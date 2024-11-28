@@ -18,6 +18,7 @@ class Student(models.Model):
         return f"{self.first_name} {self.last_name} ({self.uga_id})"
 
 class Question(models.Model):
+    question_id = models.AutoField(primary_key=True)  # Added id field
     question_text = models.TextField()
     topic = models.CharField(max_length=30, choices=[
         ('Mathematics', 'Mathematics'),
@@ -36,6 +37,7 @@ class Question(models.Model):
         return self.question_text
 
 class Assessment(models.Model):
+    assessment_id = models.AutoField(primary_key=True)  # Added id field
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     date_taken = models.DateTimeField(auto_now_add=True)
     score = models.DecimalField(max_digits=5, decimal_places=2)
@@ -47,6 +49,7 @@ class Assessment(models.Model):
         return f"Assessment for {self.student} on {self.date_taken}"
 
 class VideoModule(models.Model):
+    video_module_id = models.AutoField(primary_key=True)  # Added id field
     title = models.CharField(max_length=100)
     url = models.URLField()
     description = models.TextField()
@@ -58,6 +61,7 @@ class VideoModule(models.Model):
         return self.title
 
 class Recommendation(models.Model):
+    recommendation_id = models.AutoField(primary_key=True)  # Added id field
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     module = models.ForeignKey(VideoModule, on_delete=models.CASCADE)
     recommendation_date = models.DateTimeField(auto_now_add=True)
@@ -67,6 +71,7 @@ class Recommendation(models.Model):
         return f"Recommendation for {self.student} to watch {self.module}"
 
 class Progress(models.Model):
+    progress_id = models.AutoField(primary_key=True)  # Added id field
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     module = models.ForeignKey(VideoModule, on_delete=models.CASCADE)
     completion_status = models.CharField(max_length=15, choices=[
