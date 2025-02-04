@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Modules</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .container { padding: 20px; }
+        .module-list { list-style-type: none; padding: 0; }
+        .module-item { margin: 10px 0; }
+        .module-item a {
+            display: block;
+            padding: 10px;
+            background: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            width: 200px;
+            text-align: center;
+        }
+        .module-item a:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Available Assessment Topics</h2>
+        <ul class="module-list">
+            {% for topic in topics %}
+                <li class="module-item">
+                    <a href="{% url 'test' topic %}">{{ topic }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</body>
+</html>

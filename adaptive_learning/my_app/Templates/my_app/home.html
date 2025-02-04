@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            background-color: #333;
+            padding: 10px 20px;
+        }
+        .navbar .left, .navbar .right {
+            display: flex;
+            align-items: center;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+        }
+        .navbar a:hover {
+            background-color: #575757;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="left">
+            <span style="color: white;">Welcome, {{ username }}</span>
+        </div>
+        <div class="right">
+            <a href="{% url 'modules' %}">Modules</a>
+            <a href="#">Profile</a>
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+    </div>
+
+    <div style="padding: 20px;">
+        <h2>Welcome to the Home Page, {{ username }}!</h2>
+        <p>Explore modules, update your profile, or log out using the navigation bar above.</p>
+    </div>
+
+</body>
+</html>

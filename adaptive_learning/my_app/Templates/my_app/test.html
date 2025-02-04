@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ topic }} Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .container { padding: 20px; }
+        .question { padding: 10px; border-bottom: 1px solid #ddd; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Test for {{ topic }}</h2>
+        <ul>
+            {% for question in questions %}
+                <li class="question">{{ question.question_text }}</li>
+            {% empty %}
+                <p>No questions available for this topic.</p>
+            {% endfor %}
+        </ul>
+        <a href="{% url 'modules' %}">← Back to Modules</a>
+    </div>
+
+</body>
+</html>
