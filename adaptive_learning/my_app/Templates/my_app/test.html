@@ -8,19 +8,35 @@
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
         .container { padding: 20px; }
         .question { padding: 10px; border-bottom: 1px solid #ddd; }
+        .options { margin-top: 10px; }
+        .options label { display: block; margin: 5px 0; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h2>Test for {{ topic }}</h2>
-        <ul>
+
+        <form method="POST" action="{% url 'submit_test' topic=topic %}">
+            {% csrf_token %}
+
             {% for question in questions %}
-                <li class="question">{{ question.question_text }}</li>
-            {% empty %}
-                <p>No questions available for this topic.</p>
+              <div class="question-container">
+                <p><strong>{{ question.question_text }}</strong></p>
+
+                {% for option in question.options.all %}
+                  <label>
+                    <input type="radio" name="question_{{ question.question_id }}" value="{{ option.option_id }}">
+                    {{ option.option_text }}
+                  </label><br>
+                {% endfor %}
+
+              </div>
             {% endfor %}
-        </ul>
+
+            <button type="submit" class="btn btn-primary">Submit Test</button>
+        </form>
+
         <a href="{% url 'modules' %}">← Back to Modules</a>
     </div>
 

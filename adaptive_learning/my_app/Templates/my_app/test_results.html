@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ topic }} Test Results</title>
+</head>
+<body>
+    <div class="container">
+        <h2>Results for {{ topic }} Test</h2>
+
+        <p>Hello, {{ student_name }}! Here are your results:</p>
+        <p>Score: {{ score }}%</p>
+        <p>Date Taken: {{ date_taken }}</p>
+
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Your Answer</th>
+                    <th>Correct Answer</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for response in responses %}
+                    <tr>
+                        <td>{{ response.question.text }}</td>
+                        <td>{{ response.selected_option.text }}</td>
+                        <td>{{ response.question.correct_option.text }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3">No responses found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <a href="{% url 'modules' %}">← Back to Modules</a>
+    </div>
+</body>
+</html>
