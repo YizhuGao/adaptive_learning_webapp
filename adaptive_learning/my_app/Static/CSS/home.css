@@ -1,0 +1,182 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to right, #ff7e5f, #feb47b);
+    color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+    color: white;
+    font-weight: bold;
+}
+
+p {
+    font-size: 1.2rem;
+    color: #f1f1f1;
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+/* Navbar Styles */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px 30px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.navbar .left .welcome-text {
+    font-size: 1.2rem;
+    color: #f1f1f1;
+}
+
+.navbar .right a {
+    color: white;
+    text-decoration: none;
+    margin: 0 20px;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.navbar .right a:hover {
+    background-color: #575757;
+    border-radius: 5px;
+    transform: scale(1.05);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.navbar .right a i {
+    margin-right: 8px;
+}
+
+/* Landing Page Section */
+.landing {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    height: calc(100vh - 80px); /* Adjust to prevent overlap with navbar */
+    padding: 20px;
+    margin-top: 80px; /* Space below navbar */
+}
+
+.landing h1 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    color: white;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+    letter-spacing: 1.5px;
+    animation: fadeIn 1s ease-out;
+}
+
+.landing p {
+    font-size: 1.3rem;
+    color: #f1f1f1;
+    margin-bottom: 40px;
+    line-height: 1.8;
+    animation: fadeIn 1s ease-out;
+}
+
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 50px;
+    flex-wrap: wrap;
+    animation: fadeIn 1.5s ease-out;
+}
+
+.feature {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 30px;
+    border-radius: 15px;
+    width: 250px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: #ff5722;
+}
+
+.feature h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: white;
+    font-weight: bold;
+}
+
+.feature p {
+    font-size: 1rem;
+    color: #f1f1f1;
+    margin-bottom: 15px;
+}
+
+.feature:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Call-to-Action Button */
+.btn-cta {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 14px 30px;
+    background: #ff5722;
+    color: white;
+    font-size: 1.2rem;
+    text-decoration: none;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-cta:hover {
+    background: #e64a19;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
