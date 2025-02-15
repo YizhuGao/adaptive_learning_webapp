@@ -26,6 +26,8 @@ class Question(models.Model):
         ('English', 'English'),
         ('Thermodynamics', 'Thermodynamics'),  # Added based on your data
     ])
+    subtopic = models.CharField(max_length=255, null=True, blank=True)  # Subtopic of the question
+    assigned_at = models.IntegerField(choices=[(0, 'Before Assignment'), (1, 'After Assignment')], default=0)  # Flag for before or after assignment
     difficulty_level = models.CharField(max_length=15, choices=[
         ('Beginner', 'Beginner'),
         ('Intermediate', 'Intermediate'),

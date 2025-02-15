@@ -26,7 +26,7 @@
 
                 {% for option in question.options.all %}
                   <label>
-                    <input type="radio" name="question_{{ question.question_id }}" value="{{ option.option_id }}">
+                    <input type="radio" name="question_{{ question.pk }}" value="{{ option.pk }}">
                     {{ option.option_text }}
                   </label><br>
                 {% endfor %}

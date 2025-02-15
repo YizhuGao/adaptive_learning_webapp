@@ -1,13 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, logger
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.utils.timezone import now
 from .models import Assessment, Question, Student, AssessmentResponse, Option
 from django.urls import reverse
+import logging
+logger = logging.getLogger(__name__)
 
 
 def index(request):
@@ -128,7 +130,7 @@ def modules_view(request):
 @login_required
 def test_view(request, topic):
     # Fetch the questions based on the topic
-    questions = Question.objects.filter(topic=topic)
+    questions = Question.objects.filter(topic=topic, assigned_at=0)
 
     context = {
         'topic': topic,
@@ -136,6 +138,7 @@ def test_view(request, topic):
     }
 
     return render(request, 'my_app/test.html', context)
+
 
 @login_required
 def submit_test(request, topic):
@@ -192,9 +195,18 @@ def submit_test(request, topic):
             assessment.save()
             print(f"Final Score: {score}")
 
-            # Pass the score to the result.html template
-            return render(request, "my_app/test_results.html",
-                          {"score": score, "topic": topic})  # Ensure the correct template path
+            # Now, instead of directly rendering, we pass the data to the result template
+            context = {
+                'student_name': student.first_name + ' ' + student.last_name,
+                'topic': topic,
+                'score': score,
+                'date_taken': assessment.date_taken,
+                'responses': AssessmentResponse.objects.filter(assessment=assessment)
+            }
+
+            print("Rendering test_results with context")
+            print(f"Context:" , context)
+            return render(request, "my_app/test_results.html", context)
 
         except Exception as e:
             print("Error:", e)
@@ -203,46 +215,65 @@ def submit_test(request, topic):
     return redirect("modules")  # Redirect if accessed incorrectly
 
 
-@login_required
-def test_results(request, topic):
-    print("User ID:", request.user.id)  # Print current user ID
-
-    try:
-        student = Student.objects.get(user=request.user)  # Try to fetch the student object
-        print(f"Student found: {student.first_name} {student.last_name}")
-    except Student.DoesNotExist:
-        print("Student does not exist for this user!")
-    # Get the logged-in student
-    student = get_object_or_404(Student, user=request.user)
-
-    # Fetch the most recent assessment for the student and the given topic
-    assessment = Assessment.objects.filter(student=student, topic=topic).order_by('-date_taken').first()
-    print(f"Assessment found: {assessment}")
-
-    if not assessment:
-        messages.error(request, "No assessment found for this topic.")
-        return redirect('modules')
-
-    # Debugging: Check if we have found the assessment
-    print(f"Assessment found: {assessment}, Score: {assessment.score}, Date Taken: {assessment.date_taken}")
-
-    # Get all responses for the assessment
-    responses = AssessmentResponse.objects.filter(assessment=assessment)
-
-    # Debugging: Check if responses are found
-    if not responses:
-        print("No responses found for this assessment.")
-
-    # Prepare the data to pass to the template
-    context = {
-        'student_name': student.first_name + ' ' + student.last_name,
-        'topic': topic,
-        'score': assessment.score,
-        'date_taken': assessment.date_taken,
-        'responses': responses
-    }
-
-    return render(request, "my_app/test_results.html", context)
+# @login_required
+# def test_results(request, topic):
+#     logger.info(f"test_results called for topic: {topic}")  # This should appear in logs
+#     print(f"test_results called for topic: {topic}")  # This should appear in the console
+#     print("User ID:", request.user.id)  # Debugging
+#
+#     # Fetch the logged-in student
+#     student = get_object_or_404(Student, user=request.user)
+#     print("Student found oashahsdokj: {student.first_name} {student.last_name}")
+#
+#     print("Before assesment")
+#     # Fetch the most recent assessment for the student and the given topic
+#     assessment = Assessment.objects.filter(student=student, topic=topic).order_by('-date_taken').first()
+#
+#     print("After assessment")
+#
+#     if not assessment:
+#         messages.error(request, "No assessment found for this topic.")
+#         return redirect('modules')
+#
+#     print(f"Assessment found: {assessment}, Score: {assessment.score}, Date Taken: {assessment.date_taken}")
+#
+#     # Fetch all responses related to this assessment
+#     responses = AssessmentResponse.objects.filter(assessment=assessment)
+#
+#     # Process responses and fetch correct answers
+#     processed_responses = []
+#     for response in responses:
+#         print(f"Processing response for question: {response.question.question_text}")  # Debugging
+#
+#         # Fetch correct option manually
+#         correct_option = Option.objects.filter(question=response.question, is_correct=True).first()
+#
+#         if correct_option:
+#             print(f"Correct Answer Found: {correct_option.option_text}")
+#         else:
+#             print("No correct answer found for this question.")
+#
+#         processed_responses.append({
+#             'question_text': response.question.question_text,  # Ensure question text is included
+#             'selected_option': response.selected_option.option_text,
+#             'correct_option': correct_option.option_text if correct_option else "N/A"
+#         })
+#
+#     if not responses:
+#         print("No responses found for this assessment.")
+#
+#     # Prepare the data for the template
+#     context = {
+#         'student_name': f"{student.first_name} {student.last_name}",
+#         'topic': topic,
+#         'score': assessment.score,
+#         'date_taken': assessment.date_taken,
+#         'responses': processed_responses  # Updated responses list
+#     }
+#
+#     print(f"Context before rendering: {context}")  # Debugging
+#
+#     return render(request, "my_app/test_results.html", context)
 
 # @login_required
 # def test_scores_view(request):

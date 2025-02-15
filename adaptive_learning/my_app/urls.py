@@ -1,7 +1,7 @@
 # my_app/urls.py
 from django.urls import path
 from . import views
-from .views import submit_test, test_results
+from .views import submit_test
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -13,7 +13,7 @@ urlpatterns = [
     path('modules/', views.modules_view, name='modules'),  # Modules page
     path('test/<str:topic>/', views.test_view, name='test'),
     path('submit-test/<str:topic>/', submit_test, name='submit_test'),
-    path("test-results/", test_results, name="test_results"),
+    # path('test_results/<str:topic>/', test_results, name='test_results'),  # Ensure this exists
     # path('logout/', views.logout_view, name='logout'),
     # path('profile/', views.profile_view, name='profile'),
     # path('student-dashboard/', views.student_dashboard, name='student_dashboard'),

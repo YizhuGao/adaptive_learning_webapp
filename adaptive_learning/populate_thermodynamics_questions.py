@@ -1,132 +1,360 @@
 from my_app.models import Question, Option
 
-# Create 10 Thermodynamics Questions with their respective options
+Option.objects.all().delete()
+Question.objects.all().delete()
+
 questions_data = [
     {
-        "question_text": "What is the first law of thermodynamics?",
+        "question_text": "What is the most likely temperature of ice-cubes stored in a refrigerator’s freezer compartment?",
         "topic": "Thermodynamics",
+        "subtopic": "Fusion/melting point and freezing point",
+        "assigned_at": 0,
         "difficulty_level": "Beginner",
         "options": [
-            ("Energy cannot be created or destroyed", True),
-            ("The total energy of the universe is constant", False),
-            ("Energy is only conserved in closed systems", False),
-            ("Heat is the only form of energy", False)
-        ]
+            ("−10 °C", True),
+            ("0 °C", False),
+            ("5 °C", False),
+            ("It depends on the size of the ice-cubes.", False),
+        ],
     },
     {
-        "question_text": "What is the formula for work done by an ideal gas during an isothermal process?",
+        "question_text": "Ken takes six ice-cubes from the freezer and puts four of them into a glass of water. What is the most likely temperature of the water at this stage?",
         "topic": "Thermodynamics",
-        "difficulty_level": "Intermediate",
-        "options": [
-            ("W = P(V2 - V1)", False),
-            ("W = nRT ln(V2/V1)", True),
-            ("W = nR(T2 - T1)", False),
-            ("W = P(V1 + V2)", False)
-        ]
-    },
-    {
-        "question_text": "Which process describes the change in energy with no heat exchange?",
-        "topic": "Thermodynamics",
-        "difficulty_level": "Intermediate",
-        "options": [
-            ("Isothermal", False),
-            ("Adiabatic", True),
-            ("Isobaric", False),
-            ("Isochoric", False)
-        ]
-    },
-    {
-        "question_text": "What is the definition of entropy?",
-        "topic": "Thermodynamics",
+        "subtopic": "Fusion/melting point and freezing point",
+        "assigned_at": 0,
         "difficulty_level": "Beginner",
         "options": [
-            ("A measure of heat flow", False),
-            ("A measure of randomness or disorder", True),
-            ("A measure of pressure", False),
-            ("A measure of energy", False)
-        ]
+            ("−10 °C", False),
+            ("0 °C", True),
+            ("5 °C", False),
+            ("10 °C", False),
+        ],
     },
     {
-        "question_text": "In thermodynamics, what does a negative value for enthalpy indicate?",
+        "question_text": "When an ice-cube melts, what is the expected temperature change of the ice-cube?",
         "topic": "Thermodynamics",
-        "difficulty_level": "Advanced",
-        "options": [
-            ("The system is absorbing heat", False),
-            ("The system is at equilibrium", False),
-            ("The system is releasing heat", True),
-            ("There is no change in the system", False)
-        ]
-    },
-    {
-        "question_text": "What does the second law of thermodynamics state?",
-        "topic": "Thermodynamics",
-        "difficulty_level": "Intermediate",
-        "options": [
-            ("Energy flows from cold to hot", False),
-            ("Entropy of an isolated system always decreases", False),
-            ("The total energy of a system is conserved", False),
-            ("Entropy of an isolated system always increases", True)
-        ]
-    },
-    {
-        "question_text": "What is a Carnot engine?",
-        "topic": "Thermodynamics",
-        "difficulty_level": "Advanced",
-        "options": [
-            ("An engine that operates with maximum efficiency", True),
-            ("An engine that works only in the isothermal process", False),
-            ("An engine that works only in adiabatic process", False),
-            ("An engine that converts only electrical energy", False)
-        ]
-    },
-    {
-        "question_text": "Which of the following is a state function in thermodynamics?",
-        "topic": "Thermodynamics",
-        "difficulty_level": "Intermediate",
-        "options": [
-            ("Heat", False),
-            ("Work", False),
-            ("Pressure", True),
-            ("Time", False)
-        ]
-    },
-    {
-        "question_text": "What is the unit of specific heat capacity?",
-        "topic": "Thermodynamics",
+        "subtopic": "Phase change and temperature",
+        "assigned_at": 0,
         "difficulty_level": "Beginner",
         "options": [
-            ("Joule", False),
-            ("Joule per kilogram", False),
-            ("Joule per kilogram per Kelvin", True),
-            ("Newton per meter", False)
-        ]
+            ("It stays the same.", True),
+            ("It increases significantly.", False),
+            ("It decreases significantly.", False),
+            ("It fluctuates.", False),
+        ],
     },
     {
-        "question_text": "What does the third law of thermodynamics state?",
+        "question_text": "If a person steps into a pool of water at 10 °C, what would be the most likely result in terms of heat transfer?",
         "topic": "Thermodynamics",
-        "difficulty_level": "Advanced",
+        "subtopic": "Heat transfer and temperature change",
+        "assigned_at": 1,
+        "difficulty_level": "Intermediate",
         "options": [
-            ("Entropy of a system approaches a constant as temperature approaches absolute zero", True),
-            ("The energy in a system remains constant", False),
-            ("Energy can be created and destroyed", False),
-            ("Entropy decreases at lower temperatures", False)
-        ]
-    }
+            ("Heat will flow from the body into the water.", True),
+            ("Heat will flow from the water into the body.", False),
+            ("There will be no heat transfer.", False),
+            ("The body will remain at the same temperature.", False),
+        ],
+    },
+    {
+        "question_text": "If the temperature of water reaches 0 °C, it will begin to freeze. What happens to the temperature as it transitions from liquid to solid?",
+        "topic": "Thermodynamics",
+        "subtopic": "Freezing and melting point",
+        "assigned_at": 1,
+        "difficulty_level": "Intermediate",
+        "options": [
+            ("The temperature decreases further.", False),
+            ("The temperature stays constant.", True),
+            ("The temperature increases.", False),
+            ("The temperature fluctuates.", False),
+        ],
+    },
+    {
+        "question_text": "What is the primary reason why ice is less dense than water?",
+        "topic": "Science",
+        "subtopic": "Density and phase change",
+        "assigned_at": 1,
+        "difficulty_level": "Intermediate",
+        "options": [
+            ("Ice molecules are more spread out in the solid form.", True),
+            ("Water molecules are more tightly packed in the solid form.", False),
+            ("Ice molecules are heavier than water molecules.", False),
+            ("Water expands when it freezes.", False),
+        ],
+    },
+    {
+        "question_text": "What is the state of matter for water at room temperature (25 °C)?",
+        "topic": "Science",
+        "subtopic": "States of matter",
+        "assigned_at": 0,
+        "difficulty_level": "Beginner",
+        "options": [
+            ("Solid", False),
+            ("Liquid", True),
+            ("Gas", False),
+            ("Plasma", False),
+        ],
+    },
+    {
+        "question_text": "What is the freezing point of water at standard atmospheric pressure?",
+        "topic": "Science",
+        "subtopic": "Freezing and melting point",
+        "assigned_at": 0,
+        "difficulty_level": "Beginner",
+        "options": [
+            ("0 °C", True),
+            ("100 °C", False),
+            ("32 °F", True),
+            ("−32 °C", False),
+        ],
+    },
+    {
+        "question_text": "How does the density of water change as it freezes?",
+        "topic": "Science",
+        "subtopic": "Density and phase change",
+        "assigned_at": 1,
+        "difficulty_level": "Intermediate",
+        "options": [
+            ("It increases.", False),
+            ("It stays the same.", False),
+            ("It decreases.", True),
+            ("It fluctuates.", False),
+        ],
+    },
+    {
+        "question_text": "What is the boiling point of water at standard atmospheric pressure?",
+        "topic": "Science",
+        "subtopic": "Boiling point and phase change",
+        "assigned_at": 0,
+        "difficulty_level": "Beginner",
+        "options": [
+            ("100 °C", True),
+            ("212 °F", True),
+            ("32 °C", False),
+            ("0 °C", False),
+        ],
+    },
+    {
+        "question_text": "At which temperature does water boil at standard atmospheric pressure?",
+        "topic": "Science",
+        "subtopic": "Boiling point and phase change",
+        "assigned_at": 0,
+        "difficulty_level": "Beginner",
+        "options": [
+            ("100 °C", True),
+            ("32 °C", False),
+            ("0 °C", False),
+            ("212 °C", False),
+        ],
+    },
+    {
+        "question_text": "What happens to the volume of water when it freezes?",
+        "topic": "Science",
+        "subtopic": "Phase change and volume",
+        "assigned_at": 1,
+        "difficulty_level": "Intermediate",
+        "options": [
+            ("It increases.", True),
+            ("It decreases.", False),
+            ("It stays the same.", False),
+            ("It fluctuates.", False),
+        ],
+    },
+    {
+        "question_text": "How does the water temperature affect its ability to dissolve substances?",
+        "topic": "Science",
+        "subtopic": "Solubility and temperature",
+        "assigned_at": 1,
+        "difficulty_level": "Intermediate",
+        "options": [
+            ("Hot water dissolves substances more quickly.", True),
+            ("Cold water dissolves substances more quickly.", False),
+            ("Temperature has no effect on solubility.", False),
+            ("Hot water does not dissolve substances at all.", False),
+        ],
+    },
+    {
+        "question_text": "When water evaporates, what happens to its temperature?",
+        "topic": "Science",
+        "subtopic": "Evaporation and temperature change",
+        "assigned_at": 1,
+        "difficulty_level": "Intermediate",
+        "options": [
+            ("It increases.", False),
+            ("It stays the same.", False),
+            ("It decreases.", True),
+            ("It fluctuates.", False),
+        ],
+    },
+    {
+        "question_text": "What is the name of the process where water changes from a gas to a liquid?",
+        "topic": "Science",
+        "subtopic": "Phase changes",
+        "assigned_at": 0,
+        "difficulty_level": "Beginner",
+        "options": [
+            ("Condensation", True),
+            ("Evaporation", False),
+            ("Freezing", False),
+            ("Sublimation", False),
+        ],
+    },
+    {
+        "question_text": "What is the energy required to change the temperature of a substance?",
+        "topic": "Science",
+        "subtopic": "Heat and energy",
+        "assigned_at": 1,
+        "difficulty_level": "Intermediate",
+        "options": [
+            ("Specific heat capacity", True),
+            ("Latent heat", False),
+            ("Enthalpy", False),
+            ("Thermal conductivity", False),
+        ],
+    },
+    {
+        "question_text": "What is the difference between boiling and evaporation?",
+        "topic": "Science",
+        "subtopic": "Boiling vs Evaporation",
+        "assigned_at": 1,
+        "difficulty_level": "Intermediate",
+        "options": [
+            ("Boiling occurs only at the surface.", False),
+            ("Evaporation is a slower process than boiling.", True),
+            ("Boiling occurs at any temperature.", False),
+            ("Evaporation does not involve temperature changes.", False),
+        ],
+    },
+    {
+        "question_text": "What is the term for the amount of heat required to convert a substance from a solid to a liquid?",
+        "topic": "Science",
+        "subtopic": "Phase change and heat",
+        "assigned_at": 1,
+        "difficulty_level": "Intermediate",
+        "options": [
+            ("Latent heat of fusion", True),
+            ("Latent heat of vaporization", False),
+            ("Specific heat", False),
+            ("Sublimation heat", False),
+        ],
+    },
+    {
+        "question_text": "What is the name of the process where a substance changes directly from a solid to a gas?",
+        "topic": "Science",
+        "subtopic": "Phase changes",
+        "assigned_at": 1,
+        "difficulty_level": "Intermediate",
+        "options": [
+            ("Sublimation", True),
+            ("Melting", False),
+            ("Freezing", False),
+            ("Condensation", False),
+        ],
+    },
+    {
+        "question_text": "What happens to the water temperature when ice is added?",
+        "topic": "Thermodynamics",
+        "subtopic": "Thermal equilibrium",
+        "assigned_at": 0,
+        "difficulty_level": "Beginner",
+        "options": [
+            ("It increases.", False),
+            ("It stays the same.", False),
+            ("It decreases.", True),
+            ("It fluctuates.", False),
+        ],
+    },
+    {
+        "question_text": "What is the term used for the heat required to change a liquid to a gas?",
+        "topic": "Science",
+        "subtopic": "Latent heat",
+        "assigned_at": 1,
+        "difficulty_level": "Intermediate",
+        "options": [
+            ("Latent heat of vaporization", True),
+            ("Latent heat of fusion", False),
+            ("Specific heat", False),
+            ("Heat of reaction", False),
+        ],
+    },
+    {
+        "question_text": "What is the unit of heat?",
+        "topic": "Thermodynamics",
+        "subtopic": "Units of energy",
+        "assigned_at": 0,
+        "difficulty_level": "Beginner",
+        "options": [
+            ("Joule", True),
+            ("Kelvin", False),
+            ("Newton", False),
+            ("Celsius", False),
+        ],
+    },
+    {
+        "question_text": "Which of the following gases is most commonly used for refrigeration?",
+        "topic": "Thermodynamics",
+        "subtopic": "Refrigerants",
+        "assigned_at": 1,
+        "difficulty_level": "Intermediate",
+        "options": [
+            ("Carbon dioxide", False),
+            ("Freon", True),
+            ("Nitrogen", False),
+            ("Oxygen", False),
+        ],
+    },
+    {
+        "question_text": "Which of the following gases is used to pressurize soft drinks?",
+        "topic": "Science",
+        "subtopic": "Pressurized gases",
+        "assigned_at": 0,
+        "difficulty_level": "Beginner",
+        "options": [
+            ("Oxygen", False),
+            ("Carbon dioxide", True),
+            ("Nitrogen", False),
+            ("Helium", False),
+        ],
+    },
+    {
+        "question_text": "What is the process of transferring heat through direct contact?",
+        "topic": "Science",
+        "subtopic": "Heat transfer mechanisms",
+        "assigned_at": 0,
+        "difficulty_level": "Beginner",
+        "options": [
+            ("Conduction", True),
+            ("Convection", False),
+            ("Radiation", False),
+            ("Insulation", False),
+        ],
+    },
+    {
+        "question_text": "What is the term for the energy required to raise the temperature of a substance?",
+        "topic": "Science",
+        "subtopic": "Specific heat and energy",
+        "assigned_at": 1,
+        "difficulty_level": "Intermediate",
+        "options": [
+            ("Specific heat", True),
+            ("Latent heat", False),
+            ("Thermal conductivity", False),
+            ("Heat capacity", False),
+        ],
+    },
 ]
 
-# Insert the questions and options into the database
-for q_data in questions_data:
+for question_data in questions_data:
     question = Question.objects.create(
-        question_text=q_data["question_text"],
-        topic=q_data["topic"],
-        difficulty_level=q_data["difficulty_level"]
+        question_text=question_data["question_text"],
+        topic=question_data["topic"],
+        subtopic=question_data["subtopic"],
+        assigned_at=question_data["assigned_at"],
+        difficulty_level=question_data["difficulty_level"],
     )
-
-    for option_text, is_correct in q_data["options"]:
+    for option_text, is_correct in question_data["options"]:
         Option.objects.create(
-            question=question,
-            option_text=option_text,
-            is_correct=is_correct
+            question=question, option_text=option_text, is_correct=is_correct
         )
 
 print("Dummy data for thermodynamics questions and options inserted successfully!")
