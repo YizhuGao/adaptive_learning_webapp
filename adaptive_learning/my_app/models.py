@@ -73,6 +73,7 @@ class VideoModule(models.Model):
     url = models.URLField()
     description = models.TextField()
     topic = models.CharField(max_length=30)
+    subtopic = models.CharField(max_length=255, null=True, blank=True)
     level = models.CharField(max_length=15)
     students = models.ManyToManyField(Student, through='Recommendation')
 

@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.utils.timezone import now
-from .models import Assessment, Question, Student, AssessmentResponse, Option
+from .models import Assessment, Question, Student, AssessmentResponse, Option, VideoModule
 from django.urls import reverse
 import logging
 logger = logging.getLogger(__name__)
@@ -213,6 +213,18 @@ def submit_test(request, topic):
             return JsonResponse({"error": str(e)}, status=400)
 
     return redirect("modules")  # Redirect if accessed incorrectly
+
+
+@login_required
+def video_module_view(request):
+    # Fetch all VideoModules
+    video_modules = VideoModule.objects.all()
+
+    context = {
+        'video_modules': video_modules
+    }
+
+    return render(request, 'my_app/video_modules.html', context)
 
 
 # @login_required
