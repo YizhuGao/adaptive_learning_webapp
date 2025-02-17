@@ -1,41 +1,47 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Available Modules</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        .container { padding: 20px; }
-        .module-list { list-style-type: none; padding: 0; }
-        .module-item { margin: 10px 0; }
-        .module-item a {
-            display: block;
-            padding: 10px;
-            background: #007BFF;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            width: 200px;
-            text-align: center;
-        }
-        .module-item a:hover {
-            background: #0056b3;
-        }
-    </style>
+    <title>Modules - Adaptive Physics Learning</title>
+    <link rel="stylesheet" href="{% static 'CSS/modules.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="left">
+            <span class="welcome-text">Welcome, {{ username }}</span>
+        </div>
+        <div class="right">
+            <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
+            <a href="#" class="nav-link"><i class="fas fa-user"></i> Profile</a>
+            <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
 
-    <div class="container">
-        <h2>Available Assessment Topics</h2>
-        <ul class="module-list">
+    <!-- Modules Section -->
+    <section class="modules-section">
+        <h1>Available Assessment Topics</h1>
+        <p>Select a topic below to start your assessment.</p>
+        <div class="module-grid">
             {% for topic in topics %}
-                <li class="module-item">
-                    <a href="{% url 'test' topic %}">{{ topic }}</a>
-                </li>
+                <div class="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">
+                            <h2>{{ topic }}</h2>
+                        </div>
+                        <div class="flashcard-back">
+                            <p>Click below to start your test on {{ topic }}.</p>
+                            <a href="{% url 'test' topic %}" class="start-btn">Start Test</a>
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
-        </ul>
-    </div>
+        </div>
+    </section>
 
+    <script src="{% static 'JS/modules.js' %}"></script>
 </body>
 </html>

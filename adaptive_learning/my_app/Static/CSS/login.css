@@ -1,0 +1,218 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Arial", sans-serif;
+    scroll-behavior: smooth;
+}
+
+/* Navigation */
+.login-nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 1rem 3rem;
+    display: flex;
+    justify-content: space-between; /* Left & right alignment */
+    align-items: center;
+    background: rgba(255, 255, 255, 0.95); /* White background */
+    border-bottom: 2px solid #ddd;
+    z-index: 100;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo (Adaptive physics on the left) */
+.nav-logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ff5722;
+    text-decoration: none;
+}
+
+/* Navbar Links (on the right) */
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    padding: 12px 18px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+/* Hover effects */
+.nav-links a:hover {
+    background-color: #ff5722;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Login Button */
+.nav-links a.login-btn {
+    background-color: #ff5722;
+    color: white;
+    font-weight: 600;
+}
+
+.nav-links a.login-btn:hover {
+    background-color: #e64a19;
+}
+
+/* Ensure navbar is always visible */
+.nav-links a {
+    visibility: visible;
+}
+
+.nav-links a:hover {
+    visibility: visible;
+}
+
+/* Login Section */
+.login-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f5f5, #eceff1); /* Soft gradient background */
+    padding: 2rem;
+    animation: backgroundAnimation 3s ease-in-out infinite; /* Subtle background animation */
+}
+
+/* Subtle background animation */
+@keyframes backgroundAnimation {
+    0% {
+        background: linear-gradient(135deg, #f5f5f5, #eceff1);
+    }
+    50% {
+        background: linear-gradient(135deg, #eceff1, #f5f5f5);
+    }
+    100% {
+        background: linear-gradient(135deg, #f5f5f5, #eceff1);
+    }
+}
+
+/* Login Container (Zoomed out form) */
+.login-container {
+    background: #ffffff;
+    padding: 3rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    text-align: center;
+    width: 100%;
+    max-width: 450px;
+    transform: scale(0.95); /* Zoomed out effect */
+    animation: fadeIn 1.2s ease-out;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Hover effect on login container */
+.login-container:hover {
+    transform: scale(0.95) translateY(-5px);
+}
+
+/* Login Heading */
+.login-container h2 {
+    font-size: 2.2rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* Form Styling */
+.form-group {
+    margin-bottom: 1.8rem;
+    text-align: left;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #555;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1.1rem;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus {
+    border-color: #ff5722;
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 87, 34, 0.3);
+}
+
+/* Submit Button */
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: #ff5722;
+    color: white;
+    font-size: 1.3rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.submit-btn:hover {
+    background: #e64a19;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(230, 74, 25, 0.3);
+}
+
+/* Link Styles */
+.login-container p {
+    margin-top: 1rem;
+    color: #555;
+}
+
+.login-container p a {
+    color: #ff5722;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.login-container p a:hover {
+    color: #e64a19;
+}
+
+/* Fade-in Animation with zoomed out effect */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(0.95) translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+
+    .login-container {
+        padding: 2rem;
+        width: 90%;
+    }
+
+    .login-nav {
+        padding: 1rem 1.5rem;
+    }
+}

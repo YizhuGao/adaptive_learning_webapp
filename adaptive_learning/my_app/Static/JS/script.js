@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Previous JavaScript remains the same
-
     // Scroll Animation
     const observerOptions = {
         root: null,
@@ -17,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, observerOptions);
 
-    // Observe content wrapper
+    // Observe content wrapper and modules container
     const contentWrapper = document.querySelector('.content-wrapper');
     if (contentWrapper) {
         observer.observe(contentWrapper);
@@ -28,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(modulesContainer);
     }
 
-    // Add hover effect for module cards
+    // Hover effect for module cards
     const moduleCards = document.querySelectorAll('.module-card');
     moduleCards.forEach(card => {
         card.addEventListener('mouseenter', () => {
@@ -39,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
             card.style.transform = 'translateY(0)';
         });
     });
-
 
     // Smooth scroll for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -78,4 +75,3 @@ document.addEventListener('DOMContentLoaded', () => {
         lastScroll = currentScroll;
     });
 });
-

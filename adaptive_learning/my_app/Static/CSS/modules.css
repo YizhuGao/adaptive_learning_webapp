@@ -1,0 +1,153 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(to right, #36D1DC, #5B86E5);
+    color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px 30px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.navbar .left .welcome-text {
+    font-size: 1.2rem;
+    color: #f1f1f1;
+}
+
+.navbar .right a {
+    color: white;
+    text-decoration: none;
+    margin: 0 20px;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.navbar .right a:hover {
+    background-color: #575757;
+    border-radius: 5px;
+    transform: scale(1.05);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.navbar .right a i {
+    margin-right: 8px;
+}
+
+/* Modules Section */
+.modules-section {
+    text-align: center;
+    padding: 120px 20px 40px;
+    max-width: 800px;
+    width: 100%;
+}
+
+.modules-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.modules-section p {
+    font-size: 1.2rem;
+    color: #f1f1f1;
+    margin-bottom: 30px;
+}
+
+/* Flashcards Grid */
+.module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* Flashcard Styles */
+.flashcard {
+    width: 250px;
+    height: 150px;
+    perspective: 1000px;
+}
+
+.flashcard-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.flashcard:hover .flashcard-inner {
+    transform: rotateY(180deg);
+}
+
+.flashcard-front,
+.flashcard-back {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backface-visibility: hidden;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.flashcard-front {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    backdrop-filter: blur(12px);
+}
+
+.flashcard-back {
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    transform: rotateY(180deg);
+    flex-direction: column;
+}
+
+.start-btn {
+    margin-top: 10px;
+    padding: 8px 15px;
+    background: #ffcc00;
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.start-btn:hover {
+    background: #e6b800;
+    transform: scale(1.05);
+}

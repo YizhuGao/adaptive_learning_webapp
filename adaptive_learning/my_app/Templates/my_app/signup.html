@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - Adaptive Physics Learning</title>
-    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/signup.css' %}">
 </head>
 <body>
     <!-- Navigation (Copied from Index.html) -->
@@ -30,51 +30,58 @@
             <h2>Create Your Account</h2>
             <form action="{% url 'signup' %}" method="POST">
                 {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="confirm_password">Confirm Password</label>
-                    <input type="password" id="confirm_password" name="confirm_password" required>
+                    <div class="form-group">
+                        <label for="confirm_password">Confirm Password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required>
+                    </div>
                 </div>
 
                 <!-- Additional Fields for Student Model -->
-                <div class="form-group">
-                    <label for="first_name">First Name</label>
-                    <input type="text" id="first_name" name="first_name" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        <input type="text" id="first_name" name="first_name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="last_name">Last Name</label>
+                        <input type="text" id="last_name" name="last_name" required>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="last_name">Last Name</label>
-                    <input type="text" id="last_name" name="last_name" required>
-                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="uga_id">UGA ID</label>
+                        <input type="number" id="uga_id" name="uga_id" required>
+                    </div>
 
-                <div class="form-group">
-                    <label for="uga_id">UGA ID</label>
-                    <input type="number" id="uga_id" name="uga_id" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="class_level">Class Level</label>
-                    <select id="class_level" name="class_level">
-                        <option value="9th Grade">9th Grade</option>
-                        <option value="10th Grade">10th Grade</option>
-                        <option value="11th Grade">11th Grade</option>
-                        <option value="12th Grade">12th Grade</option>
-                    </select>
+                    <div class="form-group">
+                        <label for="class_level">Class Level</label>
+                        <select id="class_level" name="class_level">
+                            <option value="9th Grade">9th Grade</option>
+                            <option value="10th Grade">10th Grade</option>
+                            <option value="11th Grade">11th Grade</option>
+                            <option value="12th Grade">12th Grade</option>
+                        </select>
+                    </div>
                 </div>
 
                 <button type="submit" class="submit-btn">Sign Up</button>
@@ -83,6 +90,6 @@
         </div>
     </section>
 
-    <script src="{% static 'JS/script.js' %}"></script>
+    <script src="{% static 'JS/signup.js' %}"></script>
 </body>
 </html>

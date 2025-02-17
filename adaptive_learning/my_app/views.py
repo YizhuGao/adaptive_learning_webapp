@@ -124,7 +124,7 @@ def logout_view(request):
 def modules_view(request):
     # Fetch all unique assessment topics
     topics = Question.objects.values_list('topic', flat=True).distinct()
-    return render(request, 'my_app/modules.html', {'topics': topics})
+    return render(request, 'my_app/modules.html', {'topics': topics, 'username': request.user.username})
 
 
 @login_required
@@ -134,7 +134,8 @@ def test_view(request, topic):
 
     context = {
         'topic': topic,
-        'questions': questions
+        'questions': questions,
+        'username': request.user.username
     }
 
     return render(request, 'my_app/test.html', context)

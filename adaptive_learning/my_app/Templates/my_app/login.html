@@ -5,22 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Adaptive Physics Learning</title>
-    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/login.css' %}">
 </head>
 <body>
-    <!-- Navigation (Copied from Index.html) -->
+    <!-- Navigation -->
     <nav class="login-nav">
-        <a href="#" class="login nav">AdaptivePhysics</a>
+        <a href="{% url 'index' %}" class="nav-logo">Adaptive Physics</a>
         <div class="nav-links">
             <a href="{% url 'index' %}">Home</a>
             <a href="{% url 'index' %}">About</a>
             <a href="{% url 'index' %}">Modules</a>
-            <a href="Login.html" class="login-btn">LOGIN</a>
-        </div>
-        <div class="mobile-menu-btn">
-            <span></span>
-            <span></span>
-            <span></span>
+            <a href="{% url 'signup' %}" class="login-btn">SignUp</a>
         </div>
     </nav>
 
@@ -33,7 +28,6 @@
                 <div class="form-group">
                     <label for="{{ form.username.id_for_label }}">Username</label>
                     {{ form.username }}
-                    <!-- Render errors for username -->
                     {% if form.username.errors %}
                         <ul>
                             {% for error in form.username.errors %}
@@ -46,7 +40,6 @@
                 <div class="form-group">
                     <label for="{{ form.password.id_for_label }}">Password</label>
                     {{ form.password }}
-                    <!-- Render errors for password -->
                     {% if form.password.errors %}
                         <ul>
                             {% for error in form.password.errors %}
@@ -59,7 +52,6 @@
                 <button type="submit" class="submit-btn">Login</button>
             </form>
 
-            <!-- Display form-wide errors (if any) -->
             {% if form.non_field_errors %}
                 <ul>
                     {% for error in form.non_field_errors %}
@@ -72,6 +64,6 @@
         </div>
     </section>
 
-    <script src="{% static 'JS/script.js' %}"></script>
+    <script src="{% static 'JS/login.js' %}"></script>
 </body>
-</html>
+</html> 

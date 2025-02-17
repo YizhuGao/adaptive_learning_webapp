@@ -104,7 +104,22 @@
         </div>
     </div>
 </section>
-
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="#about">About Us</a>
+                <a href="#contact">Contact</a>
+                <a href="#privacy">Privacy Policy</a>
+            </div>
+            <div class="footer-social">
+                <a href="https://facebook.com" target="_blank" aria-label="Facebook"><img src="{% static 'Images/facebook-icon.png' %}" alt="Facebook" class="social-icon"></a>
+                <a href="https://twitter.com" target="_blank" aria-label="Twitter"><img src="{% static 'Images/twitter-icon.png' %}" alt="Twitter" class="social-icon"></a>
+                <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn"><img src="{% static 'Images/linkedin-icon.png' %}" alt="LinkedIn" class="social-icon"></a>
+            </div>
+            <p class="footer-text">© 2025 Adaptive Physics Learning | All Rights Reserved</p>
+        </div>
+    </footer>
 
 
     <script src="{% static 'JS/script.js' %}"></script>
@@ -130,173 +145,3 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-{% comment %} 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adaptive Physics Learning</title>
-    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}">
-</head>
-<body>
-    <!-- Navigation -->
-    <nav>
-        <a href="#" class="logo">AdaptivePhysics</a>
-        <div class="nav-links">
-            <a href="#home">Home</a>
-            <a href="#about">About</a>
-            <a href="#modules">Modules</a>
-            <a href="#login" class="login-btn">LOGIN</a>
-        </div>
-        <div class="mobile-menu-btn">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <h1>AdaptivePhysics</h1>
-        <p>Master Physics with Adaptive Learning</p>
-        <a href="#modules">
-        <button class="cta-button"  id="modulesBtn">LEARNING MODULES</button><a>
-    </section>
-
-    <!-- Interactive Learning Section -->
-    <section class="interactive-section" id="about">
-        <div class="content-wrapper">
-            <div class="text-content">
-                <h3 class="section-tag">EXPLORE PHYSICS CONCEPTS</h3>
-                <h2>Interactive learning for students</h2>
-                <p>
-                    AdaptivePhysics offers students in Athens a dynamic platform to delve into essential physics concepts.
-                    Engage with structured modules covering the Nature of Temperature, Heat Transfer, and Fusion Processes.
-                    Our interactive question segments, informative video lessons, and easy navigation ensure a comprehensive
-                    learning experience. Embrace the world of physics with AdaptivePhysics and enhance your understanding today!
-                </p>
-                <a href="#login" class="login-link">Login</a>
-            </div>
-            <div class="image-content">
-                <img src="{% static 'Images/pt.jpg' %}" alt="Physics Teacher" class="section-image">
-            </div>
-        </div>
-    </section>
-
-    <!-- Modules Section -->
-    <section class="modules-section" id="modules" aria-labelledby="modules-heading">
-        <div class="modules-container">
-            <div class="section-header">
-                <span class="section-tag">INTERACTIVE LEARNING</span>
-                <h2 id="modules-heading">Engage with dynamic physics concepts</h2>
-            </div>
-            
-            <div class="modules-grid">
-                <!-- Temperature Module Card -->
-                <article class="module-card" data-module="temperature">
-                    <div class="card-image">
-                        <img src="{% static 'Images/Thermal-physics.webp' %}" alt="Temperature concept visualization" loading="lazy">
-                    </div>
-                    <div class="card-content">
-                        <h3>Nature of temperature <span class="arrow">→</span></h3>
-                        <p>Delve into the fascinating world of temperature concepts.</p>
-                        <a href="#temperature" class="card-link" aria-label="Learn about nature of temperature">
-                            Learn more
-                        </a>
-                    </div>
-                </article>
-
-                <!-- Heat Transfer Module Card -->
-                <article class="module-card" data-module="heat-transfer">
-                    <div class="card-image">
-                        <img src="{% static 'Images/heat transfer.jpg' %}" alt="Heat transfer demonstration with fire" loading="lazy">
-                    </div>
-                    <div class="card-content">
-                        <h3>Heat transfer and temperature change <span class="arrow">→</span></h3>
-                        <p>Master the principles of heat transfer and its effects.</p>
-                        <a href="#heat-transfer" class="card-link" aria-label="Learn about heat transfer">
-                            Learn more
-                        </a>
-                    </div>
-                </article>
-
-                <!-- Fusion Module Card -->
-                <article class="module-card" data-module="fusion">
-                    <div class="card-image">
-                        <img src="{% static 'Images/stte changes.webp' %}" alt="State changes in matter visualization" loading="lazy">
-                    </div>
-                    <div class="card-content">
-                        <h3>Fusion, melting, freezing, boiling points <span class="arrow">→</span></h3>
-                        <p>Investigate the changes of state in physical matter.</p>
-                        <a href="#fusion" class="card-link" aria-label="Learn about state changes">
-                            Learn more
-                        </a>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <!-- Module Detail Section -->
-    {% comment %} <section class="module-detail" id="module-detail">
-        <div class="module-detail-container">
-            <!-- Temperature Module Detail -->
-            <div class="module-content" data-module="temperature">
-                <div class="module-header">
-                    <span class="module-tag">NATURE OF TEMPERATURE</span>
-                    <!-- Close Button -->
-                    <button class="close-module" aria-label="Close module"></button>
-                </div>
-                <div class="module-body">
-                    <div class="content-grid">
-                        <!-- Image Section -->
-                        <div class="module-image">
-                            <img src="{% static 'Images/Thermal-physics.webp' %}" alt="Temperature concept demonstration" loading="lazy">
-                        </div>
-                        <!-- Text Section -->
-                        <div class="module-text">
-                            <p class="module-description">
-                                Explore the fundamental principles of temperature through engaging 
-                                and structured modules. Understand how temperature affects matter 
-                                and energy transfer, and learn to apply these concepts to real-world 
-                                scenarios. Our interactive question segments challenge your 
-                                understanding while video learning enhances retention. Each module 
-                                encourages you to think critically about the nature of temperature, 
-                                providing a comprehensive foundation for further studies in physics. 
-                                With easy navigation, you can seamlessly transition between units, 
-                                ensuring a thorough grasp of this essential topic. Join us and elevate 
-                                your understanding of temperature today!
-                            </p>
-                            <button class="start-module-btn">Start Learning</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Heat Transfer Module Detail -->
-            <div class="module-content" data-module="heat-transfer">
-                <!-- Similar structure for heat transfer module -->
-            </div>
-
-            <!-- Fusion Module Detail -->
-            <div class="module-content" data-module="fusion">
-                <!-- Similar structure for fusion module -->
-            </div>
-        </div>
-    </section> {% endcomment %}
-{% comment %} 
-    <script src="{% static 'JS/script.js' %}"></script>
-</body>
-</html> {% endcomment %} 

@@ -1,0 +1,213 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Arial", sans-serif;
+    scroll-behavior: smooth;
+}
+
+/* Navigation */
+.login-nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 1rem 3rem;
+    display: flex;
+    justify-content: space-between; /* Logo on left, nav links on right */
+    align-items: center;
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 2px solid #ddd;
+    z-index: 100;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo (Adaptive physics on the left) */
+.nav-logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ff5722;
+    text-decoration: none;
+}
+
+/* Navbar Links (Aligned to the right) */
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    padding: 12px 18px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+/* Hover effects */
+.nav-links a:hover {
+    background-color: #ff5722;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Login Button */
+.nav-links a.login-btn {
+    background-color: #ff5722;
+    color: white;
+    font-weight: 600;
+}
+
+.nav-links a.login-btn:hover {
+    background-color: #e64a19;
+}
+
+/* Ensure navbar is always visible */
+.nav-links a {
+    visibility: visible;
+}
+
+/* Sign Up Section */
+.login-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f5f5, #eceff1);
+    padding: 4rem 2rem;  /* Increased top padding to increase gap between navbar and section */
+    animation: backgroundAnimation 3s ease-in-out infinite;
+}
+
+/* Subtle background animation */
+@keyframes backgroundAnimation {
+    0% {
+        background: linear-gradient(135deg, #f5f5f5, #eceff1);
+    }
+    50% {
+        background: linear-gradient(135deg, #eceff1, #f5f5f5);
+    }
+    100% {
+        background: linear-gradient(135deg, #f5f5f5, #eceff1);
+    }
+}
+
+/* Sign Up Container (Zoomed out effect) */
+.login-container {
+    background: #ffffff;
+    padding: 3rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 1200px; /* Increased width */
+    transform: scale(0.95); /* Zoomed out effect */
+    animation: fadeIn 1.2s ease-out;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Form Layout (Side-by-Side Fields) */
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem; /* Gap between the fields */
+}
+
+.form-group {
+    flex: 1; /* Makes the form fields equal width */
+    margin-bottom: 1.8rem;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #555;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* Input Fields Styling */
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    background-color: #f8f8f8;
+}
+
+/* Focus styles for inputs */
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #ff5722;
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 87, 34, 0.3);
+}
+
+/* Submit Button */
+.submit-btn {
+    width: auto; /* Adjust width to auto */
+    padding: 12px 24px; /* Adjust padding to make it smaller */
+    background: #ff5722;
+    color: white;
+    font-size: 1.3rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem; /* Reduced gap between button and the next section */
+}
+
+.submit-btn:hover {
+    background: #e64a19;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(230, 74, 25, 0.3);
+}
+
+/* Fade-in Animation with zoomed out effect */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(0.95) translateY(0);
+    }
+}
+
+/* Link Styles */
+.login-container p {
+    margin-top: 1rem;
+    color: #555;
+}
+
+.login-container p a {
+    color: #ff5722;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.login-container p a:hover {
+    color: #e64a19;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .login-container {
+        padding: 2rem;
+        width: 90%;
+    }
+
+    .login-nav {
+        padding: 1rem 1.5rem;
+    }
+
+    .form-row {
+        flex-direction: column; /* Stacks fields vertically on smaller screens */
+    }
+}

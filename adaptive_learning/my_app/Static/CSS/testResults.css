@@ -1,0 +1,149 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to right, #E0F7FA, #B2EBF2); /* Soft blue gradient */
+    color: #333; /* Dark gray for text */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background: linear-gradient(to right, #2980B9, #3498DB); /* Soft blue gradient */
+    padding: 15px 30px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.navbar .left .welcome-text {
+    font-size: 1.2rem;
+    color: white;
+}
+
+.navbar .right a {
+    color: white;
+    text-decoration: none;
+    margin: 0 15px;
+    padding: 10px 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.navbar .right a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    transform: scale(1.05);
+}
+
+/* Results Container */
+.results-container {
+    margin-top: 100px;
+    width: 90%;
+    max-width: 800px;
+    text-align: center;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Title Styling */
+.results-container h1, h2 {
+    margin-bottom: 10px;
+    color: #2980B9; /* Blue */
+}
+
+/* Score Styling */
+.score {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #E74C3C; /* Soft red */
+}
+
+/* Feedback Messages */
+.feedback-message {
+    font-size: 1.3rem;
+    font-weight: bold;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 10px;
+    text-align: center;
+    transition: all 0.5s ease-in-out;
+}
+
+/* Different Colors for Messages */
+.success { background: #27AE60; color: white; }  /* Green */
+.warning { background: #F39C12; color: black; }  /* Orange */
+.error { background: #E74C3C; color: white; }  /* Red */
+
+/* Results Table */
+.results-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+.results-table th, .results-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.results-table th {
+    background-color: #3498DB; /* Light blue */
+    color: white;
+}
+
+/* Correct Answer */
+.correct-answer {
+    color: #27AE60; /* Green */
+    font-weight: bold;
+}
+
+/* Incorrect Answer */
+.incorrect-answer {
+    color: #E74C3C; /* Red */
+    background-color: #FADBD8;
+    font-weight: bold;
+}
+
+/* Learning Section */
+.learning-section {
+    margin-top: 20px;
+}
+
+.learn-more-btn {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #3498DB; /* Blue */
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.learn-more-btn:hover {
+    background: #2980B9; /* Darker blue */
+    transform: scale(1.05);
+}
