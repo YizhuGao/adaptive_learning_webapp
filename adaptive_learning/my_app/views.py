@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, logger
@@ -228,82 +229,44 @@ def video_module_view(request):
     return render(request, 'my_app/video_modules.html', context)
 
 
-# @login_required
-# def test_results(request, topic):
-#     logger.info(f"test_results called for topic: {topic}")  # This should appear in logs
-#     print(f"test_results called for topic: {topic}")  # This should appear in the console
-#     print("User ID:", request.user.id)  # Debugging
-#
-#     # Fetch the logged-in student
-#     student = get_object_or_404(Student, user=request.user)
-#     print("Student found oashahsdokj: {student.first_name} {student.last_name}")
-#
-#     print("Before assesment")
-#     # Fetch the most recent assessment for the student and the given topic
-#     assessment = Assessment.objects.filter(student=student, topic=topic).order_by('-date_taken').first()
-#
-#     print("After assessment")
-#
-#     if not assessment:
-#         messages.error(request, "No assessment found for this topic.")
-#         return redirect('modules')
-#
-#     print(f"Assessment found: {assessment}, Score: {assessment.score}, Date Taken: {assessment.date_taken}")
-#
-#     # Fetch all responses related to this assessment
-#     responses = AssessmentResponse.objects.filter(assessment=assessment)
-#
-#     # Process responses and fetch correct answers
-#     processed_responses = []
-#     for response in responses:
-#         print(f"Processing response for question: {response.question.question_text}")  # Debugging
-#
-#         # Fetch correct option manually
-#         correct_option = Option.objects.filter(question=response.question, is_correct=True).first()
-#
-#         if correct_option:
-#             print(f"Correct Answer Found: {correct_option.option_text}")
-#         else:
-#             print("No correct answer found for this question.")
-#
-#         processed_responses.append({
-#             'question_text': response.question.question_text,  # Ensure question text is included
-#             'selected_option': response.selected_option.option_text,
-#             'correct_option': correct_option.option_text if correct_option else "N/A"
-#         })
-#
-#     if not responses:
-#         print("No responses found for this assessment.")
-#
-#     # Prepare the data for the template
-#     context = {
-#         'student_name': f"{student.first_name} {student.last_name}",
-#         'topic': topic,
-#         'score': assessment.score,
-#         'date_taken': assessment.date_taken,
-#         'responses': processed_responses  # Updated responses list
-#     }
-#
-#     print(f"Context before rendering: {context}")  # Debugging
-#
-#     return render(request, "my_app/test_results.html", context)
+@login_required
+def profile_update_view(request):
+    student = get_object_or_404(Student, user=request.user)  # Get the student object based on the logged-in user
 
-# @login_required
-# def test_scores_view(request):
-#     # Get all assessments for the logged-in user
-#     assessments = Assessment.objects.filter(student__user=request.user).order_by('-date_taken')
+    if request.method == 'POST':
+        # Get form data
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        class_level = request.POST.get('class_level')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
 
-#     # Render the results in the template
-#     return render(request, 'my_app/test_scores.html', {'assessments': assessments})
+        # Validate that class_level is provided
+        if not class_level:
+            messages.error(request, "Class level cannot be empty.")
+            return redirect('profile_update')
 
+        # Check if the passwords match
+        if password:
+            if password != confirm_password:
+                messages.error(request, "Passwords do not match.")
+                return redirect('profile_update')
 
-# @login_required
-# def assessment_questions_view(request, assessment_id):
-#     # Get the assessment by id, or return 404 if not found
-#     assessment = get_object_or_404(Assessment, pk=assessment_id, student__user=request.user)
+            # If password is provided and confirmed, hash and save it
+            request.user.set_password(password)
+            request.user.save()  # Save the updated user password
 
-#     # Get the questions related to this assessment
-#     questions = assessment.questions.all()
+            # Since the password has been changed, the user will need to log in again
+            messages.success(request, "Your password has been updated. Please log in again.")
+            return redirect('login')  # Redirect to the login page after password change
 
-#     # Render the results in the template
-#     return render(request, 'my_app/assessment_questions.html', {'assessment': assessment, 'questions': questions})
+        # If password is not changed, proceed with updating other fields
+        student.first_name = first_name
+        student.last_name = last_name
+        student.class_level = class_level
+        student.save()  # Save updated student info
+
+        messages.success(request, "Your profile has been updated successfully.")
+        return redirect('home')  # Redirect to the home page
+
+    return render(request, 'my_app/profile_update.html', {'student': student})
