@@ -1,14 +1,13 @@
 # my_app/urls.py
 from django.urls import path
 from . import views
-from .views import profile_update_view
+from .views import profile_update_view, student_assignments_view
 from django.contrib.auth import views as auth_views
 
 
 urlpatterns = [
     path('', views.index, name='index'),
     path('login/', views.login_view, name='login'),
-    path('login/', auth_views.LoginView.as_view(), name='login'),
     path('signup/', views.signup_view, name='signup'),
     path('success/', views.success_view, name='success'),
     path('home/', views.home_view, name='home'),
@@ -18,6 +17,7 @@ urlpatterns = [
     path('submit-test/<str:topic>/', views.submit_test, name='submit_test'),
     path('video-modules/', views.video_module_view, name='video_modules'),
     path("profile/update/", profile_update_view, name="profile_update"),
+    path('profile/assignments/', student_assignments_view, name='student_assignments'),  # New route
     # path('test_results/<str:topic>/', test_results, name='test_results'),  # Ensure this exists
     # path('profile/', views.profile_view, name='profile'),
     # path('student-dashboard/', views.student_dashboard, name='student_dashboard'),

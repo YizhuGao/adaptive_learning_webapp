@@ -270,3 +270,15 @@ def profile_update_view(request):
         return redirect('home')  # Redirect to the home page
 
     return render(request, 'my_app/profile_update.html', {'student': student})
+
+
+@login_required
+def student_assignments_view(request):
+    student = get_object_or_404(Student, user=request.user)
+    assignments = Assessment.objects.filter(student=student).order_by('-date_taken')  # Fetch assignments
+
+    context = {
+        'assignments': assignments,
+        'username': request.user.username
+    }
+    return render(request, 'my_app/student_assignments.html', context)

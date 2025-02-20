@@ -1,0 +1,22 @@
+{% block content %}
+<h2>Your Assignments</h2>
+<table>
+    <tr>
+        <th>Topic</th>
+        <th>Score</th>
+        <th>Date Taken</th>
+    </tr>
+    {% for assignment in assignments %}
+    <tr>
+        <td>{{ assignment.topic }}</td>
+        <td>{{ assignment.score }}%</td>
+        <td>{{ assignment.date_taken }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="3">No assignments taken yet.</td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{% url 'profile_update' %}">Back to Profile</a>
+{% endblock %}
