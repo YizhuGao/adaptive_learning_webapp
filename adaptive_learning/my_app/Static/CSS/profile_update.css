@@ -1,0 +1,159 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Arial", sans-serif;
+    scroll-behavior: smooth;
+}
+
+/* Navigation Bar */
+.login-nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 1rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.98);
+    border-bottom: 2px solid #ddd;
+    z-index: 100;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nav-logo {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ff5722;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover {
+    background-color: #ff5722;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Profile Update Section */
+.login-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f5f5, #eceff1);
+    padding: 6rem 2rem;
+}
+
+/* Profile Update Container */
+.login-container {
+    background: white;
+    padding: 3rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+    animation: fadeIn 1.2s ease-out;
+}
+
+/* Form Styling */
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.form-group {
+    flex: 1;
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #555;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    background-color: #f8f8f8;
+}
+
+/* Focus Effects */
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #ff5722;
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 87, 34, 0.3);
+}
+
+/* Submit Button */
+.submit-btn {
+    padding: 12px 24px;
+    background: #ff5722;
+    color: white;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    background: #e64a19;
+    transform: scale(1.05);
+}
+
+/* Error Message */
+.error-message {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+    text-align: left;
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .login-container {
+        padding: 2rem;
+        width: 90%;
+    }
+
+    .form-row {
+        flex-direction: column;
+    }
+}

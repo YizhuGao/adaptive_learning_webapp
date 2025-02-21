@@ -1,33 +1,55 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Modules</title>
+    <link rel="stylesheet" href="{% static 'CSS/video_modules.css' %}">
 </head>
 <body>
-    <h1>Available Video Modules</h1>
 
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>URL</th>
-                <th>Topic</th>
-                <th>Subtopic</th>
-                <th>Level</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for video in video_modules %}
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="left">
+            <h2 class="welcome-text">Adaptive Physics</h2>
+        </div>
+        <div class="right">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'student_assignments' %}">Test Results</a>
+            <a href="{% url 'video_modules' %}" class="active">Video Modules</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="video-container">
+        <h1>📚 Available Video Modules</h1>
+        <p class="subtitle">Enhance your learning with these interactive lessons!</p>
+
+        <table class="video-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Watch</th>
+                    <th>Topic</th>
+                    <th>Subtopic</th>
+                    <th>Level</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for video in video_modules %}
                 <tr>
                     <td>{{ video.title }}</td>
-                    <td><a href="{{ video.url }}" target="_blank">Watch Video</a></td>
+                    <td><a href="{{ video.url }}" target="_blank" class="watch-btn">▶ Watch</a></td>
                     <td>{{ video.topic }}</td>
                     <td>{{ video.subtopic }}</td>
                     <td>{{ video.level }}</td>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
+    <script src="{% static 'JS/video_modules.js' %}"></script>
 </body>
 </html>
