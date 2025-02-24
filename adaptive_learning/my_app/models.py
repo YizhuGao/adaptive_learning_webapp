@@ -2,32 +2,92 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Student(models.Model):
+    student_id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    uga_id = models.IntegerField(unique=True, primary_key=True)
+    uga_id = models.CharField(max_length=20, blank=True, null=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    class_level = models.CharField(max_length=10, choices=[
+    class_level = models.CharField(max_length=50, choices=[
+        ('5th Grade', '5th Grade'),
+        ('6th Grade', '6th Grade'),
+        ('7th Grade', '7th Grade'),
+        ('8th Grade', '8th Grade'),
         ('9th Grade', '9th Grade'),
         ('10th Grade', '10th Grade'),
         ('11th Grade', '11th Grade'),
         ('12th Grade', '12th Grade'),
+        ('College Undergraduate', 'College Undergraduate'),
+        ('Other', 'Other'),
     ])
     date_joined = models.DateTimeField(auto_now_add=True)
+    GENDER_CHOICES = [
+        ('female', 'Female'),
+        ('male', 'Male'),
+        ('non_binary', 'Non Binary'),
+        ('prefer_not_to_answer', 'Prefer Not to Answer')
+    ]
+    gender = models.CharField(max_length=20, choices=GENDER_CHOICES, blank=True, null=True)
+    ENGLISH_FIRST_LANGUAGE_CHOICES = [
+        ('Yes', 'Yes'),
+        ('No', 'No')
+    ]
+    is_english_first_language = models.CharField(max_length=3, choices=ENGLISH_FIRST_LANGUAGE_CHOICES, blank=True,
+                                                 null=True)
+
+    SCIENCE_EXPERIENCE_CHOICES = [
+        ('A_grades', 'Science is one of my best subjects and I usually make A\'s in that class.'),
+        ('ok_grades', 'Science is OK, my grades are alright, but it is not my favorite subject.'),
+        ('find_difficult',
+         'I find science very difficult, I do the best I can, but would like to earn better grades than I do.')
+    ]
+    science_experience = models.CharField(max_length=100, choices=SCIENCE_EXPERIENCE_CHOICES, blank=True, null=True)
+
+    RACE_CHOICES = [
+        ('white', 'White'),
+        ('hispanic', 'Hispanic, Latino, or Spanish origin'),
+        ('black', 'Black or African American'),
+        ('asian', 'Asian'),
+        ('american_indian', 'American Indian or Alaska Native'),
+        ('middle_eastern', 'Middle Eastern or North African'),
+        ('native_hawaiian', 'Native Hawaiian or Other Pacific Islander'),
+        ('other_race', 'Some other race, ethnicity, or origin'),
+        ('prefer_not_to_answer', 'Prefer not to answer')
+    ]
+    race = models.ManyToManyField('Race', blank=True)
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.uga_id})"
+        return f"{self.first_name} {self.last_name}"
+
+
+class Race(models.Model):
+    race_type = models.CharField(max_length=50, choices=Student.RACE_CHOICES)
+
+    def __str__(self):
+        return self.race_type
+
+class Topic(models.Model):
+    topic_id = models.AutoField(primary_key=True)
+    topic_name = models.CharField(max_length=30)
+    topic_order = models.IntegerField()
+
+    def __str__(self):
+        return self.topic_name
+
+class Subtopic(models.Model):
+    topic = models.ForeignKey(Topic, related_name="subtopics", on_delete=models.CASCADE)
+    subtopic_id = models.AutoField(primary_key=True)
+    subtopic_name = models.CharField(max_length=255)
+    subtopic_order_number = models.IntegerField()
+
+    def __str__(self):
+        return self.subtopic_name
 
 class Question(models.Model):
     question_id = models.AutoField(primary_key=True)
     question_text = models.TextField()
-    topic = models.CharField(max_length=30, choices=[
-        ('Mathematics', 'Mathematics'),
-        ('Science', 'Science'),
-        ('English', 'English'),
-        ('Thermodynamics', 'Thermodynamics'),  # Added based on your data
-    ])
-    subtopic = models.CharField(max_length=255, null=True, blank=True)  # Subtopic of the question
-    assigned_at = models.IntegerField(choices=[(0, 'Before Assignment'), (1, 'After Assignment')], default=0)  # Flag for before or after assignment
+    topic = models.ForeignKey(Topic, related_name="questions", on_delete=models.CASCADE)
+    subtopic = models.ForeignKey(Subtopic, related_name="questions", on_delete=models.CASCADE)
+    assigned_at = models.IntegerField(choices=[(0, 'Before Assignment'), (1, 'After Assignment')], default=0)
     difficulty_level = models.CharField(max_length=15, choices=[
         ('Beginner', 'Beginner'),
         ('Intermediate', 'Intermediate'),
@@ -41,17 +101,17 @@ class Option(models.Model):
     option_id = models.AutoField(primary_key=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="options")
     option_text = models.CharField(max_length=255)
-    is_correct = models.BooleanField(default=False)  # Marks the correct answer
+    is_correct = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.option_text} (Correct: {self.is_correct})"
 
 class Assessment(models.Model):
     assessment_id = models.AutoField(primary_key=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, to_field="student_id")
     date_taken = models.DateTimeField(auto_now_add=True)
     score = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
-    topic = models.CharField(max_length=30)
+    topic = models.ForeignKey(Topic, related_name="assessments", on_delete=models.CASCADE)
     level = models.CharField(max_length=15)
     questions = models.ManyToManyField(Question)
 
@@ -65,15 +125,15 @@ class AssessmentResponse(models.Model):
     selected_option = models.ForeignKey(Option, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
-        return f"Response by {self.assessment.student} for {self.question}"
+        return f"Response by {self.assessment} for {self.question}"
 
 class VideoModule(models.Model):
     video_module_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
     url = models.URLField()
     description = models.TextField()
-    topic = models.CharField(max_length=30)
-    subtopic = models.CharField(max_length=255, null=True, blank=True)
+    topic = models.ForeignKey(Topic, related_name="video_modules", on_delete=models.CASCADE)
+    subtopic = models.ForeignKey(Subtopic, related_name="video_modules", on_delete=models.CASCADE, null=True, blank=True)
     level = models.CharField(max_length=15)
     students = models.ManyToManyField(Student, through='Recommendation')
 
@@ -92,15 +152,21 @@ class Recommendation(models.Model):
 
 class Progress(models.Model):
     progress_id = models.AutoField(primary_key=True)
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, to_field="student_id")
     module = models.ForeignKey(VideoModule, on_delete=models.CASCADE)
     completion_status = models.CharField(max_length=15, choices=[
         ('Not Started', 'Not Started'),
         ('In Progress', 'In Progress'),
         ('Completed', 'Completed'),
     ])
+    current_topic = models.ForeignKey(Topic, related_name="current_topics", null=True, blank=True, on_delete=models.SET_NULL)
+    next_topic = models.ForeignKey(Topic, related_name="next_topics", null=True, blank=True, on_delete=models.SET_NULL)
+    current_subtopic = models.ForeignKey(Subtopic, related_name="current_subtopics", null=True, blank=True, on_delete=models.SET_NULL)
+    next_subtopic = models.ForeignKey(Subtopic, related_name="next_subtopics", null=True, blank=True, on_delete=models.SET_NULL)
     last_accessed = models.DateTimeField(auto_now=True)
-    score = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    score_before = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    score_after = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    video_watched = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Progress of {self.student} in {self.module}"

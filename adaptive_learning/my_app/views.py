@@ -1,14 +1,15 @@
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, logger
-from django.contrib import messages
 from django.contrib.auth.models import User
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils.timezone import now
-from .models import Assessment, Question, Student, AssessmentResponse, Option, VideoModule
-from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+from .models import Assessment, Question, Student, AssessmentResponse, Option, VideoModule, Subtopic, Progress, Topic
+from urllib.parse import unquote
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -17,37 +18,34 @@ def index(request):
     return render(request, 'my_app/index.html')
 
 
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.shortcuts import render, redirect
+
 def login_view(request):
     if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
 
-            # Manually authenticate user
-            print(f"Attempting to authenticate user: {username}")
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                print(f"Authentication successful: {user.username}")
-                login(request, user)
-                messages.success(request, f"Welcome back, {username}!")
-                return redirect('home')  # Redirect to success page after login
-            else:
-                print("Authentication failed")
-                messages.error(request, "Invalid username or password.")
+        # Manually authenticate user using email instead of username
+        print(f"Attempting to authenticate user: {email}")
+        user = authenticate(request, username=email, password=password)
+        if user is not None:
+            print(f"Authentication successful: {user.email}")
+            login(request, user)
+            messages.success(request, f"Welcome back, {email}!")
+            return redirect('home')  # Redirect to success page after login
         else:
-            print("Form is not valid!")
-            print(form.errors)  # Print form errors
-            messages.error(request, "Error during login. Please try again.")
-    else:
-        form = AuthenticationForm()
+            print("Authentication failed")
+            messages.error(request, "Invalid email or password.")
+    return render(request, 'my_app/login.html')
 
-    return render(request, 'my_app/login.html', {'form': form})
 
 
 def signup_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
+        # Fetch form data (removed 'username' and adjusted fields as per your student model)
         email = request.POST['email']
         password = request.POST['password']
         confirm_password = request.POST['confirm_password']
@@ -55,15 +53,13 @@ def signup_view(request):
         class_level = request.POST.get('class_level')  # New field for student info
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
+        gender = request.POST.get('gender')  # New field for student info
+        is_english_first_language = request.POST.get('is_english_first_language')  # New field for student info
+        science_experience = request.POST.get('science_experience')  # New field for student info
 
         # Check if passwords match
         if password != confirm_password:
             messages.error(request, "Passwords do not match!")
-            return redirect('signup')
-
-        # Check if username already exists
-        if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already exists!")
             return redirect('signup')
 
         # Check if email already exists
@@ -71,11 +67,12 @@ def signup_view(request):
             messages.error(request, "Email already exists!")
             return redirect('signup')
 
-        # Create a new user
+        # Create a new user (without username)
         try:
-            user = User.objects.create_user(username=username, email=email, password=password)
+            user = User.objects.create_user(username=email, email=email, password=password)
             user.first_name = first_name
             user.last_name = last_name
+            user.email = email
             user.save()  # Save the user to the database
 
             # Create a corresponding Student entry
@@ -84,18 +81,21 @@ def signup_view(request):
                 uga_id=uga_id,
                 first_name=first_name,
                 last_name=last_name,
-                class_level=class_level
+                class_level=class_level,
+                gender=gender,
+                is_english_first_language=is_english_first_language,
+                science_experience=science_experience
             )
 
         except Exception as e:
             messages.error(request, f"Error creating user: {e}")
             return redirect('signup')
 
-        # Authenticate the user
-        user = authenticate(username=username, password=password)
+        # Authenticate the user after creating the user and student entry
+        user = authenticate(request, username=email, password=password)  # Authenticate with email
 
         if user is not None:
-            login(request, user)
+            login(request, user)  # Log in the user after authentication
             messages.success(request, "Account created and logged in successfully!")
             return redirect('home')  # Redirect to the home page
         else:
@@ -103,6 +103,8 @@ def signup_view(request):
             return redirect('signup')
 
     return render(request, 'my_app/signup.html')  # Render the signup page
+
+
 
 
 def success_view(request):
@@ -123,27 +125,113 @@ def logout_view(request):
 
 @login_required
 def modules_view(request):
-    # Fetch all unique assessment topics
-    topics = Question.objects.values_list('topic', flat=True).distinct()
-    return render(request, 'my_app/modules.html', {'topics': topics, 'username': request.user.username})
+    student = get_object_or_404(Student, user=request.user)
+    topics = Topic.objects.all()
+
+    # Prepare a list of topics with their respective subtopics
+    topic_data = []
+    for topic in topics:
+        progress = Progress.objects.filter(student=student, current_topic=topic).first()
+
+        if progress and progress.current_subtopic:
+            subtopic_to_show = progress.current_subtopic  # Use student's current subtopic
+        else:
+            subtopic_to_show = Subtopic.objects.filter(topic=topic).order_by(
+                'subtopic_order_number').first()  # First subtopic if not started
+
+        topic_data.append({'topic': topic, 'subtopic': subtopic_to_show})
+
+    context = {
+        'topic_data': topic_data,
+        'username': request.user.username,
+    }
+
+    return render(request, 'my_app/modules.html', context)
 
 
 @login_required
-def test_view(request, topic):
-    # Fetch the questions based on the topic
-    questions = Question.objects.filter(topic=topic, assigned_at=0)
+def test_view(request, topic_name, subtopic_name):
+    student = get_object_or_404(Student, user=request.user)
+
+    # Fetch Topic and Subtopic
+    topic = get_object_or_404(Topic, topic_name=topic_name)
+    subtopic = get_object_or_404(Subtopic, subtopic_name=subtopic_name, topic=topic)
+
+    # Fetch related module
+    module = VideoModule.objects.filter(topic=topic).first()
+    if not module:
+        return HttpResponse("No associated module found for this topic.", status=400)
+
+    # Check if the student has interacted with this subtopic
+    student_has_attempted_test = AssessmentResponse.objects.filter(
+        assessment__student=student,
+        question__subtopic=subtopic
+    ).exists()
+
+    # Check if the student has watched the video for this subtopic
+    student_has_watched_video = Progress.objects.filter(
+        student=student,
+        module=module,
+        video_watched=True
+    ).exists()
+
+    student_has_interacted = student_has_attempted_test and student_has_watched_video
+
+    # Fetch relevant questions
+    assigned_at = 1 if student_has_interacted else 0
+    questions = Question.objects.filter(topic=topic, assigned_at=assigned_at, subtopic=subtopic)
+
+    # Get the latest progress entry for the student
+    latest_progress = Progress.objects.filter(student=student, module=module).order_by('-last_accessed').first()
+
+    # If the student has a progress record, calculate the next subtopic
+    if latest_progress and latest_progress.current_subtopic:
+        current_subtopic = latest_progress.current_subtopic
+
+        # Fetch next subtopic based on subtopic_order_number
+        next_subtopic = Subtopic.objects.filter(
+            topic=topic,
+            subtopic_order_number__gt=current_subtopic.subtopic_order_number
+        ).order_by('subtopic_order_number').first()
+
+        # If there is no next subtopic, set next_subtopic to None
+        if not next_subtopic:
+            next_subtopic = None
+
+    else:
+        # If no progress record, start from the first subtopic
+        next_subtopic = Subtopic.objects.filter(
+            topic=topic
+        ).order_by('subtopic_order_number').first()
+
+    print("next subtopic - ", next_subtopic)
+
+    # Ensure progress entry exists (fixing the NOT NULL module issue)
+    progress, created = Progress.objects.update_or_create(
+        student=student,
+        module=module,  # Ensuring module is always provided
+        defaults={
+            'current_topic': topic,
+            'current_subtopic': subtopic,
+            'next_subtopic': next_subtopic,
+            'completion_status': 'In Progress'
+        }
+    )
 
     context = {
         'topic': topic,
+        'subtopic' : subtopic,
         'questions': questions,
-        'username': request.user.username
+        'username': request.user.username,
+        'assigned_video': student_has_interacted,
     }
 
     return render(request, 'my_app/test.html', context)
 
 
+
 @login_required
-def submit_test(request, topic):
+def submit_test(request, topic_name, subtopic_name):
     if request.method == "POST":
         print("Form Submitted: ", request.POST)  # Debugging line
 
@@ -156,6 +244,11 @@ def submit_test(request, topic):
             student = get_object_or_404(Student, user=request.user)
             print(f"Student Found: {student}")
 
+            # Retrieve topic and subtopic (you need to pass subtopic_id with the request)
+            topic = get_object_or_404(Topic, topic_name=topic_name)
+            subtopic = get_object_or_404(Subtopic, subtopic_name=subtopic_name, topic=topic)
+            print(f"Subtopic Found: {subtopic}")
+
             # Create an assessment entry
             assessment = Assessment.objects.create(
                 student=student,
@@ -166,6 +259,8 @@ def submit_test(request, topic):
 
             correct_count = 0
             total_questions = 0
+            assigned_at_0_count = 0  # For questions with assigned_at=0
+            assigned_at_1_count = 0  # For questions with assigned_at=1
 
             # Process submitted answers
             for key, value in request.POST.items():
@@ -191,23 +286,58 @@ def submit_test(request, topic):
                             correct_count += 1
                         total_questions += 1
 
-            # Calculate and update score
+                        # Track the assigned_at value
+                        if question.assigned_at == 0:
+                            assigned_at_0_count += 1
+                        elif question.assigned_at == 1:
+                            assigned_at_1_count += 1
+
+            # Calculate the score for the test
             score = (correct_count / total_questions) * 100 if total_questions > 0 else 0
             assessment.score = score
             assessment.save()
             print(f"Final Score: {score}")
 
+            # Update the progress model based on assigned_at value
+            progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
+
+            if progress:
+                if assigned_at_0_count > 0:
+                    # Update score_before if questions with assigned_at=0 were attempted
+                    progress.score_before = score
+                    print(f"Progress Updated for Subtopic {subtopic}: Score Before: {score}")
+                if assigned_at_1_count > 0:
+                    # Update score_after if questions with assigned_at=1 were attempted
+                    progress.score_after = score
+                    progress.completion_status = "Completed"  # Mark as completed after test submission
+                    print(f"Progress Updated for Subtopic {subtopic}: Score After: {score}")
+
+                progress.save()
+
+            # Fetch the relevant VideoModule for this topic or subtopic (if applicable)
+            video_module = None
+            if subtopic:
+                video_module = VideoModule.objects.filter(subtopic=subtopic).first()  # Find video for subtopic
+            if not video_module:
+                video_module = VideoModule.objects.filter(topic=topic).first()  # Fallback to topic if no subtopic video found
+
+            video_url = video_module.url if video_module else None
+            if video_url and "youtube.com/watch" in video_url:
+                video_url = video_url.replace("watch?v=", "embed/")
+
             # Now, instead of directly rendering, we pass the data to the result template
             context = {
                 'student_name': student.first_name + ' ' + student.last_name,
                 'topic': topic,
+                'subtopic': subtopic,
                 'score': score,
                 'date_taken': assessment.date_taken,
-                'responses': AssessmentResponse.objects.filter(assessment=assessment)
+                'responses': AssessmentResponse.objects.filter(assessment=assessment),
+                'video_url': video_url
             }
 
             print("Rendering test_results with context")
-            print(f"Context:" , context)
+            print(f"Context:", context)
             return render(request, "my_app/test_results.html", context)
 
         except Exception as e:
@@ -215,6 +345,8 @@ def submit_test(request, topic):
             return JsonResponse({"error": str(e)}, status=400)
 
     return redirect("modules")  # Redirect if accessed incorrectly
+
+
 
 
 @login_required
@@ -282,3 +414,31 @@ def student_assignments_view(request):
         'username': request.user.username
     }
     return render(request, 'my_app/student_assignments.html', context)
+
+
+
+@csrf_exempt  # Only use this if you're handling CSRF manually
+def update_watch_video(request, subtopic_id):
+    print("Received POST request to update watch video")
+    if request.method == "POST":
+        try:
+            student = Student.objects.get(user=request.user)
+            subtopic = Subtopic.objects.get(id=subtopic_id)
+
+            # Update the Progress model to mark video as watched
+            progress, created = Progress.objects.update_or_create(
+                student=student,
+                current_subtopic=subtopic,
+                defaults={'video_watched': True}  # Set flag to True
+            )
+            print(f"Updating watch flag for student: {student} and subtopic: {subtopic}")
+
+            return JsonResponse({"message": "Watch status updated successfully."})
+        except Student.DoesNotExist:
+            return JsonResponse({"error": "Student record not found."}, status=400)
+        except Subtopic.DoesNotExist:
+            return JsonResponse({"error": "Subtopic record not found."}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method."}, status=405)

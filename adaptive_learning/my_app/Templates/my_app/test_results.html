@@ -1,4 +1,4 @@
-{% load static %} 
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +7,7 @@
     <title>Test Results</title>
     <link rel="stylesheet" href="{% static 'CSS/testResults.css' %}">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
     <!-- Navbar -->
@@ -24,7 +25,8 @@
     <!-- Results Container -->
     <div class="results-container">
         <h1>Test Results</h1>
-        <p><strong>Topic:</strong> {{ topic }}</p>
+        <p><strong>Topic:</strong> {{ topic.topic_name }}</p>
+        <p><strong>Subtopic:</strong> {{ subtopic.subtopic_name }}</p>
         <p><strong>Score:</strong> <span class="score">{{ score }}%</span></p>
         <p><strong>Date Taken:</strong> {{ date_taken }}</p>
 
@@ -40,6 +42,7 @@
                 </tr>
             </thead>
             <tbody>
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                 {% for response in responses %}
                 <tr>
                     <td>{{ response.question.question_text }}</td>
@@ -53,11 +56,24 @@
 
         <!-- Video Modules Section -->
         <div class="learning-section">
-            <h3>Missed a few questions? Watch the video modules to improve!</h3>
-            <a href="{% url 'video_modules' %}" class="learn-more-btn"><i class="fas fa-video"></i> Watch Video Modules</a>
+            <h3>Missed a few questions? Watch the video module to improve!</h3>
+
+            {% if video_url %}
+<div id="video-container">
+    <iframe id="learning-video" width="560" height="315"
+        src="{{ video_url }}"
+        frameborder="0"
+        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        data-subtopic-id="{{ subtopic.id }}">
+</iframe>
+</div>
+{% else %}
+<p>No video module available for this subtopic.</p>
+{% endif %}
         </div>
     </div>
-
     <script src="{% static 'JS/testResults.js' %}"></script>
+
 </body>
 </html>

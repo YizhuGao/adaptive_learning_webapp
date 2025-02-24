@@ -1,16 +1,15 @@
-# You can run this script from Django shell or as part of a migration
-
-from my_app.models import VideoModule  # Ensure you're importing the model from the correct app
+from my_app.models import VideoModule, Topic, Subtopic
 from django.db import transaction
 
-# Use a transaction to ensure atomicity
 with transaction.atomic():
+    topic_obj, created = Topic.objects.get_or_create(topic_name="Thermodynamics")
+    subtopic_obj, created = Subtopic.objects.get_or_create(subtopic_name="Nature of temperature", topic=topic_obj)
     video_module = VideoModule.objects.create(
         title="Nature of Temperature",
         url="https://www.youtube.com/watch?v=96k7_7RjCpg",
         description="This video explains the concept of temperature and its significance in the field of thermodynamics.",
-        topic="Thermodynamics",
-        subtopic="Nature of temperature",
-        level="Beginner"  # Assuming level is 'Beginner', change as per your need
+        topic=topic_obj,
+        subtopic=subtopic_obj,
+        level="Beginner"
     )
     print(f"VideoModule '{video_module.title}' added successfully!")

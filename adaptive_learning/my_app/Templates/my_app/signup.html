@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="{% static 'CSS/signup.css' %}">
 </head>
 <body>
-    <!-- Navigation (Copied from Index.html) -->
     <nav class="login-nav">
         <a href="#" class="login nav">AdaptivePhysics</a>
         <div class="nav-links">
@@ -17,25 +16,14 @@
             <a href="{% url 'index' %}">Modules</a>
             <a href="{% url 'login' %}" class="login-btn">LOGIN</a>
         </div>
-        <div class="mobile-menu-btn">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
     </nav>
 
-    <!-- Sign Up Section -->
     <section class="login-section">
         <div class="login-container">
             <h2>Create Your Account</h2>
             <form action="{% url 'signup' %}" method="POST">
                 {% csrf_token %}
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" required>
-                    </div>
-
                     <div class="form-group">
                         <label for="email">Email</label>
                         <input type="email" id="email" name="email" required>
@@ -47,20 +35,17 @@
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" required>
                     </div>
-
                     <div class="form-group">
                         <label for="confirm_password">Confirm Password</label>
                         <input type="password" id="confirm_password" name="confirm_password" required>
                     </div>
                 </div>
 
-                <!-- Additional Fields for Student Model -->
                 <div class="form-row">
                     <div class="form-group">
                         <label for="first_name">First Name</label>
                         <input type="text" id="first_name" name="first_name" required>
                     </div>
-
                     <div class="form-group">
                         <label for="last_name">Last Name</label>
                         <input type="text" id="last_name" name="last_name" required>
@@ -69,19 +54,52 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="uga_id">UGA ID</label>
-                        <input type="number" id="uga_id" name="uga_id" required>
+                        <label for="uga_id">UGA ID (Optional)</label>
+                        <input type="text" id="uga_id" name="uga_id">
                     </div>
-
                     <div class="form-group">
                         <label for="class_level">Class Level</label>
                         <select id="class_level" name="class_level">
+                            <option value="5th Grade">5th Grade</option>
+                            <option value="6th Grade">6th Grade</option>
+                            <option value="7th Grade">7th Grade</option>
+                            <option value="8th Grade">8th Grade</option>
                             <option value="9th Grade">9th Grade</option>
                             <option value="10th Grade">10th Grade</option>
                             <option value="11th Grade">11th Grade</option>
                             <option value="12th Grade">12th Grade</option>
+                            <option value="College Undergraduate">College Undergraduate</option>
+                            <option value="Other">Other</option>
                         </select>
                     </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" name="gender">
+                            <option value="female">Female</option>
+                            <option value="male">Male</option>
+                            <option value="non_binary">Non Binary</option>
+                            <option value="prefer_not_to_answer">Prefer Not to Answer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="is_english_first_language">Is English Your First Language?</label>
+                        <select id="is_english_first_language" name="is_english_first_language">
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="science_experience">Science Experience</label>
+                    <select id="science_experience" name="science_experience">
+                        <option value="A_grades">Science is one of my best subjects and I usually make A's.</option>
+                        <option value="ok_grades">Science is OK, my grades are alright, but it is not my favorite subject.</option>
+                        <option value="find_difficult">I find science very difficult and would like to earn better grades.</option>
+                    </select>
                 </div>
 
                 <button type="submit" class="submit-btn">Sign Up</button>
