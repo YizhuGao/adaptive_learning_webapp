@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>Learning Video</title>
     <link rel="stylesheet" href="{% static 'CSS/learningVideo.css' %}?v=3">
 </head>
@@ -24,15 +25,17 @@
     <div class="video-container">
         <h2>Watch the Video</h2>
         {% if video_url %}
-        <iframe id="learning-video" width="800" height="450" src="{{ video_url }}" frameborder="0" allowfullscreen
-                data-subtopic-id="{{ subtopic.id }}" data-student-id="{{ student.id }}"></iframe>
+        <!-- Placeholder for the video player -->
+        <div id="player" data-subtopic-id="{{ subtopic.subtopic_id }}" data-student-id="{{ student_id }}" data-video-url="{{ video_url }}"></div>
         {% else %}
         <p>No video module available for this subtopic.</p>
         {% endif %}
     </div>
 
-    <!-- Include the video.js script here -->
-    <script src="{% static 'JS/video.js' %}?v=3"></script>
+<!-- Include the YouTube IFrame API -->
+<script src="https://www.youtube.com/iframe_api"></script>
+<!-- Include the video.js script -->
+<script src="{% static 'JS/video.js' %}?v=3"></script>
 
 </body>
 </html>

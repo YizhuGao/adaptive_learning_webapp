@@ -7,7 +7,6 @@
     <title>Test Results</title>
     <link rel="stylesheet" href="{% static 'CSS/testResults.css' %}">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
     <!-- Navbar -->
@@ -54,20 +53,19 @@
             </tbody>
         </table>
 
-<!-- Video Learning Section -->
-<div class="learning-section">
-    <h3>Missed a few questions? Watch the video module to improve!</h3>
-
-    {% if video_url %}
-    <a href="{% url 'learning_video' topic_name=topic.topic_name subtopic_name=subtopic.subtopic_name %}" class="watch-video-button">
-        Watch Learning Video
-    </a>
-    {% else %}
-    <p>No video module available for this subtopic.</p>
-    {% endif %}
-</div>
+        <!-- Video Learning Section -->
+        <div class="learning-section">
+            {% if video_url %}
+                <h3>Missed a few questions? Watch the video module to improve!</h3>
+                <a href="{% url 'learning_video' topic_name=topic.topic_name subtopic_name=subtopic.subtopic_name %}" class="watch-video-button">
+                    Watch Learning Video
+                </a>
+            {% else %}
+                <p>No video available or you might have already watched the video for this subtopic at the moment.</p>
+            {% endif %}
+        </div>
     </div>
-    <script src="{% static 'JS/testResults.js' %}"></script>
 
+    <script src="{% static 'JS/testResults.js' %}"></script>
 </body>
 </html>
