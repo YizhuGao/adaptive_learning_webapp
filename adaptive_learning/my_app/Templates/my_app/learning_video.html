@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Video</title>
+    <link rel="stylesheet" href="{% static 'CSS/learningVideo.css' %}?v=3">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="left">
+            <span class="welcome-text">Learning Module: {{ topic.topic_name }} - {{ subtopic.subtopic_name }}</span>
+        </div>
+        <div class="right">
+            <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
+            <a href="{% url 'modules' %}" class="nav-link"><i class="fas fa-book"></i> Modules</a>
+            <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+    <div class="video-container">
+        <h2>Watch the Video</h2>
+        {% if video_url %}
+        <iframe id="learning-video" width="800" height="450" src="{{ video_url }}" frameborder="0" allowfullscreen
+                data-subtopic-id="{{ subtopic.id }}" data-student-id="{{ student.id }}"></iframe>
+        {% else %}
+        <p>No video module available for this subtopic.</p>
+        {% endif %}
+    </div>
+
+    <!-- Include the video.js script here -->
+    <script src="{% static 'JS/video.js' %}?v=3"></script>
+
+</body>
+</html>

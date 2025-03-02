@@ -240,14 +240,9 @@ def submit_test(request, topic_name, subtopic_name):
             return JsonResponse({"error": "No data received"}, status=400)
 
         try:
-            # Check if the user is logged in and has a student profile
             student = get_object_or_404(Student, user=request.user)
-            print(f"Student Found: {student}")
-
-            # Retrieve topic and subtopic (you need to pass subtopic_id with the request)
             topic = get_object_or_404(Topic, topic_name=topic_name)
             subtopic = get_object_or_404(Subtopic, subtopic_name=subtopic_name, topic=topic)
-            print(f"Subtopic Found: {subtopic}")
 
             # Create an assessment entry
             assessment = Assessment.objects.create(
@@ -255,90 +250,54 @@ def submit_test(request, topic_name, subtopic_name):
                 topic=topic,
                 date_taken=now()
             )
-            print(f"Assessment Created: {assessment}")
 
             correct_count = 0
             total_questions = 0
-            assigned_at_0_count = 0  # For questions with assigned_at=0
-            assigned_at_1_count = 0  # For questions with assigned_at=1
+            assigned_at_0_count = 0
+            assigned_at_1_count = 0
 
-            # Process submitted answers
             for key, value in request.POST.items():
                 if key.startswith("question_"):
-                    # Extract question ID and check if value is not empty
                     question_id = key.split("_")[1]
-                    print(f"Processing Question ID: {question_id}, Selected Option ID: {value}")
+                    question = get_object_or_404(Question, pk=question_id)
+                    selected_option = get_object_or_404(Option, pk=value)
 
-                    if value:  # Ensure a value is selected for each question
-                        question = get_object_or_404(Question, pk=question_id)
-                        selected_option = get_object_or_404(Option, pk=value)
+                    # Save response
+                    AssessmentResponse.objects.create(
+                        assessment=assessment,
+                        question=question,
+                        selected_option=selected_option
+                    )
 
-                        # Save response
-                        AssessmentResponse.objects.create(
-                            assessment=assessment,
-                            question=question,
-                            selected_option=selected_option
-                        )
-                        print(f"Response Saved: Question {question_id}, Option {value}")
+                    # Check correctness
+                    if selected_option.is_correct:
+                        correct_count += 1
+                    total_questions += 1
 
-                        # Check correctness
-                        if selected_option.is_correct:
-                            correct_count += 1
-                        total_questions += 1
+                    # Track assigned_at values
+                    if question.assigned_at == 0:
+                        assigned_at_0_count += 1
+                    elif question.assigned_at == 1:
+                        assigned_at_1_count += 1
 
-                        # Track the assigned_at value
-                        if question.assigned_at == 0:
-                            assigned_at_0_count += 1
-                        elif question.assigned_at == 1:
-                            assigned_at_1_count += 1
-
-            # Calculate the score for the test
+            # Calculate score
             score = (correct_count / total_questions) * 100 if total_questions > 0 else 0
             assessment.score = score
             assessment.save()
-            print(f"Final Score: {score}")
 
-            # Update the progress model based on assigned_at value
+            # Update progress model
             progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
-
             if progress:
                 if assigned_at_0_count > 0:
-                    # Update score_before if questions with assigned_at=0 were attempted
                     progress.score_before = score
-                    print(f"Progress Updated for Subtopic {subtopic}: Score Before: {score}")
                 if assigned_at_1_count > 0:
-                    # Update score_after if questions with assigned_at=1 were attempted
                     progress.score_after = score
-                    progress.completion_status = "Completed"  # Mark as completed after test submission
-                    print(f"Progress Updated for Subtopic {subtopic}: Score After: {score}")
+                    progress.completion_status = "Completed"
 
                 progress.save()
 
-            # Fetch the relevant VideoModule for this topic or subtopic (if applicable)
-            video_module = None
-            if subtopic:
-                video_module = VideoModule.objects.filter(subtopic=subtopic).first()  # Find video for subtopic
-            if not video_module:
-                video_module = VideoModule.objects.filter(topic=topic).first()  # Fallback to topic if no subtopic video found
-
-            video_url = video_module.url if video_module else None
-            if video_url and "youtube.com/watch" in video_url:
-                video_url = video_url.replace("watch?v=", "embed/")
-
-            # Now, instead of directly rendering, we pass the data to the result template
-            context = {
-                'student_name': student.first_name + ' ' + student.last_name,
-                'topic': topic,
-                'subtopic': subtopic,
-                'score': score,
-                'date_taken': assessment.date_taken,
-                'responses': AssessmentResponse.objects.filter(assessment=assessment),
-                'video_url': video_url
-            }
-
-            print("Rendering test_results with context")
-            print(f"Context:", context)
-            return render(request, "my_app/test_results.html", context)
+            # Redirect to the test results page
+            return redirect('test_results', topic_name=topic_name, subtopic_name=subtopic_name)
 
         except Exception as e:
             print("Error:", e)
@@ -347,6 +306,189 @@ def submit_test(request, topic_name, subtopic_name):
     return redirect("modules")  # Redirect if accessed incorrectly
 
 
+@login_required
+def test_results(request, topic_name, subtopic_name):
+    try:
+        # Get student details
+        student = get_object_or_404(Student, user=request.user)
+
+        # Get topic and subtopic details
+        topic = get_object_or_404(Topic, topic_name=topic_name)
+        subtopic = get_object_or_404(Subtopic, subtopic_name=subtopic_name, topic=topic)
+
+        # Fetch the latest assessment for the student on this topic
+        assessment = Assessment.objects.filter(student=student, topic=topic).order_by("-date_taken").first()
+        if not assessment:
+            return JsonResponse({"error": "No assessment data found for this topic."}, status=404)
+
+        # Fetch responses for the assessment
+        responses = AssessmentResponse.objects.filter(assessment=assessment)
+
+        # Get the score
+        score = assessment.score
+
+        # Get the video module (if available)
+        video_module = VideoModule.objects.filter(subtopic=subtopic).first()
+        if not video_module:
+            video_module = VideoModule.objects.filter(topic=topic).first()  # Fallback to topic-level video
+
+        video_url = video_module.url if video_module else None
+        if video_url and "youtube.com/watch" in video_url:
+            video_url = video_url.replace("watch?v=", "embed/")
+
+        # Prepare context data for the template
+        context = {
+            "student_name": f"{student.first_name} {student.last_name}",
+            "topic": topic,
+            "subtopic": subtopic,
+            "score": score,
+            "date_taken": assessment.date_taken,
+            "responses": responses,
+            "video_url": video_url,
+        }
+
+        return render(request, "my_app/test_results.html", context)
+
+    except Exception as e:
+        print("Error in test_results:", e)
+        return JsonResponse({"error": str(e)}, status=400)
+
+
+# @login_required
+# def submit_test(request, topic_name, subtopic_name):
+#     if request.method == "POST":
+#
+#         if not request.POST:
+#             print("No data received in POST request.")
+#             return JsonResponse({"error": "No data received"}, status=400)
+#
+#         try:
+#             # Check if the user is logged in and has a student profile
+#             student = get_object_or_404(Student, user=request.user)
+#
+#             # Retrieve topic and subtopic (you need to pass subtopic_id with the request)
+#             topic = get_object_or_404(Topic, topic_name=topic_name)
+#             subtopic = get_object_or_404(Subtopic, subtopic_name=subtopic_name, topic=topic)
+#
+#             # Create an assessment entry
+#             assessment = Assessment.objects.create(
+#                 student=student,
+#                 topic=topic,
+#                 date_taken=now()
+#             )
+#
+#             correct_count = 0
+#             total_questions = 0
+#             assigned_at_0_count = 0  # For questions with assigned_at=0
+#             assigned_at_1_count = 0  # For questions with assigned_at=1
+#
+#             # Process submitted answers
+#             for key, value in request.POST.items():
+#                 if key.startswith("question_"):
+#                     # Extract question ID and check if value is not empty
+#                     question_id = key.split("_")[1]
+#
+#                     if value:  # Ensure a value is selected for each question
+#                         question = get_object_or_404(Question, pk=question_id)
+#                         selected_option = get_object_or_404(Option, pk=value)
+#
+#                         # Save response
+#                         AssessmentResponse.objects.create(
+#                             assessment=assessment,
+#                             question=question,
+#                             selected_option=selected_option
+#                         )
+#
+#                         # Check correctness
+#                         if selected_option.is_correct:
+#                             correct_count += 1
+#                         total_questions += 1
+#
+#                         # Track the assigned_at value
+#                         if question.assigned_at == 0:
+#                             assigned_at_0_count += 1
+#                         elif question.assigned_at == 1:
+#                             assigned_at_1_count += 1
+#
+#             # Calculate the score for the test
+#             score = (correct_count / total_questions) * 100 if total_questions > 0 else 0
+#             assessment.score = score
+#             assessment.save()
+#
+#             # Update the progress model based on assigned_at value
+#             progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
+#
+#             if progress:
+#                 if assigned_at_0_count > 0:
+#                     # Update score_before if questions with assigned_at=0 were attempted
+#                     progress.score_before = score
+#                     print(f"Progress Updated for Subtopic {subtopic}: Score Before: {score}")
+#                 if assigned_at_1_count > 0:
+#                     # Update score_after if questions with assigned_at=1 were attempted
+#                     progress.score_after = score
+#                     progress.completion_status = "Completed"  # Mark as completed after test submission
+#                     print(f"Progress Updated for Subtopic {subtopic}: Score After: {score}")
+#
+#                 progress.save()
+#
+#             # Fetch the relevant VideoModule for this topic or subtopic (if applicable)
+#             video_module = None
+#             if subtopic:
+#                 video_module = VideoModule.objects.filter(subtopic=subtopic).first()  # Find video for subtopic
+#             if not video_module:
+#                 video_module = VideoModule.objects.filter(topic=topic).first()  # Fallback to topic if no subtopic video found
+#
+#             video_url = video_module.url if video_module else None
+#             if video_url and "youtube.com/watch" in video_url:
+#                 video_url = video_url.replace("watch?v=", "embed/")
+#
+#             # Now, instead of directly rendering, we pass the data to the result template
+#             context = {
+#                 'student_name': student.first_name + ' ' + student.last_name,
+#                 'topic': topic,
+#                 'subtopic': subtopic,
+#                 'score': score,
+#                 'date_taken': assessment.date_taken,
+#                 'responses': AssessmentResponse.objects.filter(assessment=assessment),
+#                 'video_url': video_url
+#             }
+#
+#             return render(request, "my_app/test_results.html", context)
+#
+#         except Exception as e:
+#             print("Error:", e)
+#             return JsonResponse({"error": str(e)}, status=400)
+#
+#     return redirect("modules")  # Redirect if accessed incorrectly
+
+
+@login_required
+def learning_video(request, topic_name, subtopic_name):
+    try:
+        # Get topic and subtopic
+        topic = get_object_or_404(Topic, topic_name=topic_name)
+        subtopic = get_object_or_404(Subtopic, subtopic_name=subtopic_name, topic=topic)
+
+        # Get the video module (if available)
+        video_module = VideoModule.objects.filter(subtopic=subtopic).first()
+        if not video_module:
+            video_module = VideoModule.objects.filter(topic=topic).first()  # Fallback to topic-level video
+
+        video_url = video_module.url if video_module else None
+        if video_url and "youtube.com/watch" in video_url:
+            video_url = video_url.replace("watch?v=", "embed/")
+
+        context = {
+            "topic": topic,
+            "subtopic": subtopic,
+            "video_url": video_url,
+        }
+
+        return render(request, "my_app/learning_video.html", context)
+
+    except Exception as e:
+        print("Error in learning_video:", e)
+        return JsonResponse({"error": str(e)}, status=400)
 
 
 @login_required
@@ -358,7 +500,7 @@ def video_module_view(request):
         'video_modules': video_modules
     }
 
-    return render(request, 'my_app/video_modules.html', context)
+    return render(request, 'my_app/learning_video.html', context)
 
 
 @login_required
@@ -417,28 +559,28 @@ def student_assignments_view(request):
 
 
 
-@csrf_exempt  # Only use this if you're handling CSRF manually
-def update_watch_video(request, subtopic_id):
-    print("Received POST request to update watch video")
+@csrf_exempt
+@login_required
+def update_video_progress(request):
+    print("Inside the update_video_progress function")
     if request.method == "POST":
         try:
-            student = Student.objects.get(user=request.user)
-            subtopic = Subtopic.objects.get(id=subtopic_id)
+            data = json.loads(request.body)
+            subtopic_id = data.get('subtopic_id')
+            student_id = data.get('student_id')
 
-            # Update the Progress model to mark video as watched
-            progress, created = Progress.objects.update_or_create(
-                student=student,
-                current_subtopic=subtopic,
-                defaults={'video_watched': True}  # Set flag to True
-            )
-            print(f"Updating watch flag for student: {student} and subtopic: {subtopic}")
+            # Fetch the Progress record for this student and subtopic
+            progress = Progress.objects.filter(student_id=student_id, subtopic_id=subtopic_id).first()
 
-            return JsonResponse({"message": "Watch status updated successfully."})
-        except Student.DoesNotExist:
-            return JsonResponse({"error": "Student record not found."}, status=400)
-        except Subtopic.DoesNotExist:
-            return JsonResponse({"error": "Subtopic record not found."}, status=400)
+            if progress and not progress.watch_video:
+                # If progress exists and video has not been watched
+                progress.watch_video = True
+                progress.save()
+                return JsonResponse({"status": "success", "message": "Video progress updated to 75%"})
+            else:
+                return JsonResponse({"status": "error", "message": "Progress not found or already updated"})
+
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=400)
     else:
-        return JsonResponse({"error": "Invalid request method."}, status=405)
+        return JsonResponse({"error": "Invalid request method"}, status=400)

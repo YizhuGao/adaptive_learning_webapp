@@ -54,24 +54,18 @@
             </tbody>
         </table>
 
-        <!-- Video Modules Section -->
-        <div class="learning-section">
-            <h3>Missed a few questions? Watch the video module to improve!</h3>
+<!-- Video Learning Section -->
+<div class="learning-section">
+    <h3>Missed a few questions? Watch the video module to improve!</h3>
 
-            {% if video_url %}
-<div id="video-container">
-    <iframe id="learning-video" width="560" height="315"
-        src="{{ video_url }}"
-        frameborder="0"
-        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-        data-subtopic-id="{{ subtopic.id }}">
-</iframe>
+    {% if video_url %}
+    <a href="{% url 'learning_video' topic_name=topic.topic_name subtopic_name=subtopic.subtopic_name %}" class="watch-video-button">
+        Watch Learning Video
+    </a>
+    {% else %}
+    <p>No video module available for this subtopic.</p>
+    {% endif %}
 </div>
-{% else %}
-<p>No video module available for this subtopic.</p>
-{% endif %}
-        </div>
     </div>
     <script src="{% static 'JS/testResults.js' %}"></script>
 
