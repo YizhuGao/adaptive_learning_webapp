@@ -151,11 +151,17 @@ def modules_view(request):
                     topic=topic,
                     subtopic_order_number__gt=next_subtopic.subtopic_order_number
                 ).order_by('subtopic_order_number').first()  # Get the next next subtopic
+
+                # Update completion status if the next subtopic exists
+                progress.completion_status = 'in_progress'  # or any logic you have to determine completion
             else:
                 subtopic_to_show = None
                 # Update the progress table, no next subtopic available
                 progress.current_subtopic = current_subtopic  # Keep current subtopic
                 progress.next_subtopic = None
+
+                # Mark as completed if there are no more subtopics
+                progress.completion_status = 'completed'
 
             # Save the updated progress
             progress.save()
@@ -163,6 +169,10 @@ def modules_view(request):
         else:
             # If no progress exists for the student, show the first subtopic for the topic
             subtopic_to_show = Subtopic.objects.filter(topic=topic).order_by('subtopic_order_number').first()
+            # Mark as in progress if it's the first subtopic
+            progress = Progress(student=student, current_topic=topic, current_subtopic=subtopic_to_show,
+                                completion_status='in_progress')
+            progress.save()
 
         # Append the topic and its subtopic to the topic_data list
         topic_data.append({'topic': topic, 'subtopic': subtopic_to_show})
