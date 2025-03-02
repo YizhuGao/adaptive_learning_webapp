@@ -128,54 +128,70 @@ def modules_view(request):
     student = get_object_or_404(Student, user=request.user)
     topics = Topic.objects.all()
 
-    # Prepare a list of topics with their respective subtopics
     topic_data = []
+
     for topic in topics:
-        # Fetch the student's progress for the current topic
-        progress = Progress.objects.filter(student=student, current_topic=topic).first()
+        # Get the latest progress for this topic
+        progress = Progress.objects.filter(student=student, current_topic=topic).order_by('-last_accessed').first()
 
         if progress:
-            # If student has a current subtopic, fetch the next subtopic based on the subtopic order number
             current_subtopic = progress.current_subtopic
             next_subtopic = Subtopic.objects.filter(
                 topic=topic,
-                subtopic_order_number__gt=current_subtopic.subtopic_order_number  # Get the next subtopic in order
-            ).order_by('subtopic_order_number').first()
+                subtopic_order_number__gt=current_subtopic.subtopic_order_number
+            ).order_by('subtopic_order_number').first() if current_subtopic else None
 
-            # If there is a next subtopic, set it as next_subtopic, else set to None
             if next_subtopic:
-                subtopic_to_show = next_subtopic
-                # Update the progress table to reflect the next subtopic
-                progress.current_subtopic = next_subtopic
-                progress.next_subtopic = Subtopic.objects.filter(
-                    topic=topic,
-                    subtopic_order_number__gt=next_subtopic.subtopic_order_number
-                ).order_by('subtopic_order_number').first()  # Get the next next subtopic
+                # Instead of updating, create a new progress entry for the new subtopic
+                new_progress = Progress.objects.create(
+                    student=student,
+                    current_topic=topic,
+                    current_subtopic=next_subtopic,
+                    next_subtopic=Subtopic.objects.filter(
+                        topic=topic,
+                        subtopic_order_number__gt=next_subtopic.subtopic_order_number
+                    ).order_by('subtopic_order_number').first(),
+                    module=VideoModule.objects.filter(topic=topic).first(),
+                    completion_status='in_progress',
+                    video_watched=False  # Reset for the new subtopic
+                )
+                topic_data.append({'topic': topic, 'subtopic': new_progress.current_subtopic})
 
-                # Update completion status if the next subtopic exists
-                progress.completion_status = 'in_progress'  # or any logic you have to determine completion
             else:
-                subtopic_to_show = None
-                # Update the progress table, no next subtopic available
-                progress.current_subtopic = current_subtopic  # Keep current subtopic
-                progress.next_subtopic = None
-
-                # Mark as completed if there are no more subtopics
+                # If no next subtopic, mark topic as completed and move to next topic
                 progress.completion_status = 'completed'
+                progress.save()
 
-            # Save the updated progress
-            progress.save()
+                next_topic = Topic.objects.filter(id__gt=topic.id).order_by('id').first()
+                if next_topic:
+                    first_subtopic = Subtopic.objects.filter(topic=next_topic).order_by('subtopic_order_number').first()
+                    if first_subtopic:
+                        new_progress = Progress.objects.create(
+                            student=student,
+                            current_topic=next_topic,
+                            current_subtopic=first_subtopic,
+                            next_subtopic=None,
+                            module=VideoModule.objects.filter(topic=next_topic).first(),
+                            completion_status='not_started'
+                        )
+                        topic_data.append({'topic': next_topic, 'subtopic': new_progress.current_subtopic})
 
         else:
-            # If no progress exists for the student, show the first subtopic for the topic
-            subtopic_to_show = Subtopic.objects.filter(topic=topic).order_by('subtopic_order_number').first()
-            # Mark as in progress if it's the first subtopic
-            progress = Progress(student=student, current_topic=topic, current_subtopic=subtopic_to_show,
-                                completion_status='in_progress')
-            progress.save()
+            # If no progress exists for the student, start from the first subtopic
+            first_subtopic = Subtopic.objects.filter(topic=topic).order_by('subtopic_order_number').first()
+            if first_subtopic:
+                progress = Progress.objects.create(
+                    student=student,
+                    current_topic=topic,
+                    current_subtopic=first_subtopic,
+                    next_subtopic=Subtopic.objects.filter(topic=topic,
+                                                          subtopic_order_number__gt=first_subtopic.subtopic_order_number).order_by(
+                        'subtopic_order_number').first(),
+                    module=VideoModule.objects.filter(topic=topic).first(),
+                    completion_status='not_started'
+                )
 
-        # Append the topic and its subtopic to the topic_data list
-        topic_data.append({'topic': topic, 'subtopic': subtopic_to_show})
+        topic_data.append({'topic': topic, 'subtopic': progress.current_subtopic})
 
     context = {
         'topic_data': topic_data,
@@ -385,7 +401,7 @@ def test_results(request, topic_name, subtopic_name):
         progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
 
         # Get video URL with the condition
-        video_url = video_module.url if video_module and progress and progress.video_watched else None
+        video_url = video_module.url if video_module and progress and not progress.score_after else None
         if video_url:
             if "youtube.com/watch" in video_url:
                 video_url = video_url.replace("watch?v=", "embed/")
