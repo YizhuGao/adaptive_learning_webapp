@@ -39,7 +39,7 @@
                 </ul>
                 <p>Click below to continue your test on {{ item.topic.topic_name }}.</p>
                 {% if item.subtopic %}
-                    <a href="{% url 'test' topic_name=item.topic.topic_name subtopic_name=item.subtopic.subtopic_name %}" class="start-btn">Continue Test</a>
+                    <a href="{% url 'test' topic_id=item.topic.topic_id subtopic_id=item.subtopic.subtopic_id %}" class="start-btn">Continue Test</a>
                 {% else %}
                     <p>No subtopics available.</p>
                 {% endif %}

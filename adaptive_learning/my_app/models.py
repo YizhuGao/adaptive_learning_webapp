@@ -168,5 +168,22 @@ class Progress(models.Model):
     score_after = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     video_watched = models.BooleanField(default=False)
 
+    class Meta:
+        unique_together = ('student', 'module', 'current_subtopic')  # Ensure this combination is unique
+
     def __str__(self):
         return f"Progress of {self.student} in {self.module}"
+
+
+
+
+
+class VideoProgress(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    subtopic = models.ForeignKey(Subtopic, on_delete=models.CASCADE)
+    video = models.ForeignKey(VideoModule, on_delete=models.CASCADE)
+    watched = models.BooleanField(default=False)
+    watched_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ('student', 'video')  # Ensure one entry per student-video

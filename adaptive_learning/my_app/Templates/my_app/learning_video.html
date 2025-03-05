@@ -10,30 +10,47 @@
 </head>
 <body>
 
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="left">
-            <span class="welcome-text">Learning Module: {{ topic.topic_name }} - {{ subtopic.subtopic_name }}</span>
-        </div>
-        <div class="right">
-            <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
-            <a href="{% url 'modules' %}" class="nav-link"><i class="fas fa-book"></i> Modules</a>
-            <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        </div>
-    </nav>
-
-    <div class="video-container">
-        <h2>Watch the Video</h2>
-        {% if video_url %}
-        <!-- Placeholder for the video player -->
-        <div id="player" data-subtopic-id="{{ subtopic.subtopic_id }}" data-student-id="{{ student_id }}" data-video-url="{{ video_url }}"></div>
-        {% else %}
-        <p>No video module available for this subtopic.</p>
-        {% endif %}
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="left">
+        <span class="welcome-text">Learning Module: {{ topic.topic_name }} - {{ subtopic.subtopic_name }}</span>
     </div>
+    <div class="right">
+        <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
+        <a href="{% url 'modules' %}" class="nav-link"><i class="fas fa-book"></i> Modules</a>
+        <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+</nav>
+
+<p>Subtopic ID: {{ subtopic_id }}</p>
+<p>Video IDs:</p>
+<ul>
+    {% for video in video_data %}
+        <li>{{ video.id }}: {{ video.title }}</li>
+    {% endfor %}
+</ul>
+
+<div class="video-container">
+    <h2>Watch the Video</h2>
+    {% if video_data %}
+        {% for video in video_data %}
+            <div class="video-player">
+                <!-- Embed the video using iframe (YouTube embedded) -->
+                <iframe width="560" height="315" src="{{ video.url }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+                <!-- Add a button to mark the video as watched -->
+                <button onclick="markVideoAsWatched('{{ video.id }}', '{{ subtopic_id }}')">
+                    Mark as Watched
+                </button>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No video modules available for this subtopic.</p>
+    {% endif %}
+</div>
 
 <!-- Include the YouTube IFrame API -->
-<script src="https://www.youtube.com/iframe_api"></script>
+<!--<script src="https://www.youtube.com/iframe_api"></script>-->
 <!-- Include the video.js script -->
 <script src="{% static 'JS/video.js' %}?v=3"></script>
 

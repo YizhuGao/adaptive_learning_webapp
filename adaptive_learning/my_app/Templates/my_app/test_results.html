@@ -57,7 +57,7 @@
         <div class="learning-section">
             {% if video_url %}
                 <h3>Missed a few questions? Watch the video module to improve!</h3>
-                <a href="{% url 'learning_video' topic_name=topic.topic_name subtopic_name=subtopic.subtopic_name %}" class="watch-video-button">
+                <a href="{% url 'learning_video' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="watch-video-button">
                     Watch Learning Video
                 </a>
             {% else %}

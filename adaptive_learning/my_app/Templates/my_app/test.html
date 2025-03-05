@@ -29,7 +29,7 @@
             <div class="progress" id="progress"></div>
         </div>
 
-        <form method="POST" action="{% url 'submit_test' topic_name=topic.topic_name subtopic_name=subtopic.subtopic_name %}">
+        <form method="POST" action="{% url 'submit_test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}">
             {% csrf_token %}
             <div id="questions-container">
                 {% for question in questions %}
