@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ topic }} Test</title>
+    <title>{{ topic.topic_name }} - {{ subtopic.subtopic_name }} Test</title>
     <link rel="stylesheet" href="{% static 'CSS/test.css' %}">
 </head>
 <body>
@@ -22,14 +22,14 @@
 
     <!-- Test Container -->
     <div class="test-container">
-        <h1>{{ topic }} Test</h1>
+        <h1>{{ topic.topic_name }} - {{ subtopic.subtopic_name }} Test</h1>
         <p>Answer the following questions carefully:</p>
 
         <div class="progress-bar">
             <div class="progress" id="progress"></div>
         </div>
 
-        <form method="POST" action="{% url 'submit_test' topic=topic %}">
+        <form method="POST" action="{% url 'submit_test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}">
             {% csrf_token %}
             <div id="questions-container">
                 {% for question in questions %}

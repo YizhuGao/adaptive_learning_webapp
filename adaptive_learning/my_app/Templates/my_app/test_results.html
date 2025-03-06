@@ -1,4 +1,4 @@
-{% load static %} 
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +24,8 @@
     <!-- Results Container -->
     <div class="results-container">
         <h1>Test Results</h1>
-        <p><strong>Topic:</strong> {{ topic }}</p>
+        <p><strong>Topic:</strong> {{ topic.topic_name }}</p>
+        <p><strong>Subtopic:</strong> {{ subtopic.subtopic_name }}</p>
         <p><strong>Score:</strong> <span class="score">{{ score }}%</span></p>
         <p><strong>Date Taken:</strong> {{ date_taken }}</p>
 
@@ -40,6 +41,7 @@
                 </tr>
             </thead>
             <tbody>
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                 {% for response in responses %}
                 <tr>
                     <td>{{ response.question.question_text }}</td>
@@ -51,10 +53,16 @@
             </tbody>
         </table>
 
-        <!-- Video Modules Section -->
+        <!-- Video Learning Section -->
         <div class="learning-section">
-            <h3>Missed a few questions? Watch the video modules to improve!</h3>
-            <a href="{% url 'video_modules' %}" class="learn-more-btn"><i class="fas fa-video"></i> Watch Video Modules</a>
+            {% if video_url %}
+                <h3>Missed a few questions? Watch the video module to improve!</h3>
+                <a href="{% url 'learning_video' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="watch-video-button">
+                    Watch Learning Video
+                </a>
+            {% else %}
+                <p>No video available or you might have already watched the video for this subtopic at the moment.</p>
+            {% endif %}
         </div>
     </div>
 

@@ -1,13 +1,15 @@
-from my_app.models import Question, Option
+from my_app.models import Question, Option, Topic, Subtopic
 
 Option.objects.all().delete()
 Question.objects.all().delete()
 
 questions_data = [
     {
-        "question_text": "What is the most likely temperature of ice-cubes stored in a refrigerator’s freezer compartment?",
+        "question_text": "What is the most likely temperature of ice-cubes stored in a refrigerator’s freezer compartment?", #question 1
         "topic": "Thermodynamics",
+        "topic_order": 1,
         "subtopic": "Fusion/melting point and freezing point",
+        "subtopic_order_number": 4,
         "assigned_at": 0,
         "difficulty_level": "Beginner",
         "options": [
@@ -20,7 +22,9 @@ questions_data = [
     {
         "question_text": "Ken takes six ice-cubes from the freezer and puts four of them into a glass of water. What is the most likely temperature of the water at this stage?",
         "topic": "Thermodynamics",
-        "subtopic": "Fusion/melting point and freezing point",
+        "topic_order": 1,
+        "subtopic": "Fusion/melting point and freezing point", #question 2
+        "subtopic_order_number": 4,
         "assigned_at": 0,
         "difficulty_level": "Beginner",
         "options": [
@@ -33,7 +37,9 @@ questions_data = [
     {
         "question_text": "When an ice-cube melts, what is the expected temperature change of the ice-cube?",
         "topic": "Thermodynamics",
-        "subtopic": "Phase change and temperature",
+        "topic_order": 1,
+        "subtopic": "Fusion/melting point and freezing point", #question 3
+        "subtopic_order_number": 4,
         "assigned_at": 0,
         "difficulty_level": "Beginner",
         "options": [
@@ -46,7 +52,9 @@ questions_data = [
     {
         "question_text": "If a person steps into a pool of water at 10 °C, what would be the most likely result in terms of heat transfer?",
         "topic": "Thermodynamics",
-        "subtopic": "Heat transfer and temperature change",
+"topic_order": 1,
+        "subtopic": "Boiling point, Liquifaction, Vaporation", #question 4
+"subtopic_order_number": 5,
         "assigned_at": 1,
         "difficulty_level": "Intermediate",
         "options": [
@@ -59,7 +67,9 @@ questions_data = [
     {
         "question_text": "If the temperature of water reaches 0 °C, it will begin to freeze. What happens to the temperature as it transitions from liquid to solid?",
         "topic": "Thermodynamics",
-        "subtopic": "Freezing and melting point",
+"topic_order": 1,
+        "subtopic": "Boiling point, Liquifaction, Vaporation", #question 5
+"subtopic_order_number": 5,
         "assigned_at": 1,
         "difficulty_level": "Intermediate",
         "options": [
@@ -71,8 +81,10 @@ questions_data = [
     },
     {
         "question_text": "What is the primary reason why ice is less dense than water?",
-        "topic": "Science",
-        "subtopic": "Density and phase change",
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Boiling point, Liquifaction, Vaporation", #question 6
+"subtopic_order_number": 5,
         "assigned_at": 1,
         "difficulty_level": "Intermediate",
         "options": [
@@ -83,9 +95,11 @@ questions_data = [
         ],
     },
     {
-        "question_text": "What is the state of matter for water at room temperature (25 °C)?",
-        "topic": "Science",
-        "subtopic": "States of matter",
+        "question_text": "What is the state of matter for water at room temperature (25 °C)?", #question 7
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Heat transfer and temperature change",
+"subtopic_order_number": 2,
         "assigned_at": 0,
         "difficulty_level": "Beginner",
         "options": [
@@ -97,8 +111,10 @@ questions_data = [
     },
     {
         "question_text": "What is the freezing point of water at standard atmospheric pressure?",
-        "topic": "Science",
-        "subtopic": "Freezing and melting point",
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Boiling point, Liquifaction, Vaporation", #question 8
+"subtopic_order_number": 5,
         "assigned_at": 0,
         "difficulty_level": "Beginner",
         "options": [
@@ -109,9 +125,11 @@ questions_data = [
         ],
     },
     {
-        "question_text": "How does the density of water change as it freezes?",
-        "topic": "Science",
-        "subtopic": "Density and phase change",
+        "question_text": "How does the density of water change as it freezes?", #question 9
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Nature of temperature",
+"subtopic_order_number": 1,
         "assigned_at": 1,
         "difficulty_level": "Intermediate",
         "options": [
@@ -122,9 +140,11 @@ questions_data = [
         ],
     },
     {
-        "question_text": "What is the boiling point of water at standard atmospheric pressure?",
-        "topic": "Science",
-        "subtopic": "Boiling point and phase change",
+        "question_text": "What is the boiling point of water at standard atmospheric pressure?", #question 10
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Heat transfer and temperature change",
+"subtopic_order_number": 2,
         "assigned_at": 0,
         "difficulty_level": "Beginner",
         "options": [
@@ -135,9 +155,11 @@ questions_data = [
         ],
     },
     {
-        "question_text": "At which temperature does water boil at standard atmospheric pressure?",
-        "topic": "Science",
-        "subtopic": "Boiling point and phase change",
+        "question_text": "At which temperature does water boil at standard atmospheric pressure?", #question 11
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Fusion/melting point and freezing point",
+"subtopic_order_number": 4,
         "assigned_at": 0,
         "difficulty_level": "Beginner",
         "options": [
@@ -148,9 +170,11 @@ questions_data = [
         ],
     },
     {
-        "question_text": "What happens to the volume of water when it freezes?",
-        "topic": "Science",
-        "subtopic": "Phase change and volume",
+        "question_text": "What happens to the volume of water when it freezes?", #question 12
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Boiling point, Liquifaction, Vaporation",
+"subtopic_order_number": 5,
         "assigned_at": 1,
         "difficulty_level": "Intermediate",
         "options": [
@@ -161,9 +185,11 @@ questions_data = [
         ],
     },
     {
-        "question_text": "How does the water temperature affect its ability to dissolve substances?",
-        "topic": "Science",
-        "subtopic": "Solubility and temperature",
+        "question_text": "How does the water temperature affect its ability to dissolve substances?", #question 13
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Heat transfer and temperature change",
+"subtopic_order_number": 2,
         "assigned_at": 1,
         "difficulty_level": "Intermediate",
         "options": [
@@ -174,9 +200,11 @@ questions_data = [
         ],
     },
     {
-        "question_text": "When water evaporates, what happens to its temperature?",
-        "topic": "Science",
-        "subtopic": "Evaporation and temperature change",
+        "question_text": "When water evaporates, what happens to its temperature?", #question 14
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Heat transfer and material",
+"subtopic_order_number": 3,
         "assigned_at": 1,
         "difficulty_level": "Intermediate",
         "options": [
@@ -187,9 +215,11 @@ questions_data = [
         ],
     },
     {
-        "question_text": "What is the name of the process where water changes from a gas to a liquid?",
-        "topic": "Science",
-        "subtopic": "Phase changes",
+        "question_text": "What is the name of the process where water changes from a gas to a liquid?", #question 15
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Nature of temperature",
+"subtopic_order_number": 1,
         "assigned_at": 0,
         "difficulty_level": "Beginner",
         "options": [
@@ -201,9 +231,11 @@ questions_data = [
     },
     {
         "question_text": "What is the energy required to change the temperature of a substance?",
-        "topic": "Science",
-        "subtopic": "Heat and energy",
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Heat transfer and material", #question 16
         "assigned_at": 1,
+        "subtopic_order_number": 3,
         "difficulty_level": "Intermediate",
         "options": [
             ("Specific heat capacity", True),
@@ -213,9 +245,11 @@ questions_data = [
         ],
     },
     {
-        "question_text": "What is the difference between boiling and evaporation?",
-        "topic": "Science",
-        "subtopic": "Boiling vs Evaporation",
+        "question_text": "What is the difference between boiling and evaporation?", #question 17
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Boiling point, Liquifaction, Vaporation",
+"subtopic_order_number": 5,
         "assigned_at": 1,
         "difficulty_level": "Intermediate",
         "options": [
@@ -227,8 +261,10 @@ questions_data = [
     },
     {
         "question_text": "What is the term for the amount of heat required to convert a substance from a solid to a liquid?",
-        "topic": "Science",
-        "subtopic": "Phase change and heat",
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Heat transfer and temperature change", #question 18
+"subtopic_order_number": 2,
         "assigned_at": 1,
         "difficulty_level": "Intermediate",
         "options": [
@@ -240,8 +276,10 @@ questions_data = [
     },
     {
         "question_text": "What is the name of the process where a substance changes directly from a solid to a gas?",
-        "topic": "Science",
-        "subtopic": "Phase changes",
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Boiling point, Liquifaction, Vaporation", #question 19
+"subtopic_order_number": 5,
         "assigned_at": 1,
         "difficulty_level": "Intermediate",
         "options": [
@@ -252,9 +290,11 @@ questions_data = [
         ],
     },
     {
-        "question_text": "What happens to the water temperature when ice is added?",
+        "question_text": "What happens to the water temperature when ice is added?", #question 20
         "topic": "Thermodynamics",
-        "subtopic": "Thermal equilibrium",
+"topic_order": 1,
+        "subtopic": "Nature of temperature",
+"subtopic_order_number": 1,
         "assigned_at": 0,
         "difficulty_level": "Beginner",
         "options": [
@@ -265,9 +305,11 @@ questions_data = [
         ],
     },
     {
-        "question_text": "What is the term used for the heat required to change a liquid to a gas?",
-        "topic": "Science",
-        "subtopic": "Latent heat",
+        "question_text": "What is the term used for the heat required to change a liquid to a gas?", #question 21
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Boiling point, Liquifaction, Vaporation",
+"subtopic_order_number": 5,
         "assigned_at": 1,
         "difficulty_level": "Intermediate",
         "options": [
@@ -278,9 +320,11 @@ questions_data = [
         ],
     },
     {
-        "question_text": "What is the unit of heat?",
+        "question_text": "What is the unit of heat?", #question 22
         "topic": "Thermodynamics",
-        "subtopic": "Units of energy",
+"topic_order": 1,
+        "subtopic": "Heat transfer and temperature change",
+"subtopic_order_number": 2,
         "assigned_at": 0,
         "difficulty_level": "Beginner",
         "options": [
@@ -293,7 +337,9 @@ questions_data = [
     {
         "question_text": "Which of the following gases is most commonly used for refrigeration?",
         "topic": "Thermodynamics",
-        "subtopic": "Refrigerants",
+        "topic_order": 1,
+        "subtopic": "Heat transfer and material", #question 23
+        "subtopic_order_number": 3,
         "assigned_at": 1,
         "difficulty_level": "Intermediate",
         "options": [
@@ -305,9 +351,11 @@ questions_data = [
     },
     {
         "question_text": "Which of the following gases is used to pressurize soft drinks?",
-        "topic": "Science",
-        "subtopic": "Pressurized gases",
-        "assigned_at": 0,
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Heat transfer and material",
+        "subtopic_order_number": 3,
+        "assigned_at": 0, #question 24
         "difficulty_level": "Beginner",
         "options": [
             ("Oxygen", False),
@@ -318,8 +366,10 @@ questions_data = [
     },
     {
         "question_text": "What is the process of transferring heat through direct contact?",
-        "topic": "Science",
-        "subtopic": "Heat transfer mechanisms",
+        "topic": "Thermodynamics",
+"topic_order": 1,
+        "subtopic": "Nature of temperature", #question 25
+"subtopic_order_number": 1,
         "assigned_at": 0,
         "difficulty_level": "Beginner",
         "options": [
@@ -331,12 +381,14 @@ questions_data = [
     },
     {
         "question_text": "What is the term for the energy required to raise the temperature of a substance?",
-        "topic": "Science",
-        "subtopic": "Specific heat and energy",
+        "topic": "Thermodynamics",
+        "topic_order": 1,
+        "subtopic": "Heat transfer and material",
+        "subtopic_order_number": 3,
         "assigned_at": 1,
         "difficulty_level": "Intermediate",
         "options": [
-            ("Specific heat", True),
+            ("Specific heat", True), #question 26
             ("Latent heat", False),
             ("Thermal conductivity", False),
             ("Heat capacity", False),
@@ -344,17 +396,41 @@ questions_data = [
     },
 ]
 
+# for question_data in questions_data:
+#     question = Question.objects.create(
+#         question_text=question_data["question_text"],
+#         topic=question_data["topic"],
+#         subtopic=question_data["subtopic"],
+#         assigned_at=question_data["assigned_at"],
+#         difficulty_level=question_data["difficulty_level"],
+#     )
+#     for option_text, is_correct in question_data["options"]:
+#         Option.objects.create(
+#             question=question, option_text=option_text, is_correct=is_correct
+#         )
+
 for question_data in questions_data:
+    if "topic_order" in question_data:
+        topic_obj, _ = Topic.objects.get_or_create(id=question_data["topic_order"], defaults={"topic_name": question_data["topic"]})
+    else:
+        topic_obj, _ = Topic.objects.get_or_create(topic_name=question_data["topic"])
+    if "subtopic_order_number" in question_data:
+        subtopic_obj, _ = Subtopic.objects.get_or_create(id=question_data["subtopic_order_number"], defaults={"subtopic_name": question_data["subtopic"], "topic": topic_obj})
+    else:
+        subtopic_obj, _ = Subtopic.objects.get_or_create(subtopic_name=question_data["subtopic"], topic=topic_obj)
     question = Question.objects.create(
         question_text=question_data["question_text"],
-        topic=question_data["topic"],
-        subtopic=question_data["subtopic"],
+        topic=topic_obj,
+        subtopic=subtopic_obj,
         assigned_at=question_data["assigned_at"],
         difficulty_level=question_data["difficulty_level"],
     )
     for option_text, is_correct in question_data["options"]:
         Option.objects.create(
-            question=question, option_text=option_text, is_correct=is_correct
+            question=question,
+            option_text=option_text,
+            is_correct=is_correct
         )
+
 
 print("Dummy data for thermodynamics questions and options inserted successfully!")

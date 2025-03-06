@@ -26,19 +26,27 @@
         <h1>Available Assessment Topics</h1>
         <p>Select a topic below to start your assessment.</p>
         <div class="module-grid">
-            {% for topic in topics %}
-                <div class="flashcard">
-                    <div class="flashcard-inner">
-                        <div class="flashcard-front">
-                            <h2>{{ topic }}</h2>
-                        </div>
-                        <div class="flashcard-back">
-                            <p>Click below to start your test on {{ topic }}.</p>
-                            <a href="{% url 'test' topic %}" class="start-btn">Start Test</a>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
+{% for item in topic_data %}
+    <div class="flashcard">
+        <div class="flashcard-inner">
+            <div class="flashcard-front">
+                <h2>{{ item.topic.topic_name }}</h2>
+            </div>
+            <div class="flashcard-back">
+                <h3>Currently Learning:</h3>
+                <ul>
+                    <li>{{ item.subtopic.subtopic_name }}</li>  <!-- Show only the assigned subtopic -->
+                </ul>
+                <p>Click below to continue your test on {{ item.topic.topic_name }}.</p>
+                {% if item.subtopic %}
+                    <a href="{% url 'test' topic_id=item.topic.topic_id subtopic_id=item.subtopic.subtopic_id %}" class="start-btn">Continue Test</a>
+                {% else %}
+                    <p>No subtopics available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endfor %}
         </div>
     </section>
 
