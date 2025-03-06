@@ -180,10 +180,11 @@ def modules_view(request):
                 progress.completion_status = 'completed'
                 progress.save()
 
-                next_topic = Topic.objects.filter(id__gt=topic.id).order_by('id').first()
+                next_topic = Topic.objects.filter(topic_id__gt=topic.topic_id).order_by('topic_id').first()
                 if next_topic:
                     first_subtopic = Subtopic.objects.filter(topic=next_topic).order_by('subtopic_order_number').first()
-                    if first_subtopic:
+
+                    if first_subtopic:  # Ensure first_subtopic is not None before using it
                         new_progress = Progress.objects.create(
                             student=student,
                             current_topic=next_topic,
@@ -194,16 +195,18 @@ def modules_view(request):
                         )
                         topic_data.append({'topic': next_topic, 'subtopic': new_progress.current_subtopic})
 
-                # Insert VideoProgress records for videos in the first subtopic of the next topic
-                video_modules = VideoModule.objects.filter(topic=next_topic, subtopic=first_subtopic)
-                for video in video_modules:
-                    video_progress, created = VideoProgress.objects.get_or_create(
-                        student=student,
-                        subtopic=first_subtopic,
-                        video=video,
-                        defaults={'watched': False, 'watched_at': None}
-                    )
-                    print(f"Created VideoProgress for student {student} - Subtopic: {first_subtopic} - Video: {video}")
+                    # Check again if first_subtopic is valid before using it
+                    if first_subtopic:
+                        video_modules = VideoModule.objects.filter(topic=next_topic, subtopic=first_subtopic)
+                        for video in video_modules:
+                            video_progress, created = VideoProgress.objects.get_or_create(
+                                student=student,
+                                subtopic=first_subtopic,
+                                video=video,
+                                defaults={'watched': False, 'watched_at': None}
+                            )
+                            print(
+                                f"Created VideoProgress for student {student} - Subtopic: {first_subtopic} - Video: {video}")
 
         else:
             # If no progress exists for the student, start from the first subtopic
