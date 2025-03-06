@@ -37,7 +37,7 @@ p {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 1200px;
+/*     max-width: 1200px; */
     background: rgba(0, 0, 0, 0.8);
     padding: 15px 30px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
