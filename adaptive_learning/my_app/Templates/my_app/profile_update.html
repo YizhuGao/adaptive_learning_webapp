@@ -4,94 +4,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update Profile - Adaptive Physics Learning</title>
-    <link rel="stylesheet" href="{% static 'CSS/profile_update.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/profile_update.css' %}?v=3">
+    <title>Update Profile</title>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="login-nav">
-        <a href="#" class="login nav">AdaptivePhysics</a>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="nav-logo">Adaptive Physics</a>
         <div class="nav-links">
             <a href="{% url 'home' %}">Home</a>
-            <a href="{% url 'modules' %}">Modules</a>
+            <a href="{% url 'student_assignments' %}">Assignments</a>
             <a href="{% url 'logout' %}">Logout</a>
-        </div>
-        <div class="mobile-menu-btn">
-            <span></span>
-            <span></span>
-            <span></span>
         </div>
     </nav>
 
     <!-- Profile Update Section -->
-    <section class="login-section">
-        <div class="login-container">
-            <h2>Update Your Profile</h2>
+    <div class="profile-section">
+        <div class="profile-container">
+            <h1>Update Your Profile</h1>
+
             <form action="{% url 'profile_update' %}" method="POST">
                 {% csrf_token %}
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" value="{{ student.user.username }}" disabled>
-                        <small class="error-message">Sorry, you cannot update the username.</small>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" value="{{ student.user.email }}" disabled>
-                        <small class="error-message">Sorry, you cannot update the email.</small>
-                    </div>
+                <!-- Username (Non-editable) -->
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" value="{{ student.user.username }}" disabled>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="class_level">Class Level</label>
-                        <select id="class_level" name="class_level" disabled>
-                            <option value="9th Grade" {% if student.class_level == '9th Grade' %}selected{% endif %}>9th Grade</option>
-                            <option value="10th Grade" {% if student.class_level == '10th Grade' %}selected{% endif %}>10th Grade</option>
-                            <option value="11th Grade" {% if student.class_level == '11th Grade' %}selected{% endif %}>11th Grade</option>
-                            <option value="12th Grade" {% if student.class_level == '12th Grade' %}selected{% endif %}>12th Grade</option>
-                        </select>
-                        <small class="error-message">Sorry, you cannot update the Class Level.</small>
-                    </div>
+                <!-- Email (Non-editable) -->
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" value="{{ student.user.email }}" disabled>
+                </div>
 
-                    <div class="form-group">
-                        <label for="uga_id">UGA ID</label>
-                        <input type="number" id="uga_id" value="{{ student.uga_id }}" disabled>
-                        <small class="error-message">Sorry, you cannot update the UGA ID.</small>
-                    </div>
+                <!-- UGA ID (Non-editable) -->
+                <div class="form-group">
+                    <label for="uga_id">UGA ID:</label>
+                    <input type="number" id="uga_id" name="uga_id" value="{{ student.uga_id }}" disabled>
+                </div>
+
+                <!-- Editable Fields -->
+                <div class="form-group">
+                    <label for="class_level">Class Level:</label>
+                    <select id="class_level" name="class_level">
+                        <option value="9th Grade" {% if student.class_level == '9th Grade' %}selected{% endif %}>9th Grade</option>
+                        <option value="10th Grade" {% if student.class_level == '10th Grade' %}selected{% endif %}>10th Grade</option>
+                        <option value="11th Grade" {% if student.class_level == '11th Grade' %}selected{% endif %}>11th Grade</option>
+                        <option value="12th Grade" {% if student.class_level == '12th Grade' %}selected{% endif %}>12th Grade</option>
+                    </select>
                 </div>
                 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="first_name">First Name</label>
-                        <input type="text" id="first_name" name="first_name" value="{{ student.first_name }}" required>
-                    </div>
+                <div class="form-group">
+                    <label for="first_name">First Name:</label>
+                    <input type="text" id="first_name" name="first_name" value="{{ student.first_name }}" required>
+                </div>
 
-                    <div class="form-group">
-                        <label for="last_name">Last Name</label>
-                        <input type="text" id="last_name" name="last_name" value="{{ student.last_name }}" required>
+                <div class="form-group">
+                    <label for="last_name">Last Name:</label>
+                    <input type="text" id="last_name" name="last_name" value="{{ student.last_name }}" required>
+                </div>
+
+                <!-- Password and Confirm Password with Show Password Feature -->
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password">
+                        <span id="togglePassword" class="eye-icon">&#128065;</span> <!-- Eye icon for show/hide -->
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="password">New Password</label>
-                        <input type="password" id="password" name="password">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="confirm_password">Confirm Password</label>
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password:</label>
+                    <div class="password-container">
                         <input type="password" id="confirm_password" name="confirm_password">
+                        <span id="toggleConfirmPassword" class="eye-icon">&#128065;</span> <!-- Eye icon for show/hide -->
                     </div>
                 </div>
 
                 <button type="submit" class="submit-btn">Update Profile</button>
             </form>
-            <a href="{% url 'student_assignments' %}" class="btn btn-primary">View Your Assignments</a>
-        </div>
-    </section>
 
-    <script src="{% static 'JS/profile_update.js' %}"></script>
+            <p><a href="{% url 'home' %}">Go back to Home</a></p>
+
+            <a href="{% url 'student_assignments' %}" class="btn-primary">View Your Assignments</a>
+        </div>
+    </div>
+
+    <script src="{% static 'JS/profile_update.js' %}?v=3"></script>
+
 </body>
 </html>

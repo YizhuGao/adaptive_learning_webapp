@@ -1,80 +1,74 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const form = document.querySelector("form");
-    const password = document.getElementById("password");
-    const confirmPassword = document.getElementById("confirm_password");
-    const firstName = document.querySelector('input[name="first_name"]');
-    const lastName = document.querySelector('input[name="last_name"]');
-    const submitButton = document.querySelector('.submit-btn');
+    // Select all disabled input fields
+    const disabledFields = document.querySelectorAll('input:disabled, select:disabled');
 
-    // Smooth scroll to profile update section on page load
-    document.querySelector('.login-section').scrollIntoView({ behavior: 'smooth' });
+    // Add an event listener to each disabled field
+    disabledFields.forEach(field => {
+        field.addEventListener("focus", function(event) {
+            // Display a generic message for non-editable fields
+            showMessage("Sorry, you cannot edit this field.");
+        });
+    });
 
-    // Password Validation
-    function validatePassword() {
-        if (password.value !== confirmPassword.value) {
-            confirmPassword.setCustomValidity("Passwords do not match!");
-            confirmPassword.style.border = "2px solid red";
+    // Function to display the message
+    function showMessage(message) {
+        const messageContainer = document.createElement("div");
+        messageContainer.classList.add("message");
+        messageContainer.textContent = message;
+
+        // Add the message container to the body or any specific location on the page
+        document.body.appendChild(messageContainer);
+
+        // Automatically remove the message after 3 seconds
+        setTimeout(() => {
+            messageContainer.remove();
+        }, 3000);
+    }
+
+    // Show/Hide Password functionality
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirm_password");
+
+    // Create eye icons for password fields
+    const passwordEyeIcon = document.createElement("span");
+    passwordEyeIcon.classList.add("eye-icon");
+    passwordEyeIcon.innerHTML = "👁️";  // You can replace it with any icon or use an icon font
+
+    const confirmPasswordEyeIcon = document.createElement("span");
+    confirmPasswordEyeIcon.classList.add("eye-icon");
+    confirmPasswordEyeIcon.innerHTML = "👁️"; // Replace with icon or use font icons
+
+    // Append the eye icons to the password fields
+    const passwordContainer = document.createElement("div");
+    passwordContainer.classList.add("password-container");
+    passwordInput.parentNode.appendChild(passwordContainer);
+    passwordContainer.appendChild(passwordInput);
+    passwordContainer.appendChild(passwordEyeIcon);
+
+    const confirmPasswordContainer = document.createElement("div");
+    confirmPasswordContainer.classList.add("password-container");
+    confirmPasswordInput.parentNode.appendChild(confirmPasswordContainer);
+    confirmPasswordContainer.appendChild(confirmPasswordInput);
+    confirmPasswordContainer.appendChild(confirmPasswordEyeIcon);
+
+    // Add event listeners to toggle password visibility
+    passwordEyeIcon.addEventListener("click", function() {
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            passwordEyeIcon.style.color = "#9e1b32"; // Change color on visibility toggle
         } else {
-            confirmPassword.setCustomValidity("");
-            confirmPassword.style.border = "2px solid green";
-        }
-    }
-
-    password.addEventListener("input", validatePassword);
-    confirmPassword.addEventListener("input", validatePassword);
-
-    // Form Validation
-    form.addEventListener("submit", function(event) {
-        clearErrors();
-        let hasError = false;
-
-        if (!firstName.value.trim()) {
-            showError(firstName, "Please enter your first name.");
-            hasError = true;
-        }
-        if (!lastName.value.trim()) {
-            showError(lastName, "Please enter your last name.");
-            hasError = true;
-        }
-        if (!password.value.trim()) {
-            showError(password, "Please enter a password.");
-            hasError = true;
-        }
-        if (!confirmPassword.value.trim()) {
-            showError(confirmPassword, "Please confirm your password.");
-            hasError = true;
-        }
-        if (password.value !== confirmPassword.value) {
-            showError(confirmPassword, "Passwords do not match.");
-            hasError = true;
-        }
-
-        if (hasError) {
-            event.preventDefault();
+            passwordInput.type = "password";
+            passwordEyeIcon.style.color = "#555"; // Reset color
         }
     });
 
-    // Show Error Function
-    function showError(input, message) {
-        input.classList.add("error");
-        let errorMessage = document.createElement("p");
-        errorMessage.classList.add("error-message");
-        errorMessage.textContent = message;
-        input.parentElement.appendChild(errorMessage);
-    }
-
-    // Clear Errors Function
-    function clearErrors() {
-        document.querySelectorAll(".error-message").forEach(msg => msg.remove());
-        document.querySelectorAll(".error").forEach(input => input.classList.remove("error"));
-    }
-
-    // Button Hover Effects
-    submitButton.addEventListener("mouseenter", function() {
-        this.style.transform = "scale(1.05)";
-    });
-
-    submitButton.addEventListener("mouseleave", function() {
-        this.style.transform = "scale(1)";
+    confirmPasswordEyeIcon.addEventListener("click", function() {
+        if (confirmPasswordInput.type === "password") {
+            confirmPasswordInput.type = "text";
+            confirmPasswordEyeIcon.style.color = "#9e1b32"; // Change color on visibility toggle
+        } else {
+            confirmPasswordInput.type = "password";
+            confirmPasswordEyeIcon.style.color = "#555"; // Reset color
+        }
     });
 });
