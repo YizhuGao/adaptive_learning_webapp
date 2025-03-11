@@ -1,18 +1,17 @@
+import os
 from datetime import timezone
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponse
-from django.utils.timezone import now
+from django.utils import timezone, timesince
 from django.views.decorators.csrf import csrf_exempt
 import json
-
 from .models import Assessment, Question, Student, AssessmentResponse, Option, VideoModule, Subtopic, Progress, Topic, \
     VideoProgress
-from urllib.parse import unquote
-
 import logging
 logger = logging.getLogger(__name__)
 
@@ -129,122 +128,6 @@ def logout_view(request):
 
 
 @login_required
-def modules_view(request):
-    student = get_object_or_404(Student, user=request.user)
-    topics = Topic.objects.all()
-
-    topic_data = []
-
-    for topic in topics:
-        # Get the latest progress for this topic
-        progress = Progress.objects.filter(student=student, current_topic=topic).order_by('-last_accessed').first()
-
-        if progress:
-            current_subtopic = progress.current_subtopic
-            next_subtopic = Subtopic.objects.filter(
-                topic=topic,
-                subtopic_order_number__gt=current_subtopic.subtopic_order_number
-            ).order_by('subtopic_order_number').first() if current_subtopic else None
-
-            if next_subtopic:
-                # Instead of updating, create a new progress entry for the new subtopic
-                new_progress = Progress.objects.create(
-                    student=student,
-                    current_topic=topic,
-                    current_subtopic=next_subtopic,
-                    next_subtopic=Subtopic.objects.filter(
-                        topic=topic,
-                        subtopic_order_number__gt=next_subtopic.subtopic_order_number
-                    ).order_by('subtopic_order_number').first(),
-                    module=VideoModule.objects.filter(topic=topic).first(),
-                    completion_status='in_progress',
-                    video_watched=False  # Reset for the new subtopic
-                )
-                topic_data.append({'topic': topic, 'subtopic': new_progress.current_subtopic})
-
-                # Now, insert records for each video in the next subtopic for this student
-                video_modules = VideoModule.objects.filter(topic=topic, subtopic=next_subtopic)
-                for video in video_modules:
-                    # Create a VideoProgress entry for each video
-                    video_progress, created = VideoProgress.objects.get_or_create(
-                        student=student,
-                        subtopic=next_subtopic,
-                        video=video,
-                        defaults={'watched': False, 'watched_at': None}
-                    )
-                    # Optionally log or print the creation of VideoProgress
-                    print(f"Created VideoProgress for student {student} - Subtopic: {next_subtopic} - Video: {video}")
-
-            else:
-                # If no next subtopic, mark topic as completed and move to next topic
-                progress.completion_status = 'completed'
-                progress.save()
-
-                next_topic = Topic.objects.filter(topic_id__gt=topic.topic_id).order_by('topic_id').first()
-                if next_topic:
-                    first_subtopic = Subtopic.objects.filter(topic=next_topic).order_by('subtopic_order_number').first()
-
-                    if first_subtopic:  # Ensure first_subtopic is not None before using it
-                        new_progress = Progress.objects.create(
-                            student=student,
-                            current_topic=next_topic,
-                            current_subtopic=first_subtopic,
-                            next_subtopic=None,
-                            module=VideoModule.objects.filter(topic=next_topic).first(),
-                            completion_status='not_started'
-                        )
-                        topic_data.append({'topic': next_topic, 'subtopic': new_progress.current_subtopic})
-
-                    # Check again if first_subtopic is valid before using it
-                    if first_subtopic:
-                        video_modules = VideoModule.objects.filter(topic=next_topic, subtopic=first_subtopic)
-                        for video in video_modules:
-                            video_progress, created = VideoProgress.objects.get_or_create(
-                                student=student,
-                                subtopic=first_subtopic,
-                                video=video,
-                                defaults={'watched': False, 'watched_at': None}
-                            )
-                            print(
-                                f"Created VideoProgress for student {student} - Subtopic: {first_subtopic} - Video: {video}")
-
-        else:
-            # If no progress exists for the student, start from the first subtopic
-            first_subtopic = Subtopic.objects.filter(topic=topic).order_by('subtopic_order_number').first()
-            if first_subtopic:
-                progress = Progress.objects.create(
-                    student=student,
-                    current_topic=topic,
-                    current_subtopic=first_subtopic,
-                    next_subtopic=Subtopic.objects.filter(topic=topic,
-                                                          subtopic_order_number__gt=first_subtopic.subtopic_order_number).order_by(
-                        'subtopic_order_number').first(),
-                    module=VideoModule.objects.filter(topic=topic).first(),
-                    completion_status='not_started'
-                )
-                # Insert VideoProgress records for videos in the first subtopic
-                video_modules = VideoModule.objects.filter(topic=topic, subtopic=first_subtopic)
-                for video in video_modules:
-                    video_progress, created = VideoProgress.objects.get_or_create(
-                        student=student,
-                        subtopic=first_subtopic,
-                        video=video,
-                        defaults={'watched': False, 'watched_at': None}
-                    )
-                    print(f"Created VideoProgress for student {student} - Subtopic: {first_subtopic} - Video: {video}")
-
-        topic_data.append({'topic': topic, 'subtopic': progress.current_subtopic})
-
-    context = {
-        'topic_data': topic_data,
-        'username': request.user.username,
-    }
-
-    return render(request, 'my_app/modules.html', context)
-
-
-
-@login_required
 def test_view(request, topic_id, subtopic_id):
     student = get_object_or_404(Student, user=request.user)
 
@@ -257,63 +140,30 @@ def test_view(request, topic_id, subtopic_id):
     if not module:
         return HttpResponse("No associated module found for this topic.", status=400)
 
-    # Check if the student has attempted the test for this subtopic
-    student_has_attempted_test = AssessmentResponse.objects.filter(
-        assessment__student=student,
-        question__subtopic=subtopic
-    ).exists()
-
-    # Fetch the student's progress for this subtopic
+    # Fetch the student's progress for this subtopic (record must already exist)
     student_progress = Progress.objects.filter(
         student=student,
-        module=module,
         current_subtopic=subtopic
-    ).first()  # Fetch the progress record without creating a new one.
+    ).first()
 
-    if student_progress:
-        # Check if all videos for this subtopic have been watched
-        total_videos = VideoModule.objects.filter(subtopic=subtopic).count()
-        watched_videos = VideoProgress.objects.filter(student=student, subtopic=subtopic, watched=True).count()
-
-        # If all videos are watched, update the Progress model's video_watched flag
-        if watched_videos == total_videos:
-            student_progress.video_watched = True
-
-        # Fetch the next subtopic based on order
-        next_subtopic = Subtopic.objects.filter(
-            topic=topic,
-            subtopic_order_number__gt=subtopic.subtopic_order_number
-        ).order_by('subtopic_order_number').first()
-
-        # Update progress fields
-        student_progress.current_topic = topic
-        student_progress.next_subtopic = next_subtopic
-        student_progress.completion_status = 'In Progress'
-        student_progress.save()
-    else:
-        # If no progress record exists (which should not happen if created in module_view), create a new one
-        next_subtopic = Subtopic.objects.filter(
-            topic=topic,
-            subtopic_order_number__gt=subtopic.subtopic_order_number
-        ).order_by('subtopic_order_number').first()
-
-        student_progress = Progress.objects.create(
-            student=student,
-            module=module,
-            current_subtopic=subtopic,
-            current_topic=topic,
-            video_watched=False,  # Set initially to False
-            next_subtopic=next_subtopic,
-            completion_status='In Progress'
-        )
+    if not student_progress:
+        return HttpResponse("Progress record not found. Ensure progress is created in the module view.", status=400)
 
     # Determine if video link should be loaded
     load_video_link = not student_progress.video_watched
 
+    # Determine assigned value based on video_watched and score_before
+    if student_progress.video_watched and student_progress.score_before is not None:
+        assigned_value = 1
+    else:
+        assigned_value = 0
+
+    questions = Question.objects.filter(topic=topic, assigned_at=assigned_value, subtopic=subtopic)
+
     context = {
         'topic': topic,
         'subtopic': subtopic,
-        'questions': Question.objects.filter(topic=topic, assigned_at=1 if student_progress.video_watched else 0, subtopic=subtopic),
+        'questions': questions,
         'username': request.user.username,
         'assigned_video': student_progress.video_watched,
         'load_video_link': load_video_link,  # Include this flag in the context
@@ -342,7 +192,7 @@ def submit_test(request, topic_id, subtopic_id):
             assessment = Assessment.objects.create(
                 student=student,
                 topic=topic,
-                date_taken=now()
+                date_taken=timezone.now()
             )
 
             correct_count = 0
@@ -384,6 +234,7 @@ def submit_test(request, topic_id, subtopic_id):
             if progress:
                 if assigned_at_0_count > 0:
                     progress.score_before = score
+                    progress.completion_status = "In Progress"
                 if assigned_at_1_count > 0:
                     progress.score_after = score
                     progress.completion_status = "Completed"
@@ -398,6 +249,107 @@ def submit_test(request, topic_id, subtopic_id):
             return JsonResponse({"error": str(e)}, status=400)
 
     return redirect("modules")  # Redirect if accessed incorrectly
+
+
+@login_required
+def modules_view(request):
+    student = get_object_or_404(Student, user=request.user)
+    topics = Topic.objects.all()
+    topic_data = []
+
+    for topic in topics:
+        # Get the latest progress for this topic
+        progress = Progress.objects.filter(student=student, current_topic=topic).order_by('-last_accessed').first()
+
+        if progress:
+            current_subtopic = progress.current_subtopic
+
+            # Check if the current subtopic is completed before creating progress for the next one
+            if progress.completion_status == 'Completed':
+                next_subtopic = Subtopic.objects.filter(
+                    topic=topic,
+                    subtopic_order_number__gt=current_subtopic.subtopic_order_number
+                ).order_by('subtopic_order_number').first() if current_subtopic else None
+
+                if next_subtopic:
+                    # Check if progress already exists for the next subtopic
+                    next_progress = Progress.objects.filter(
+                        student=student,
+                        current_topic=topic,
+                        current_subtopic=next_subtopic
+                    ).first()
+
+                    if not next_progress:
+                        # Create progress for the next subtopic
+                        new_progress = Progress.objects.create(
+                            student=student,
+                            current_topic=topic,
+                            current_subtopic=next_subtopic,
+                            next_subtopic=Subtopic.objects.filter(
+                                topic=topic,
+                                subtopic_order_number__gt=next_subtopic.subtopic_order_number
+                            ).order_by('subtopic_order_number').first(),
+                            module=VideoModule.objects.filter(subtopic=current_subtopic).first(),
+                            completion_status='not_started',
+                            video_watched=False
+                        )
+                        progress = new_progress  # Update reference to latest progress
+
+                    topic_data.append({'topic': topic, 'subtopic': progress.current_subtopic})
+
+                    # Insert records for each video in the next subtopic
+                    video_modules = VideoModule.objects.filter(topic=topic, subtopic=next_subtopic)
+                    for video in video_modules:
+                        VideoProgress.objects.get_or_create(
+                            student=student,
+                            subtopic=next_subtopic,
+                            video=video,
+                            defaults={'watched': False, 'watched_at': None}
+                        )
+
+                else:
+                    # If no next subtopic, mark topic as completed
+                    progress.completion_status = 'Completed'
+                    progress.save()
+
+            else:
+                # If current subtopic is not complete, do not create next subtopic progress
+                topic_data.append({'topic': topic, 'subtopic': progress.current_subtopic})
+
+        else:
+            # If no progress exists, start from the first subtopic
+            first_subtopic = Subtopic.objects.filter(topic=topic).order_by('subtopic_order_number').first()
+            if first_subtopic:
+                progress = Progress.objects.create(
+                    student=student,
+                    current_topic=topic,
+                    current_subtopic=first_subtopic,
+                    next_subtopic=Subtopic.objects.filter(
+                        topic=topic,
+                        subtopic_order_number__gt=first_subtopic.subtopic_order_number
+                    ).order_by('subtopic_order_number').first(),
+                    module=VideoModule.objects.filter(topic=topic).first(),
+                    completion_status='not_started'
+                )
+
+                # Insert VideoProgress records for videos in the first subtopic
+                video_modules = VideoModule.objects.filter(topic=topic, subtopic=first_subtopic)
+                for video in video_modules:
+                    VideoProgress.objects.get_or_create(
+                        student=student,
+                        subtopic=first_subtopic,
+                        video=video,
+                        defaults={'watched': False, 'watched_at': None}
+                    )
+
+            topic_data.append({'topic': topic, 'subtopic': progress.current_subtopic})
+
+    context = {
+        'topic_data': topic_data,
+        'username': request.user.username,
+    }
+
+    return render(request, 'my_app/modules.html', context)
 
 
 @login_required
@@ -465,14 +417,10 @@ def learning_video(request, topic_id, subtopic_id):
 
         # Get the logged-in student
         student = get_object_or_404(Student, user=request.user)
-        # print(f"Student retrieved: {student.student_id}")
 
         # Get topic and subtopic
         topic = get_object_or_404(Topic, topic_id=topic_id)
-        # print(f"Topic retrieved: {topic}")
-
         subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id, topic=topic)
-        # print(f"Subtopic retrieved: {subtopic}")
 
         # Fetch videos linked to the subtopic
         videos = VideoModule.objects.filter(subtopic=subtopic)
@@ -484,22 +432,16 @@ def learning_video(request, topic_id, subtopic_id):
         for video in videos:
             video_url = video.url
 
-            # Check if the URL is from YouTube and convert it for embedding
-            if "youtube.com/watch" in video_url:
-                video_url = video_url.replace("watch?v=", "embed/")
-            elif "sharepoint.com" in video_url or "onedrive.com" in video_url:
-                # print(f"Detected OneDrive/SharePoint video: {video_url}")
-                # OneDrive/SharePoint videos usually require an <iframe> or direct video tag
-                # The &resid= part might be needed for embedding
-                video_url = video_url  # No modification, ensure it's valid for embedding
+            # Convert Google Drive link to embeddable format
+            if "drive.google.com/file/d/" in video_url:
+                file_id = video_url.split('/d/')[1].split('/')[0]
+                video_url = f"https://drive.google.com/file/d/{file_id}/preview"
 
             video_data.append({
                 'id': video.video_module_id,
                 'title': video.title,
                 'url': video_url
             })
-
-        # print(f"Video data: {video_data}")
 
         # Pass student.id to the context
         context = {
@@ -515,6 +457,7 @@ def learning_video(request, topic_id, subtopic_id):
     except Exception as e:
         print("Error in learning_video:", e)
         return JsonResponse({"error": str(e)}, status=400)
+
 
 
 @login_required
@@ -619,33 +562,77 @@ def update_video_progress(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 
-def complete_video(request, subtopic_id, video_id):
+
+@login_required
+def complete_video(request):
+    print("Inside the complete_video")
     if request.method == 'POST':
-        print("Subtopic ID: ", subtopic_id)
-        print("Video ID: ", video_id)
-        student = request.user.student
-        subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id)
-        video = get_object_or_404(VideoModule, video_module_id=video_id, subtopic=subtopic)
+        try:
+            # Parse the JSON request data
+            data = json.loads(request.body)
+            video_id = data.get('video_id')
+            subtopic_id = data.get('subtopic_id')
 
-        # Get or create a VideoProgress entry
-        video_progress, created = VideoProgress.objects.get_or_create(
-            student=student, video=video)
+            print(f"DEBUG: Received Subtopic ID: {subtopic_id}, Video ID: {video_id}")
 
-        if not video_progress.watched:
-            video_progress.watched = True
-            video_progress.watched_at = timezone.now()
-            video_progress.save()
+            # Get the student object from the logged-in user
+            student = get_object_or_404(Student, user=request.user)
 
-            # Check if all videos for this subtopic are watched
-            videos = VideoModule.objects.filter(subtopic=subtopic)
-            all_videos_watched = all(vp.watched for vp in VideoProgress.objects.filter(student=student, video__in=videos))
+            # Get the subtopic and video
+            subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id)
+            video = get_object_or_404(VideoModule, video_module_id=video_id, subtopic=subtopic)
 
-            if all_videos_watched:
-                # Update the Progress model (main flag)
-                progress, created = student.progress_set.get_or_create(subtopic=subtopic)
-                progress.video_watched = True
-                progress.save()
+            # Try to get the VideoProgress entry; raise an exception if not found
+            try:
+                video_progress = VideoProgress.objects.get(
+                    student=student, video=video, subtopic=subtopic
+                )
+            except VideoProgress.DoesNotExist:
+                raise Exception(f"VideoProgress entry not found for student {student.id}, video {video.id}, subtopic {subtopic.id}")
 
-            return JsonResponse({"success": True})
-        else:
-            return JsonResponse({"success": False, "message": "Video already watched"})
+            # If the video hasn't been watched already, mark it as watched
+            if not video_progress.watched:
+                video_progress.watched = True
+                video_progress.watched_at = timezone.now()
+                video_progress.save()
+
+                # Check if all videos for this subtopic are watched
+                total_videos = VideoModule.objects.filter(subtopic=subtopic).count()
+                watched_videos = VideoProgress.objects.filter(
+                    student=student, subtopic=subtopic, watched=True
+                ).count()
+
+                if watched_videos == total_videos:
+                    progress = student.progress_set.filter(current_subtopic=subtopic).first()
+                    if progress:
+                        progress.video_watched = True
+                        progress.save()
+                        print(f"DEBUG: All videos watched for subtopic {subtopic_id}. Progress updated.")
+                    else:
+                        print(f"DEBUG: No progress record found for subtopic {subtopic_id} for student {student}.")
+
+                return JsonResponse({"success": True, "message": "Video marked as watched"})
+            else:
+                return JsonResponse({"success": False, "message": "Video already watched"})
+
+        except Exception as e:
+            print(f"Error in complete_video: {e}")
+            return JsonResponse({"success": False, "message": str(e)}, status=500)
+    else:
+        return JsonResponse({"success": False, "message": "Invalid request method"}, status=400)
+
+
+@login_required()
+def simulation_view(request):
+    # Define the path to the HTML file
+    simulation_path = os.path.join(settings.BASE_DIR,
+                                   'my_app/Simulations/System Design/states-of-matter-basics_en.html')
+
+    # Check if the file exists
+    if os.path.exists(simulation_path):
+        # Read the file content and return as an HttpResponse
+        with open(simulation_path, 'r', encoding='utf-8') as f:
+            simulation_content = f.read()
+        return HttpResponse(simulation_content)
+    else:
+        return HttpResponse("Simulation file not found.", status=404)

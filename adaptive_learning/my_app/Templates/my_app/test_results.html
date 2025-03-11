@@ -64,6 +64,21 @@
                 <p>No video available or you might have already watched the video for this subtopic at the moment.</p>
             {% endif %}
         </div>
+<!--        <div class="learning-section">-->
+<!--            {% if subtopic.subtopic_id == 1 %}-->
+<!--                &lt;!&ndash; Different link when subtopic_id is 1 &ndash;&gt;-->
+<!--                <h3>Expand your knowledge further!</h3>-->
+<!--                 <a href="{% url 'simulation' %}" class="simulation-button">Open Simulation</a>-->
+<!--            {% elif subtopic.subtopic_id != 1 and video_url %}-->
+<!--                &lt;!&ndash; Show Watch Video button when subtopic_id is not 4 &ndash;&gt;-->
+<!--                <h3>Missed a few questions? Watch the video module to improve!</h3>-->
+<!--                <a href="{% url 'learning_video' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="watch-video-button">-->
+<!--                    Watch Learning Video-->
+<!--                </a>-->
+<!--            {% else %}-->
+<!--                <p>No video available or you might have already watched the video for this subtopic.</p>-->
+<!--            {% endif %}-->
+<!--        </div>-->
     </div>
 
     <script src="{% static 'JS/testResults.js' %}"></script>

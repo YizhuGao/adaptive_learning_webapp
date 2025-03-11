@@ -34,25 +34,35 @@
     <h2>Watch the Video</h2>
     {% if video_data %}
         {% for video in video_data %}
-            <div class="video-player">
-                <!-- Embed the video using iframe (YouTube embedded) -->
-                <iframe width="560" height="315" src="{{ video.url }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-                <!-- Add a button to mark the video as watched -->
-                <button onclick="markVideoAsWatched('{{ video.id }}', '{{ subtopic_id }}')">
-                    Mark as Watched
-                </button>
-            </div>
+        <div class="video-container">
+            <iframe class="video-frame"
+                    width="560"
+                    height="315"
+                    src="{{ video.url }}"
+                    frameborder="0"
+                    allow="autoplay; fullscreen"
+                    allowfullscreen
+                    data-video-id="{{ video.id }}"
+                    data-subtopic-id="{{ subtopic_id }}"
+                    id="video-{{ video.id }}">
+            </iframe>
+            <button class="mark-watched-btn" data-video-id="{{ video.id }}" data-subtopic-id="{{ subtopic_id }}">
+                Mark as Watched
+            </button>
+        </div>
         {% endfor %}
     {% else %}
         <p>No video modules available for this subtopic.</p>
     {% endif %}
 </div>
 
-<!-- Include the YouTube IFrame API -->
-<!--<script src="https://www.youtube.com/iframe_api"></script>-->
-<!-- Include the video.js script -->
-<script src="{% static 'JS/video.js' %}?v=3"></script>
+<div class="test-navigation">
+    <p class="test-prompt">Finished watching videos?<br>Now test what you learned!</p>
+    <a href="{% url 'test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="start-btn">
+        Continue Test
+    </a>
+</div>
 
+<script src="{% static 'JS/video.js' %}?v=5"></script>
 </body>
 </html>

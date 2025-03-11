@@ -31,7 +31,7 @@ videos_data = [
     # },
     {
         "title": "The conductivity of temperature",
-        "url": "https://outlookuga-my.sharepoint.com/personal/yg94225_uga_edu/_layouts/15/stream.aspx?id=%2Fpersonal%2Fyg94225%5Fuga%5Fedu%2FDocuments%2FGrant%2F2024%20UGA%20Learning%20Technologies%20Grant%2FThermal%20Topic%2FLearning%20Videos%2FThermal%20Learning%20Videos%2FMisconception%2015%20the%20conductivity%20of%20temperature%2FMisconception%2015%20the%20conductivity%20of%20temperature%2Emp4&referrer=StreamWebApp%2EWeb&referrerScenario=AddressBarCopied%2Eview%2E3b842d6d%2D65c8%2D43c3%2Db5de%2D9a6231db1b27",
+        "url": "https://drive.google.com/file/d/1PuvHLyXVm_zTs0JnhltWQOr3xQWnUrx2/view?usp=sharing&t=5",
         "description": "Understanding different methods used to measure temperature.",
         "level": "Beginner",
         "topic_name": "Thermodynamics",
@@ -39,7 +39,7 @@ videos_data = [
     },
     {
         "title": "Water and oil",
-        "url": "https://outlookuga-my.sharepoint.com/:v:/r/personal/yg94225_uga_edu/Documents/Grant/2024%20UGA%20Learning%20Technologies%20Grant/Thermal%20Topic/Learning%20Videos/Thermal%20Learning%20Videos/Misconception%2018%20water%20and%20oil/Misconception%2018%20water%20and%20oil.mp4?csf=1&web=1&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=VwvaRW",
+        "url": "https://drive.google.com/file/d/1S8U3vBoJW0jfPV5COUEUih08JdSbMUh6/view?usp=sharing",
         "description": "Understanding different methods used to measure temperature.",
         "level": "Beginner",
         "topic_name": "Thermodynamics",
@@ -47,7 +47,7 @@ videos_data = [
     },
     {
         "title": "Temperature",
-        "url": "https://outlookuga-my.sharepoint.com/:v:/r/personal/yg94225_uga_edu/Documents/Grant/2024%20UGA%20Learning%20Technologies%20Grant/Thermal%20Topic/Learning%20Videos/Thermal%20Learning%20Videos/Misconception%204%20Temperature/Misconception%204%20Temperature.mp4?csf=1&web=1&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=Z01bLR",
+        "url": "https://drive.google.com/file/d/1LizRx2eG5PTeFijjTkBUlUhnie8AF00a/view?usp=sharing",
         "description": "Exploring how temperature relates to heat energy transfer.",
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
@@ -55,7 +55,7 @@ videos_data = [
     },
     {
         "title": "Cold and hot water to environment temperature",
-        "url": "https://outlookuga-my.sharepoint.com/:v:/r/personal/yg94225_uga_edu/Documents/Grant/2024%20UGA%20Learning%20Technologies%20Grant/Thermal%20Topic/Learning%20Videos/Thermal%20Learning%20Videos/Misconception%2013-cold%20and%20hot%20water%20to%20environment%20temperature/Misconception%2013-cold%20and%20hot%20water%20to%20environment%20temperature.mp4?csf=1&web=1&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=Gc3JG7",
+        "url": "https://drive.google.com/file/d/18W1I-ZywPaamQ4Snn5FTGW25zumBOHgT/view?usp=sharing",
         "description": "Exploring how temperature relates to heat energy transfer.",
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
@@ -63,7 +63,7 @@ videos_data = [
     },
     {
         "title": "Diffusion",
-        "url": "https://outlookuga-my.sharepoint.com/:v:/r/personal/yg94225_uga_edu/Documents/Grant/2024%20UGA%20Learning%20Technologies%20Grant/Thermal%20Topic/Learning%20Videos/Thermal%20Learning%20Videos/Misconception3%20Diffusion/Misconception3%20Diffusion.mp4?csf=1&web=1&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=AnLAXE",
+        "url": "https://drive.google.com/file/d/1JFU39GuGd-8yPd8xh1bZvD5yc6IVSabE/view?usp=sharing",
         "description": "Exploring how temperature relates to heat energy transfer.",
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
@@ -71,7 +71,7 @@ videos_data = [
     },
     {
         "title": "Ice",
-        "url": "https://outlookuga-my.sharepoint.com/:v:/r/personal/yg94225_uga_edu/Documents/Grant/2024%20UGA%20Learning%20Technologies%20Grant/Thermal%20Topic/Learning%20Videos/Thermal%20Learning%20Videos/Misconception%207-ice/Misconception%207-ice.mp4?csf=1&web=1&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=PxCwcn",
+        "url": "https://drive.google.com/file/d/1novvBfJJozY3qUhklDiF6o5uk6Fhh7FA/view?usp=sharing",
         "description": "Exploring how temperature relates to heat energy transfer.",
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
@@ -79,7 +79,7 @@ videos_data = [
     },
     {
         "title": "Melted ice",
-        "url": "https://outlookuga-my.sharepoint.com/:v:/r/personal/yg94225_uga_edu/Documents/Grant/2024%20UGA%20Learning%20Technologies%20Grant/Thermal%20Topic/Learning%20Videos/Thermal%20Learning%20Videos/Misconception%209%2012%2020%2021%20melted%20ice/Misconception%209%2012%2020%2021%20melted%20ice.mp4?csf=1&web=1&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=wy43E4",
+        "url": "https://drive.google.com/file/d/188pul86g6ibo42BVu5DPf6jp40SmusyM/view?usp=sharing",
         "description": "Exploring how temperature relates to heat energy transfer.",
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
@@ -87,7 +87,7 @@ videos_data = [
     },
     {
         "title": "Metal in cold and hot water",
-        "url": "https://outlookuga-my.sharepoint.com/:v:/r/personal/yg94225_uga_edu/Documents/Grant/2024%20UGA%20Learning%20Technologies%20Grant/Thermal%20Topic/Learning%20Videos/Thermal%20Learning%20Videos/Misconception%2012%2013%2017%2018-%20mental%20with%20cold%20and%20hot%20water/Misconception%2012%2013%2017%2018-%20mental%20with%20cold%20and%20hot%20water.mp4?csf=1&web=1&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=ij8uva",
+        "url": "https://drive.google.com/file/d/1LF91sc5gXto1taib3J_eHDXXPWmwk8V9/view?usp=sharing",
         "description": "Exploring how temperature relates to heat energy transfer.",
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
@@ -95,7 +95,7 @@ videos_data = [
     },
     {
         "title": "Boiled Water",
-        "url": "https://outlookuga-my.sharepoint.com/:v:/r/personal/yg94225_uga_edu/Documents/Grant/2024%20UGA%20Learning%20Technologies%20Grant/Thermal%20Topic/Learning%20Videos/Thermal%20Learning%20Videos/Misconception%205%209%2019%2022%20Boiled%20water/M5%209%2019%2022%20Boiled%20Water.mp4?csf=1&web=1&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=nakOWy",
+        "url": "https://drive.google.com/file/d/1CF0mejUwK9gWLrPUwDvuitwT9sI77TAv/view?usp=sharing",
         "description": "Exploring how temperature relates to heat energy transfer.",
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
@@ -103,7 +103,7 @@ videos_data = [
     },
     {
         "title": "Cold and hot water",
-        "url": "https://outlookuga-my.sharepoint.com/:v:/r/personal/yg94225_uga_edu/Documents/Grant/2024%20UGA%20Learning%20Technologies%20Grant/Thermal%20Topic/Learning%20Videos/Thermal%20Learning%20Videos/Misconception%208%20cold%20and%20hot%20water/Misconception%208%20cold%20and%20hot%20water.mp4?csf=1&web=1&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=5jbJxc",
+        "url": "https://drive.google.com/file/d/18pE3I4WUkfoNiIAniM24ySczuSLsQjrh/view?usp=sharing",
         "description": "Exploring how temperature relates to heat energy transfer.",
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
@@ -111,7 +111,7 @@ videos_data = [
     },
     {
         "title": "Vaportation",
-        "url": "https://outlookuga-my.sharepoint.com/:v:/r/personal/yg94225_uga_edu/Documents/Grant/2024%20UGA%20Learning%20Technologies%20Grant/Thermal%20Topic/Learning%20Videos/Thermal%20Learning%20Videos/Misconception%2023%20vaportation/Misconception%2023%20vaportation.mp4?csf=1&web=1&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=cBUv49",
+        "url": "https://drive.google.com/file/d/11tPM8yK4Lfs8ukfa92bt5b5BCxBnYWm-/view?usp=sharing",
         "description": "Exploring how temperature relates to heat energy transfer.",
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
