@@ -258,6 +258,14 @@ def modules_view(request):
     topic_data = []
 
     for topic in topics:
+
+        # Get all completed subtopics for this student and topic
+        completed_subtopics = list(Progress.objects.filter(
+            student=student,
+            current_topic=topic,
+            completion_status='Completed'
+        ).values_list('current_subtopic__subtopic_name', flat=True))
+
         # Get the latest progress for this topic
         progress = Progress.objects.filter(student=student, current_topic=topic).order_by('-last_accessed').first()
 
@@ -342,11 +350,15 @@ def modules_view(request):
                         defaults={'watched': False, 'watched_at': None}
                     )
 
-            topic_data.append({'topic': topic, 'subtopic': progress.current_subtopic})
+            topic_data.append({
+                'topic': topic,
+                'subtopic': progress.current_subtopic
+            })
 
     context = {
         'topic_data': topic_data,
         'username': request.user.username,
+        'completed_subtopics' : completed_subtopics
     }
 
     return render(request, 'my_app/modules.html', context)
