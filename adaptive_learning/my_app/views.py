@@ -360,6 +360,7 @@ def modules_view(request):
         'username': request.user.username,
         'completed_subtopics' : completed_subtopics
     }
+    print("Context - ", context)
 
     return render(request, 'my_app/modules.html', context)
 
