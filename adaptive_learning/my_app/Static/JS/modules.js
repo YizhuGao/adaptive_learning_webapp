@@ -1,17 +1,21 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const welcomeText = document.querySelector(".welcome-text");
+document.addEventListener('DOMContentLoaded', () => {
+    // Handle flashcard flip effect
+    const flashcards = document.querySelectorAll('.flashcard');
 
-    // Function to update the greeting message based on the time of day
-    function updateTime() {
-        const now = new Date();
-        const hours = now.getHours();
-        const greeting = hours < 12 ? "Good Morning" : hours < 18 ? "Good Afternoon" : "Good Evening";
+    flashcards.forEach(card => {
+        card.addEventListener('click', () => {
+            flashcards.forEach(item => {
+                if (item !== card) item.classList.remove('flip');
+            });
+            card.classList.toggle('flip');
+        });
+    });
 
-        // Update the greeting with the username
-        welcomeText.textContent = `${greeting}, ${welcomeText.textContent.split(",")[1]}`;
-    }
-
-    // Initial call to update greeting message
-    updateTime();
-    setInterval(updateTime, 60000);
+    // Highlight active navbar link
+    const navLinks = document.querySelectorAll('.navbar .right a');
+    navLinks.forEach(link => {
+        if (link.href === window.location.href) {
+            link.classList.add('active');
+        }
+    });
 });

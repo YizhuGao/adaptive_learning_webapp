@@ -7,91 +7,93 @@
 
 body {
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(to right, #36D1DC, #5B86E5);
-    color: white;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
+    background-color: #ffffff;
+    color: #333;
 }
 
-/* Navbar */
+/* Navbar Styles */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    padding: 15px 30px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    background-color: #000;
+    padding: 15px 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 10;
+    z-index: 1000;
 }
 
-.navbar .left .welcome-text {
-    font-size: 1.2rem;
-    color: #f1f1f1;
+.navbar .left {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #9e1b32;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.navbar .right {
+    display: flex;
+    gap: 20px;
 }
 
 .navbar .right a {
     color: white;
     text-decoration: none;
-    margin: 0 20px;
-    padding: 10px 20px;
     font-size: 1.1rem;
     font-weight: bold;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    padding: 8px 16px;
+    border-radius: 5px;
     transition: all 0.3s ease;
 }
 
 .navbar .right a:hover {
-    background-color: #575757;
-    border-radius: 5px;
-    transform: scale(1.05);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    background-color: #9e1b32;
+    color: #fff;
+    transform: translateY(-2px);
 }
 
-.navbar .right a i {
-    margin-right: 8px;
+.navbar .right a.active {
+    background-color: #9e1b32;
 }
 
 /* Modules Section */
 .modules-section {
-    text-align: center;
-    padding: 120px 20px 40px;
-    max-width: 800px;
+    padding: 100px 20px 40px;
     width: 100%;
+    text-align: center;
 }
 
-.modules-section h1 {
-    font-size: 2.5rem;
+h1 {
+    font-size: 2.8rem;
+    color: #9e1b32;
+    font-weight: bold;
     margin-bottom: 20px;
-    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
 }
 
-.modules-section p {
+p {
     font-size: 1.2rem;
-    color: #f1f1f1;
+    color: #555;
     margin-bottom: 30px;
+    line-height: 1.6;
 }
 
-/* Flashcards Grid */
+/* Flashcard Container */
 .module-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    justify-content: center;
-    padding: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    justify-items: center;
 }
 
 /* Flashcard Styles */
 .flashcard {
-    width: 250px;
-    height: 150px;
+    width: 100%;
+    max-width: 320px;
+    height: 260px;
     perspective: 1000px;
 }
 
@@ -99,55 +101,218 @@ body {
     width: 100%;
     height: 100%;
     position: relative;
-    transition: transform 0.6s;
     transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+    border-radius: 12px;
 }
 
-.flashcard:hover .flashcard-inner {
+/* Flip Effect */
+.flashcard.flip .flashcard-inner {
     transform: rotateY(180deg);
 }
 
+/* Front and Back Design */
 .flashcard-front,
 .flashcard-back {
     width: 100%;
     height: 100%;
     position: absolute;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
     backface-visibility: hidden;
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: bold;
-}
-
-.flashcard-front {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    backdrop-filter: blur(12px);
-}
-
-.flashcard-back {
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    transform: rotateY(180deg);
+    padding: 20px;
+    display: flex;
     flex-direction: column;
+    justify-content: center;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.start-btn {
-    margin-top: 10px;
-    padding: 8px 15px;
-    background: #ffcc00;
-    color: black;
+/* Front Side */
+.flashcard-front {
+    background-color: #ffffff;
+    border: 3px solid #9e1b32;
+    color: #9e1b32;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.flashcard-front h2 {
+    font-size: 1.5rem;
     font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.flashcard-front:hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+/* Back Side */
+.flashcard-back {
+    background-color: #fff9d8; /* Background colour of Flashcard */
+    color: #333;
+    transform: rotateY(180deg);
+    border: 3px solid #9e1b32;
+}
+
+/* Flashcard Content Styling */
+.flashcard-back h3 {
+    font-size: 1.3rem;
+    color: #000;   /* used for " CURRENT LEARNING" on Flashcard  */
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.flashcard-back ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 12px;
+}
+
+.flashcard-back ul li {
+    font-size: 1.1rem;
+    color: #000000;
+    padding: 4px 0;
+    transition: color 0.3s ease;
+}
+
+/* Alternating Colors for List Items */
+.flashcard-back ul li:nth-child(odd) {
+    color: #9e1b32;
+}
+
+.flashcard-back ul li:nth-child(even) {
+    color: #7a141d;
+}
+
+/* Start Button */
+.start-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #9e1b32;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 6px;
     text-decoration: none;
-    border-radius: 5px;
     transition: all 0.3s ease;
 }
 
 .start-btn:hover {
-    background: #e6b800;
+    background-color: #7a141d;
     transform: scale(1.05);
+}
+
+
+/* Completed Topics Container */
+.completed-topics {
+    background-color: #f9f9f9;
+    border: 2px solid #9e1b32; /* UGA Red border */
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+    transition: transform 0.3s ease;
+}
+
+/* Hover effect to lift the container */
+.completed-topics:hover {
+    transform: translateY(-4px);
+}
+
+/* Heading Styling */
+.completed-topics h3 {
+    font-size: 1.5rem;
+    color: #9e1b32; /* UGA Red */
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #9e1b32;
+    padding-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+/* List Container */
+.completed-topics ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Individual List Item Styling */
+.completed-topics ul li {
+    font-size: 1.2rem;
+    background-color: #fdfdfd;
+    color: #2e1801;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    border-left: 4px solid #9e1b32; /* UGA Red accent */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Alternating Colors for List Items */
+.completed-topics ul li:nth-child(odd) {
+    background-color: #f8f8f8;
+}
+
+.completed-topics ul li:nth-child(even) {
+    background-color: #f0f0f0;
+}
+
+/* Icon for Subtopics (Optional) */
+.completed-topics ul li::before {
+    content: '✓'; /* Checkmark symbol */
+    color: #057945;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+
+/* Hover Effect */
+.completed-topics ul li:hover {
+    background-color: #f0f0f0;
+    border-left-color: #057945; /* Change accent color on hover */
+    transform: translateX(6px);
+    color: #9e1b32;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 12px 20px;
+    }
+
+    .navbar .left {
+        font-size: 1.2rem;
+    }
+
+    .navbar .right a {
+        font-size: 0.9rem;
+        padding: 6px 10px;
+    }
+
+    h1 {
+        font-size: 2.2rem;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+
+    .flashcard {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .completed-topics {
+        padding: 12px;
+    }
+}
+
+/* Smooth Transition for Better Feel */
+html {
+    scroll-behavior: smooth;
 }

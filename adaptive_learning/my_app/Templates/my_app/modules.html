@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modules - Adaptive Physics Learning</title>
-    <link rel="stylesheet" href="{% static 'CSS/modules.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/modules.css' %}?v=3">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
@@ -25,31 +25,48 @@
     <section class="modules-section">
         <h1>Available Assessment Topics</h1>
         <p>Select a topic below to start your assessment.</p>
+
         <div class="module-grid">
-{% for item in topic_data %}
-    <div class="flashcard">
-        <div class="flashcard-inner">
-            <div class="flashcard-front">
-                <h2>{{ item.topic.topic_name }}</h2>
+            {% for item in topic_data %}
+            <!-- Flashcard -->
+            <div class="flashcard">
+                <div class="flashcard-inner">
+                    <!-- Front Side -->
+                    <div class="flashcard-front">
+                        <h2>{{ item.topic.topic_name }}</h2>
+                    </div>
+                    <!-- Back Side -->
+                    <div class="flashcard-back">
+                        <h3>Currently Learning:</h3>
+                        <ul>
+                            {% if item.subtopic %}
+                                <li>{{ item.subtopic.subtopic_name }}</li>
+                            {% else %}
+                                <li>No subtopics available</li>
+                            {% endif %}
+                        </ul>
+                        {% if item.subtopic %}
+                            <a href="{% url 'test' topic_id=item.topic.topic_id subtopic_id=item.subtopic.subtopic_id %}" class="start-btn">Continue Test</a>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-            <div class="flashcard-back">
-                <h3>Currently Learning:</h3>
+
+            <!-- Completed Subtopics Section -->
+            {% if item.completed_subtopics %}
+            <div class="completed-topics">
+                <h3>Completed Subtopics of "{{ item.topic.topic_name }}"</h3>
                 <ul>
-                    <li>{{ item.subtopic.subtopic_name }}</li>  <!-- Show only the assigned subtopic -->
+                    {% for subtopic in item.completed_subtopics %}
+                        <li>{{ subtopic }}</li>
+                    {% endfor %}
                 </ul>
-                <p>Click below to continue your test on {{ item.topic.topic_name }}.</p>
-                {% if item.subtopic %}
-                    <a href="{% url 'test' topic_id=item.topic.topic_id subtopic_id=item.subtopic.subtopic_id %}" class="start-btn">Continue Test</a>
-                {% else %}
-                    <p>No subtopics available.</p>
-                {% endif %}
             </div>
-        </div>
-    </div>
-{% endfor %}
+            {% endif %}
+            {% endfor %}
         </div>
     </section>
 
-    <script src="{% static 'JS/modules.js' %}"></script>
+    <script src="{% static 'JS/modules.js' %}?v=3"></script>
 </body>
 </html>
