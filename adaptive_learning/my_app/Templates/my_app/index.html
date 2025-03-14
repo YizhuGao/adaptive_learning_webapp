@@ -5,24 +5,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adaptive Physics Learning</title>
-    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'CSS/styles.css' %}?v=4">
 </head>
 <body>
     <!-- Navigation -->
-    <nav>
-        <a href="#" class="logo">AdaptivePhysics</a>
-        <div class="nav-links">
-            <a href="#home">Home</a>
-            <a href="#about">About</a>
-            <a href="#modules">Modules</a>
-            <a href="{% url 'login' %}" class="login-btn">LOGIN</a>
-        </div>
-        <div class="mobile-menu-btn">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </nav>
+    <!-- Navigation -->
+<nav>
+    <a href="#" class="logo">Adaptive Physics</a>
+    <div class="nav-links">
+        <a href="#home" class="nav-link">
+            <i class="fas fa-home"></i> Home
+        </a>
+        <a href="#about" class="nav-link">
+            <i class="fas fa-info-circle"></i> About
+        </a>
+        <a href="#modules" class="nav-link">
+            <i class="fas fa-book-open"></i> Modules
+        </a>
+        <a href="{% url 'login' %}" class="login-btn">
+            <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <div class="mobile-menu-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <a href="#home" class="mobile-link">
+            <i class="fas fa-home"></i> Home
+        </a>
+        <a href="#about" class="mobile-link">
+            <i class="fas fa-info-circle"></i> About
+        </a>
+        <a href="#modules" class="mobile-link">
+            <i class="fas fa-book-open"></i> Modules
+        </a>
+        <a href="{% url 'login' %}" class="mobile-link">
+            <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+    </div>
+</nav>
 
     <!-- Hero Section -->
     <section class="hero" id="home">

@@ -54,8 +54,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add scroll-based animations for nav
     let lastScroll = 0;
+    const nav = document.querySelector('nav');
     window.addEventListener('scroll', () => {
-        const nav = document.querySelector('nav');
         const currentScroll = window.pageYOffset;
 
         if (currentScroll <= 0) {
@@ -73,5 +73,42 @@ document.addEventListener('DOMContentLoaded', () => {
             nav.classList.add('scroll-up');
         }
         lastScroll = currentScroll;
+    });
+
+    // ✅ Mobile Menu Toggle ✅
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const mobileMenu = document.querySelector('.mobile-menu');
+
+    if (mobileMenuBtn && mobileMenu) {
+        // Open/Close mobile menu
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking outside
+        window.addEventListener('click', (e) => {
+            if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+    }
+
+    // ✅ Navbar Link Hover Animation ✅
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('mouseenter', () => {
+            const icon = link.querySelector('i');
+            if (icon) {
+                icon.style.transform = 'translateY(-3px)';
+                icon.style.transition = 'transform 0.2s ease';
+            }
+        });
+
+        link.addEventListener('mouseleave', () => {
+            const icon = link.querySelector('i');
+            if (icon) {
+                icon.style.transform = 'translateY(0)';
+            }
+        });
     });
 });

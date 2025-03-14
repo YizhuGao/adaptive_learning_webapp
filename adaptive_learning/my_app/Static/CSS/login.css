@@ -155,10 +155,10 @@
 /* Submit Button */
 .submit-btn {
     width: 100%;
-    padding: 14px;
+    padding: 12px;
     background: #9e1b32; /* UGA Red */
     color: white;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -169,7 +169,6 @@
 .submit-btn:hover {
     background: #7a141d; /* Darker UGA Red */
     transform: scale(1.05);
-    box-shadow: 0 4px 10px rgba(230, 74, 25, 0.3);
 }
 
 /* Link Styles */
@@ -214,5 +213,75 @@
 
     .login-nav {
         padding: 1rem 1.5rem;
+    }
+}
+
+/* Password Container */
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+/* Button Styling (Password Block Button) */
+.password-container .submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: #9e1b32; /* UGA Red */
+    color: white;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.password-container .submit-btn:hover {
+    background: #7a141d; /* Darker UGA Red */
+    transform: scale(1.05);
+}
+
+/* Eye Icon Styling (for password field) */
+.eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 1.5rem;
+    color: #555;
+}
+
+.eye-icon:hover {
+    color: #9e1b32; /* UGA Red */
+}
+
+/* Styling for message box (if needed) */
+.message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ff4d4d;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    text-align: center;
+    max-width: 80%;
+    animation: fadeInMessage 0.5s ease-in-out;
+}
+
+/* Fade-in animation for the message */
+@keyframes fadeInMessage {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
     }
 }

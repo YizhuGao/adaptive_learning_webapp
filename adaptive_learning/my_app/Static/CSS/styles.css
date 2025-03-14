@@ -6,54 +6,144 @@
     font-family: 'Georgia', serif; /* UGA font style */
 }
 
-/* Navigation Styles */
+/* Navigation Styles ----------------------------------------------------------------------------------------------------------------------------------NAVBAR*/
 nav {
     position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    padding: 1.5rem 2rem;
+    background-color: #9B1B30; /* UGA Red */
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #9B1B30; /* UGA Red */
-    z-index: 100;
-    transition: box-shadow 0.3s ease;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* Logo */
 .logo {
     font-size: 1.8rem;
     font-weight: bold;
     color: #FFFFFF;
     text-decoration: none;
     font-family: 'Georgia', serif;
+    text-transform: uppercase;
 }
 
+/* Navbar Links */
 .nav-links {
     display: flex;
-    gap: 2rem;
     align-items: center;
+    gap: 1.5rem;
 }
 
-.nav-links a {
-    text-decoration: none;
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
     color: #FFFFFF;
+    text-decoration: none;
     font-weight: 500;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.nav-link i {
+    font-size: 1.2rem;
+    color: #FFD700; /* UGA Gold */
     transition: color 0.3s ease;
 }
 
-.nav-links a:hover {
-    color: #FFD700; /* UGA Gold */
+.nav-link:hover {
+    color: #FFD700;
+    transform: translateY(-2px);
 }
 
+/* Login Button */
 .login-btn {
     padding: 0.5rem 1.5rem;
     border: 2px solid #FFFFFF;
-    border-radius: 4px;
-    transition: all 0.3s ease;
+    color: #FFFFFF;
+    background-color: transparent;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.login-btn i {
+    font-size: 1.2rem;
 }
 
 .login-btn:hover {
-    background: #FFFFFF;
+    background-color: #FFFFFF;
     color: #9B1B30;
+}
+
+/* Mobile Menu Button */
+.mobile-menu-btn {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.mobile-menu-btn span {
+    width: 28px;
+    height: 3px;
+    background-color: #FFFFFF;
+    transition: transform 0.3s ease;
+}
+
+/* Mobile Menu */
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 70%;
+    height: 100vh;
+    background-color: #F4F4F4;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    transition: right 0.3s ease;
+    z-index: 999;
+}
+
+.mobile-menu.active {
+    right: 0;
+}
+
+.mobile-link {
+    color: #9B1B30;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.mobile-link:hover {
+    color: #FFD700;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+
+    .mobile-menu-btn {
+        display: flex;
+    }
+
+    .nav-link i {
+        font-size: 1rem;
+    }
 }
 /* Hero Section Styles */
 /* Hero Section Styles */

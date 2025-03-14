@@ -73,3 +73,14 @@ window.addEventListener('resize', () => {
         navbar.style.padding = '1rem 3rem'; // Reset padding for larger screens
     }
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const passwordInput = document.querySelector('input[name="password"]');
+    const togglePassword = document.querySelector('#toggle-password');
+
+    togglePassword.addEventListener('click', () => {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        togglePassword.innerHTML = type === 'password' ? '👁️' : '🙈';
+    });
+});

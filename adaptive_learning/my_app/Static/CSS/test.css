@@ -7,47 +7,56 @@
 
 body {
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(to right, #56CCF2, #2F80ED);
-    color: white;
+    background-color: #ffffff;
+    color: #333;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-/* Navbar */
+/* Navbar Styles */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    background-color: #000;
     padding: 15px 30px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     position: fixed;
     top: 0;
     left: 0;
     z-index: 10;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
 .navbar .left .welcome-text {
     font-size: 1.2rem;
-    color: #f1f1f1;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.navbar .right {
+    display: flex;
+    gap: 20px;
 }
 
 .navbar .right a {
     color: white;
     text-decoration: none;
-    margin: 0 15px;
-    padding: 10px 15px;
-    font-size: 1rem;
+    padding: 10px 20px;
+    font-size: 1.1rem;
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 1px;
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .navbar .right a:hover {
-    background-color: #575757;
+    background-color: #9e1b32;
     border-radius: 5px;
     transform: scale(1.05);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
@@ -60,73 +69,75 @@ body {
     max-width: 800px;
     text-align: center;
     padding: 30px;
-    background: rgba(255, 255, 255, 0.1);
+    background-color: #fafafa;
     border-radius: 12px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
-.test-container h1 {
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-.test-container p {
-    font-size: 1.2rem;
-    color: #f1f1f1;
-    margin-bottom: 20px;
-}
-
-/* Progress Bar */
+/* Progress Bar (Moved Below Text) */
 .progress-bar {
     width: 100%;
-    height: 10px;
-    background-color: #ddd;
-    margin-bottom: 20px;
-    border-radius: 5px;
+    height: 12px;
+    background-color: #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
 }
 
 .progress {
     width: 0;
     height: 100%;
-    background-color: #4CAF50;
-    border-radius: 5px;
+    background: linear-gradient(90deg, #9e1b32, #7a141d);
+    border-radius: 8px;
+    transition: width 0.4s ease-in-out;
 }
 
-/* Question Card */
+/* Questions Section */
+.questions-container {
+    margin-top: 20px; /* Space between progress bar and questions */
+    height: 450px;
+    overflow-y: auto;
+    padding-right: 10px;
+    border-top: 2px solid #ddd;
+}
+
 .question-card {
-    background: rgba(0, 0, 0, 0.6);
+    background-color: #ffffff;
     padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 2px solid #9e1b32;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
     transition: transform 0.3s ease;
 }
 
 .question-card:hover {
-    transform: scale(1.02);
+    transform: translateY(-4px);
 }
 
 /* Question Text */
 .question-text {
     font-size: 1.2rem;
     margin-bottom: 10px;
+    color: #333;
 }
 
 /* Options */
 .options {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 .option {
+    background-color: #f8f8f8;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 10px;
-    border-radius: 5px;
-    transition: background 0.3s ease, transform 0.2s;
+    gap: 10px;
+    transition: background-color 0.3s ease;
 }
 
 .option input {
@@ -134,26 +145,27 @@ body {
 }
 
 .option:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.02);
+    background-color: #f0f0f0;
+    cursor: pointer;
 }
 
 /* Submit Button */
 .submit-btn {
     margin-top: 20px;
-    padding: 12px 20px;
-    background: #ffcc00;
-    color: black;
-    font-weight: bold;
-    font-size: 1rem;
+    padding: 14px 24px;
+    background-color: #9e1b32;
+    color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
     cursor: pointer;
-    transition: all 0.3s ease;
 }
 
 .submit-btn:hover {
-    background: #e6b800;
+    background-color: #7a141d;
     transform: scale(1.05);
 }
 
@@ -162,13 +174,59 @@ body {
     margin-top: 20px;
     font-size: 1.2rem;
     color: #4CAF50;
-    font-weight: bold;
 }
 
-/* Motivational Message */
-.motivational-message {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #ffcc00;
-    text-transform: uppercase;
+/* Scrollbar Styling */
+.questions-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.questions-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.questions-container::-webkit-scrollbar-thumb {
+    background: #9e1b32;
+    border-radius: 10px;
+}
+
+.questions-container::-webkit-scrollbar-thumb:hover {
+    background: #7a141d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 12px 20px;
+    }
+
+    .navbar .right a {
+        font-size: 1rem;
+        padding: 8px 12px;
+    }
+
+    .test-container {
+        padding: 20px;
+    }
+
+    .questions-container {
+        height: 400px;
+    }
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

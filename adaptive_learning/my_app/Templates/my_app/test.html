@@ -6,54 +6,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ topic.topic_name }} - {{ subtopic.subtopic_name }} Test</title>
     <link rel="stylesheet" href="{% static 'CSS/test.css' %}">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-        <div class="left">
-            <span class="welcome-text">Best Of Luck , {{ username }}</span>
-        </div>
-        <div class="right">
-            <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
-            <a href="{% url 'modules' %}" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Modules</a>
-            <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
-        </div>
-    </nav>
 
-    <!-- Test Container -->
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="left">
+        <span class="welcome-text">Best Of Luck, {{ username }}</span>
+    </div>
+    <div class="right">
+        <a href="{% url 'home' %}" class="nav-link">
+            <i class="fas fa-home"></i> Home
+        </a>
+        <a href="{% url 'modules' %}" class="nav-link">
+            <i class="fas fa-arrow-left"></i> Back to Modules
+        </a>
+        <a href="{% url 'logout' %}" class="nav-link">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
+</nav>
+
+<!-- Test Container -->
+{% comment %} <div class="test-container">
+    <h1>{{ topic.topic_name }} - {{ subtopic.subtopic_name }} Test</h1>
+    <p>Answer the following questions carefully:</p>
+
+    <!-- Fixed Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+
+    <!-- Questions Section -->
+    <form method="POST" action="{% url 'submit_test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}">
+        {% csrf_token %}
+        <div class="questions-container">
+            {% for question in questions %}
+            <div class="question-card">
+                <p class="question-text"><strong>{{ question.question_text }}</strong></p>
+
+                <div class="options">
+                    {% for option in question.options.all %}
+                    <label class="option">
+                        <input type="radio" name="question_{{ question.pk }}" value="{{ option.pk }}">
+                        {{ option.option_text }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <button type="submit" class="submit-btn">Submit Test</button>
+    </form> {% endcomment %}
     <div class="test-container">
         <h1>{{ topic.topic_name }} - {{ subtopic.subtopic_name }} Test</h1>
         <p>Answer the following questions carefully:</p>
-
+    
+        <!-- Moved Progress Bar Here -->
         <div class="progress-bar">
             <div class="progress" id="progress"></div>
         </div>
-
+    
         <form method="POST" action="{% url 'submit_test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}">
             {% csrf_token %}
-            <div id="questions-container">
+            <div class="questions-container">
                 {% for question in questions %}
-                    <div class="question-card">
-                        <p class="question-text"><strong>{{ question.question_text }}</strong></p>
-
-                        <div class="options">
-                            {% for option in question.options.all %}
-                                <label class="option">
-                                    <input type="radio" name="question_{{ question.pk }}" value="{{ option.pk }}">
-                                    {{ option.option_text }}
-                                </label>
-                            {% endfor %}
-                        </div>
+                <div class="question-card">
+                    <p class="question-text"><strong>{{ question.question_text }}</strong></p>
+    
+                    <div class="options">
+                        {% for option in question.options.all %}
+                        <label class="option">
+                            <input type="radio" name="question_{{ question.pk }}" value="{{ option.pk }}">
+                            {{ option.option_text }}
+                        </label>
+                        {% endfor %}
                     </div>
+                </div>
                 {% endfor %}
             </div>
-
+    
             <button type="submit" class="submit-btn">Submit Test</button>
         </form>
-
-        <div id="feedback"></div>
     </div>
+    
 
-    <script src="{% static 'JS/test.js' %}"></script>
+    <div id="feedback"></div>
+</div>
+
+<script src="{% static 'JS/test.js' %}?v=3"></script>
+
 </body>
 </html>
