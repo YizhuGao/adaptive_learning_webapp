@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ topic.topic_name }} - {{ subtopic.subtopic_name }} Test</title>
-    <link rel="stylesheet" href="{% static 'CSS/test.css' %}?v=4">
+    <link rel="stylesheet" href="{% static 'CSS/test.css' %}?v=2">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -43,7 +43,7 @@
         <div class="questions-container">
             {% for question in questions %}
             <div class="question-card">
-                <p class="question-text"><strong>{{ question.question_text }}</strong></p>
+                <center><p class="question-text"><strong>{{ question.question_text }}</strong></p></center>
                 <div class="options">
                     {% for option in question.options.all %}
                     <label class="option">
@@ -62,7 +62,7 @@
             <button type="button" id="next-btn" class="nav-btn">Next</button>
         </div>
 
-        <button type="submit" class="submit-btn">Submit Test</button>
+       <center> <button type="submit" class="submit-btn">Submit Test</button></center>
     </form>
 </div>
 
