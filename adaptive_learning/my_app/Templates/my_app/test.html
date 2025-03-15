@@ -2,10 +2,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ topic.topic_name }} - {{ subtopic.subtopic_name }} Test</title>
-    <link rel="stylesheet" href="{% static 'CSS/test.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/test.css' %}?v=4">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -29,23 +29,21 @@
 </nav>
 
 <!-- Test Container -->
-{% comment %} <div class="test-container">
+<div class="test-container">
     <h1>{{ topic.topic_name }} - {{ subtopic.subtopic_name }} Test</h1>
     <p>Answer the following questions carefully:</p>
 
-    <!-- Fixed Progress Bar -->
+    <!-- Progress Bar -->
     <div class="progress-bar">
         <div class="progress" id="progress"></div>
     </div>
 
-    <!-- Questions Section -->
     <form method="POST" action="{% url 'submit_test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}">
         {% csrf_token %}
         <div class="questions-container">
             {% for question in questions %}
             <div class="question-card">
                 <p class="question-text"><strong>{{ question.question_text }}</strong></p>
-
                 <div class="options">
                     {% for option in question.options.all %}
                     <label class="option">
@@ -58,45 +56,20 @@
             {% endfor %}
         </div>
 
-        <button type="submit" class="submit-btn">Submit Test</button>
-    </form> {% endcomment %}
-    <div class="test-container">
-        <h1>{{ topic.topic_name }} - {{ subtopic.subtopic_name }} Test</h1>
-        <p>Answer the following questions carefully:</p>
-    
-        <!-- Moved Progress Bar Here -->
-        <div class="progress-bar">
-            <div class="progress" id="progress"></div>
+        <!-- Navigation Buttons -->
+        <div class="nav-buttons">
+            <button type="button" id="prev-btn" class="nav-btn">Previous</button>
+            <button type="button" id="next-btn" class="nav-btn">Next</button>
         </div>
-    
-        <form method="POST" action="{% url 'submit_test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}">
-            {% csrf_token %}
-            <div class="questions-container">
-                {% for question in questions %}
-                <div class="question-card">
-                    <p class="question-text"><strong>{{ question.question_text }}</strong></p>
-    
-                    <div class="options">
-                        {% for option in question.options.all %}
-                        <label class="option">
-                            <input type="radio" name="question_{{ question.pk }}" value="{{ option.pk }}">
-                            {{ option.option_text }}
-                        </label>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-    
-            <button type="submit" class="submit-btn">Submit Test</button>
-        </form>
-    </div>
-    
 
-    <div id="feedback"></div>
+        <button type="submit" class="submit-btn">Submit Test</button>
+    </form>
 </div>
 
-<script src="{% static 'JS/test.js' %}?v=3"></script>
+<!-- Feedback Section -->
+<div id="feedback"></div>
+
+<script src="{% static 'JS/test.js' %}?v=4"></script>
 
 </body>
 </html>

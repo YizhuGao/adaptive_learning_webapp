@@ -7,11 +7,14 @@
 
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #ffffff;
+    background-color: #f4f4f4; /* Light gray background */
     color: #333;
+    height: 100vh;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
+    overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
 /* Navbar Styles */
@@ -20,8 +23,8 @@ body {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    background-color: #000;
-    padding: 15px 30px;
+    background-color: #000; /* Black background for navbar */
+    padding: 20px 30px; /* Increased padding for slightly taller navbar */
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     position: fixed;
     top: 0;
@@ -30,138 +33,173 @@ body {
 }
 
 .navbar .left .welcome-text {
-    font-size: 1.2rem;
+    font-size: 1rem;
     color: white;
-    font-weight: bold;
-    text-transform: uppercase;
-}
-
-.navbar .right {
-    display: flex;
-    gap: 20px;
 }
 
 .navbar .right a {
     color: white;
     text-decoration: none;
-    padding: 10px 20px;
-    font-size: 1.1rem;
+    margin: 0 15px;
+    padding: 8px 15px;
+    font-size: 1rem;
     font-weight: bold;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
     transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
 }
 
 .navbar .right a:hover {
-    background-color: #9e1b32;
+    background-color: #9e1b32; /* UGA Red on hover */
     border-radius: 5px;
     transform: scale(1.05);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
-/* Test Container */
+/* Test Page Container */
 .test-container {
-    margin-top: 100px;
-    width: 90%;
-    max-width: 800px;
-    text-align: center;
-    padding: 30px;
-    background-color: #fafafa;
-    border-radius: 12px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 120px; /* Adjust for the increased navbar height */
+    width: 80%;
+    max-width: 850px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #9e1b32; /* UGA Red border */
+    border-right: 5px solid #9e1b32;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow-y: auto; /* Allow scrolling for content */
+    min-height: 70vh; /* Ensure content takes up at least 70% of the page height */
 }
 
-/* Progress Bar (Moved Below Text) */
+.test-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.2);
+}
+
+.test-container h1 {
+    font-size: 2.2rem; /* Reduced font size */
+    color: #9e1b32;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Progress Bar */
 .progress-bar {
     width: 100%;
     height: 12px;
     background-color: #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
 }
 
 .progress {
     width: 0;
     height: 100%;
     background: linear-gradient(90deg, #9e1b32, #7a141d);
-    border-radius: 8px;
-    transition: width 0.4s ease-in-out;
+    border-radius: 10px;
+    transition: width 0.4s ease;
 }
 
-/* Questions Section */
-.questions-container {
-    margin-top: 20px; /* Space between progress bar and questions */
-    height: 450px;
-    overflow-y: auto;
-    padding-right: 10px;
-    border-top: 2px solid #ddd;
-}
-
+/* Questions */
 .question-card {
-    background-color: #ffffff;
-    padding: 20px;
-    border: 2px solid #9e1b32;
+    display: none;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
     border-radius: 12px;
-    margin-bottom: 16px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease;
+    padding: 15px; /* Reduced padding */
+    margin-bottom: 15px; /* Reduced margin */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.question-card.active {
+    display: block;
 }
 
 .question-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
-/* Question Text */
 .question-text {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
+    font-size: 1.1rem; /* Reduced font size */
     color: #333;
+    font-weight: bold;
+    margin-bottom: 10px; /* Reduced margin */
 }
 
 /* Options */
 .options {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px; /* Reduced gap */
 }
 
 .option {
-    background-color: #f8f8f8;
-    padding: 12px;
-    border: 1px solid #ddd;
+    font-size: 0.95rem; /* Reduced font size */
+    color: #333;
+    padding: 6px; /* Reduced padding */
+    cursor: pointer;
     border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: background-color 0.3s ease;
-}
-
-.option input {
-    margin-right: 10px;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
 }
 
 .option:hover {
-    background-color: #f0f0f0;
+    background-color: #9e1b32; /* UGA Red */
+    color: white;
+    transform: scale(1.05);
+}
+
+input[type="radio"]:checked + .option {
+    background-color: #9e1b32;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Navigation Buttons */
+.nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px; /* Reduced margin */
+}
+
+.nav-btn {
+    background-color: #9e1b32;
+    color: white;
+    border: none;
+    padding: 12px 20px; /* Reduced padding */
+    border-radius: 10px;
     cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem; /* Reduced font size */
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.nav-btn:hover {
+    background-color: #7a141d;
+    transform: translateY(-3px);
+}
+
+.nav-btn:disabled {
+    background-color: #e0e0e0;
+    cursor: not-allowed;
 }
 
 /* Submit Button */
 .submit-btn {
-    margin-top: 20px;
-    padding: 14px 24px;
+    margin-top: 20px; /* Reduced margin */
     background-color: #9e1b32;
     color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    transition: background-color 0.3s ease;
+    padding: 14px;
+    border-radius: 10px;
     cursor: pointer;
+    font-weight: bold;
+    font-size: 1.1rem; /* Reduced font size */
+    transition: background-color 0.3s ease;
 }
 
 .submit-btn:hover {
@@ -171,55 +209,14 @@ body {
 
 /* Feedback */
 #feedback {
-    margin-top: 20px;
-    font-size: 1.2rem;
-    color: #4CAF50;
+    margin-top: 20px; /* Reduced margin */
+    font-size: 1rem; /* Reduced font size */
+    color: #4CAF50; /* Green feedback color */
+    text-align: center;
+    font-weight: bold;
 }
 
-/* Scrollbar Styling */
-.questions-container::-webkit-scrollbar {
-    width: 8px;
-}
-
-.questions-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-.questions-container::-webkit-scrollbar-thumb {
-    background: #9e1b32;
-    border-radius: 10px;
-}
-
-.questions-container::-webkit-scrollbar-thumb:hover {
-    background: #7a141d;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .navbar {
-        padding: 12px 20px;
-    }
-
-    .navbar .right a {
-        font-size: 1rem;
-        padding: 8px 12px;
-    }
-
-    .test-container {
-        padding: 20px;
-    }
-
-    .questions-container {
-        height: 400px;
-    }
-}
-
-/* Smooth Scrolling */
-html {
-    scroll-behavior: smooth;
-}
-
-/* Fade-in Animation */
+/* Animations */
 @keyframes fadeIn {
     0% {
         opacity: 0;
@@ -229,4 +226,10 @@ html {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.question-card,
+.nav-btn,
+.submit-btn {
+    animation: fadeIn 1s ease-out;
 }
