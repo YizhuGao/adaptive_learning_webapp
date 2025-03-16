@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Results</title>
-    <link rel="stylesheet" href="{% static 'CSS/testResults.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/testResults.css' %}?v=3">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -38,21 +38,28 @@
                 <tr>
                     <th>Question</th>
                     <th>Selected Answer</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                 {% for response in responses %}
                 <tr>
                     <td>{{ response.question.question_text }}</td>
                     <td class="{% if response.correct %}correct-answer{% else %}incorrect-answer{% endif %}">
                         {{ response.selected_option.option_text }}
                     </td>
+                    <td>
+                        {% if response.selected_option.is_correct %}
+                            ✅ Correct
+                        {% else %}
+                            ❌ Incorrect
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-
+        
         <!-- Video Learning Section -->
         <div class="learning-section">
             {% if video_url %}
@@ -81,6 +88,6 @@
 <!--        </div>-->
     </div>
 
-    <script src="{% static 'JS/testResults.js' %}"></script>
+    <script src="{% static 'JS/testResults.js' %}?v=3"></script>
 </body>
 </html>

@@ -89,9 +89,20 @@ body {
 }
 
 /* Different Colors for Messages */
-.success { background: #27AE60; color: white; }  /* Green */
-.warning { background: #F39C12; color: black; }  /* Orange */
-.error { background: #E74C3C; color: white; }  /* Red */
+.success {
+    background: #27AE60; /* Green */
+    color: white;
+}
+
+.warning {
+    background: #F39C12; /* Orange */
+    color: black;
+}
+
+.error {
+    background: #E74C3C; /* Red */
+    color: white;
+}
 
 /* Results Table */
 .results-table {
@@ -124,12 +135,33 @@ body {
     font-weight: bold;
 }
 
+/* Status Column Styling */
+.status {
+    font-size: 1.1rem;
+    font-weight: bold;
+    padding: 6px 10px;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+/* Correct Status */
+.status.correct {
+    color: #27AE60;
+    background-color: #eafbea;
+}
+
+/* Incorrect Status */
+.status.incorrect {
+    color: #E74C3C;
+    background-color: #fadbd8;
+}
+
 /* Learning Section */
 .learning-section {
     margin-top: 20px;
 }
 
-.learn-more-btn {
+.watch-video-button {
     display: inline-block;
     padding: 12px 20px;
     background: #3498DB; /* Blue */
@@ -143,7 +175,40 @@ body {
     text-decoration: none;
 }
 
-.learn-more-btn:hover {
+.watch-video-button:hover {
     background: #2980B9; /* Darker blue */
     transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 12px 20px;
+    }
+
+    .navbar .right a {
+        font-size: 1rem;
+        padding: 8px 12px;
+    }
+
+    .results-container {
+        padding: 20px;
+    }
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
