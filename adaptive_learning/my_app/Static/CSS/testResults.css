@@ -6,40 +6,42 @@
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(to right, #E0F7FA, #B2EBF2); /* Soft blue gradient */
-    color: #333; /* Dark gray for text */
+    font-family: 'Arial', sans-serif;
+    background-color: white; /* Clean white background */
+    color: #333; /* Dark text for readability */
+    height: 100vh;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
 }
 
-/* Navbar */
+/* Navbar Styles */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    background: linear-gradient(to right, #2980B9, #3498DB); /* Soft blue gradient */
+    background-color: #000; /* Black background */
     padding: 15px 30px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     position: fixed;
     top: 0;
     left: 0;
     z-index: 10;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .navbar .left .welcome-text {
     font-size: 1.2rem;
-    color: white;
+    color: white; /* White text for contrast */
 }
 
 .navbar .right a {
-    color: white;
+    color: white; /* White links */
     text-decoration: none;
-    margin: 0 15px;
-    padding: 10px 15px;
-    font-size: 1rem;
+    margin: 0 20px;
+    padding: 10px 20px;
+    font-size: 1.1rem;
     font-weight: bold;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -47,18 +49,23 @@ body {
 }
 
 .navbar .right a:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: #9e1b32; /* UGA Red on hover */
     border-radius: 5px;
     transform: scale(1.05);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.navbar .right a i {
+    margin-right: 8px;
 }
 
 /* Results Container */
 .results-container {
     margin-top: 100px;
-    width: 90%;
-    max-width: 800px;
+    width: 100%;
+    max-width: 900px;
     text-align: center;
-    padding: 30px;
+    padding: 15px;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 15px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
@@ -67,14 +74,16 @@ body {
 /* Title Styling */
 .results-container h1, h2 {
     margin-bottom: 10px;
-    color: #2980B9; /* Blue */
+    color: #9e1b32; /* UGA Red */
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Score Styling */
 .score {
     font-size: 2.5rem;
     font-weight: bold;
-    color: #E74C3C; /* Soft red */
+    color: #490202; /* Soft red */
 }
 
 /* Feedback Messages */
@@ -118,7 +127,7 @@ body {
 }
 
 .results-table th {
-    background-color: #3498DB; /* Light blue */
+    background-color: #9e1b32; /* UGA Red */
     color: white;
 }
 
@@ -164,7 +173,7 @@ body {
 .watch-video-button {
     display: inline-block;
     padding: 12px 20px;
-    background: #3498DB; /* Blue */
+    background: #9e1b32; /* UGA Red */
     color: white;
     font-weight: bold;
     font-size: 1rem;
@@ -176,8 +185,9 @@ body {
 }
 
 .watch-video-button:hover {
-    background: #2980B9; /* Darker blue */
+    background: #7a141d; /* Darker UGA Red */
     transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Responsive Design */
