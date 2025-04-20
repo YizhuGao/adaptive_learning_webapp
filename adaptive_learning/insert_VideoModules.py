@@ -21,14 +21,6 @@ VideoModule.objects.all().delete()
 
 # Data for new videos to be inserted
 videos_data = [
-    # {
-    #     "title": "Nature of Temperature - Introduction",
-    #     "url": "https://www.youtube.com/watch?v=96k7_7RjCpg",
-    #     "description": "Introduction to the concept of temperature and its significance in thermodynamics.",
-    #     "level": "Beginner",
-    #     "topic_name": "Thermodynamics",
-    #     "subtopic_name": "Nature of Temperature",
-    # },
     {
         "title": "The conductivity of temperature",
         "url": "https://drive.google.com/file/d/1PuvHLyXVm_zTs0JnhltWQOr3xQWnUrx2/view?usp=sharing&t=5",
@@ -36,6 +28,7 @@ videos_data = [
         "level": "Beginner",
         "topic_name": "Thermodynamics",
         "subtopic_name": "Nature of temperature",
+        "misconceptions": "15"
     },
     {
         "title": "Water and oil",
@@ -44,6 +37,7 @@ videos_data = [
         "level": "Beginner",
         "topic_name": "Thermodynamics",
         "subtopic_name": "Nature of temperature",
+        "misconceptions": "18"
     },
     {
         "title": "Temperature",
@@ -52,6 +46,7 @@ videos_data = [
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
         "subtopic_name": "Heat transfer and temperature change",
+        "misconceptions": "4"
     },
     {
         "title": "Cold and hot water to environment temperature",
@@ -60,6 +55,7 @@ videos_data = [
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
         "subtopic_name": "Heat transfer and temperature change",
+        "misconceptions": "13"
     },
     {
         "title": "Diffusion",
@@ -68,6 +64,7 @@ videos_data = [
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
         "subtopic_name": "Heat transfer and temperature change",
+        "misconceptions": "3"
     },
     {
         "title": "Ice",
@@ -76,6 +73,7 @@ videos_data = [
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
         "subtopic_name": "Heat transfer and material",
+        "misconceptions": "7"
     },
     {
         "title": "Melted ice",
@@ -84,6 +82,7 @@ videos_data = [
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
         "subtopic_name": "Fusion/melting point and freezing point",
+        "misconceptions": "9,12,20,21"
     },
     {
         "title": "Metal in cold and hot water",
@@ -92,6 +91,7 @@ videos_data = [
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
         "subtopic_name": "Fusion/melting point and freezing point",
+        "misconceptions": "12,13,17,18"
     },
     {
         "title": "Boiled Water",
@@ -100,6 +100,7 @@ videos_data = [
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
         "subtopic_name": "Boiling point, Liquifaction, Vaporation",
+        "misconceptions": "5,9,19,22"
     },
     {
         "title": "Cold and hot water",
@@ -108,6 +109,7 @@ videos_data = [
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
         "subtopic_name": "Boiling point, Liquifaction, Vaporation",
+        "misconceptions": "8"
     },
     {
         "title": "Vaportation",
@@ -116,6 +118,7 @@ videos_data = [
         "level": "Intermediate",
         "topic_name": "Thermodynamics",
         "subtopic_name": "Boiling point, Liquifaction, Vaporation",
+        "misconceptions": "23"
     }
 ]
 
@@ -131,5 +134,6 @@ with transaction.atomic():
             topic=topic_obj,
             subtopic=subtopic_obj,
             level=video["level"],
+            misconceptions=video.get("misconceptions", "")
         )
         print(f"VideoModule '{video_module.title}' added successfully!")

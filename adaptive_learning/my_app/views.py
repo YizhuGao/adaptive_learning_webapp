@@ -1,19 +1,23 @@
 import os
 from datetime import timezone
-
-from django.conf import settings
+from .ML.ncdm_inference import load_model, predict
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate, logout
+from django.shortcuts import get_object_or_404
+from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponse
-from django.utils import timezone, timesince
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import Assessment, Question, Student, AssessmentResponse, Option, VideoModule, Subtopic, Progress, Topic, \
     VideoProgress
 import logging
+import numpy as np
+from django.conf import settings
+BASE_DIR = settings.BASE_DIR
+
 logger = logging.getLogger(__name__)
+import pandas as pd
 
 
 def index(request):
@@ -158,7 +162,7 @@ def test_view(request, topic_id, subtopic_id):
     else:
         assigned_value = 0
 
-    questions = Question.objects.filter(topic=topic, assigned_at=assigned_value, subtopic=subtopic)
+    questions = Question.objects.filter(topic=topic, subtopic=subtopic, assigned_at=assigned_value)
 
     context = {
         'topic': topic,
@@ -200,6 +204,19 @@ def submit_test(request, topic_id, subtopic_id):
             assigned_at_0_count = 0
             assigned_at_1_count = 0
 
+            question_ids_list = []
+            correctness_list = []
+
+            print(BASE_DIR)
+            TCE_Misunderstanding_path = os.path.join(BASE_DIR, 'my_app', 'ML', 'TCE_Misunderstanding.xlsx')
+
+            print(BASE_DIR)
+            print("Excel file path - ", TCE_Misunderstanding_path)
+
+            tce_misunderstanding = pd.read_excel(TCE_Misunderstanding_path)
+            knowledge_n = tce_misunderstanding.shape[1] - 1
+
+
             for key, value in request.POST.items():
                 if key.startswith("question_"):
                     question_id = key.split("_")[1]
@@ -213,9 +230,15 @@ def submit_test(request, topic_id, subtopic_id):
                         selected_option=selected_option
                     )
 
+                    # Track question ID
+                    question_ids_list.append(question.question_id - 13)
+
                     # Check correctness
                     if selected_option.is_correct:
                         correct_count += 1
+                        correctness_list.append(1)
+                    else:
+                        correctness_list.append(0)
                     total_questions += 1
 
                     # Track assigned_at values
@@ -226,8 +249,125 @@ def submit_test(request, topic_id, subtopic_id):
 
             # Calculate score
             score = (correct_count / total_questions) * 100 if total_questions > 0 else 0
+
             assessment.score = score
             assessment.save()
+
+            answers_df = pd.DataFrame({
+                "question_id": question_ids_list,
+                "correct": correctness_list
+            })
+
+            print(answers_df)
+            model_path = os.path.join(BASE_DIR, 'my_app', 'ML', 'ncdm_model.pth')
+            num_questions = answers_df.shape[0]
+            device = "cpu"
+
+            model = load_model(model_path, knowledge_n, num_questions, 1, device)
+
+            misconception_matrix = tce_misunderstanding
+            print(question_ids_list)
+
+            weak_knowledge_indices = set()
+
+            for que in question_ids_list:
+                try:
+                    # Fetch the knowledge embedding for this specific question
+                    item_id = f"Item_{que}"  # construct the matching string
+
+                    question_row = misconception_matrix[misconception_matrix['item_id'] == item_id]
+
+
+                    if question_row.empty:
+                        print(f"Question ID {que} not found in misunderstanding matrix.")
+                        continue
+
+                    # Extract the knowledge vector from the row (skipping question_id column)
+                    knowledge_vector = question_row.iloc[0, 1:].to_numpy(dtype=float).reshape(1, -1)
+
+                    # Predict using the model
+                    prediction, proficiency_vector  = predict(model, student.student_id, int(que), knowledge_vector, device)
+
+                    print(f"\nQuestion ID: Q{que}")
+                    print(f"Prediction: {prediction:.4f}")
+                    print(f"Proficiency Vector: {proficiency_vector}")
+
+                    knowledge_vector_np = np.array(knowledge_vector).flatten()
+
+                    active_knowledge_indices = np.where(knowledge_vector_np == 1)[0]
+
+                    selected_proficiencies = proficiency_vector[active_knowledge_indices]
+
+                    # If answer is correct do we need to show him the video
+                    for idx in active_knowledge_indices:
+                        prof_value = proficiency_vector[idx]
+
+                        if prof_value > 0.6:
+                            weak_knowledge_indices.add(idx)
+                            print(f"High misconception likelihood: prof={prof_value:.4f} → Added idx {idx + 1 } from Q{que}")
+
+                        elif 0.4 <= prof_value <= 0.6:
+                            if correctness_list[question_ids_list.index(int(que))] == 0:  # Student answered incorrectly
+                                weak_knowledge_indices.add(idx)
+                                print(
+                                    f"Moderate prof + incorrect answer: prof={prof_value:.4f} → Added idx {idx + 1 } from Q{que}")
+                            else:
+                                print(
+                                    f"Moderate prof + correct answer: prof={prof_value:.4f} → Not Added idx {idx + 1 } from Q{que}")
+                        elif prediction < 0.7:
+                            weak_knowledge_indices.add(idx)
+                            # print(f"Low prediction ({prediction:.4f}) → Added idx {idx + 1 } from Q{que}")
+
+                        elif prof_value < 0.48:
+                            print(
+                                f"Low misconception probability (prof={prof_value:.4f}) → Skipped idx {idx + 1 } for Q{que}")
+
+                        else:
+                            print(f"No condition met for prof={prof_value:.4f}, idx {idx + 1 }, Q{que}")
+
+                except Exception as e:
+                    print(f"Prediction error for Q{que}: {e}")
+
+            weak_knowledge_indices = sorted([int(idx) + 1 for idx in weak_knowledge_indices])
+
+            print("Final Weak Knowledge Indices:", weak_knowledge_indices)
+
+            try:
+                misconception_videos = VideoModule.objects.filter(subtopic=subtopic)
+
+                print(" misconception_videos :", misconception_videos)
+
+                for video in misconception_videos:
+                    try:
+                        # Assuming misconceptions are stored as comma-separated values in a CharField
+                        video_misconceptions = [
+                            int(m.strip()) for m in video.misconceptions.split(',') if m.strip().isdigit()
+                        ]
+
+                        # Get intersection between video misconceptions and weak knowledge indices
+                        matched_misconceptions = list(set(video_misconceptions) & set(weak_knowledge_indices))
+
+                        if matched_misconceptions:
+                            print(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
+                            print(f"  → Related to misconceptions: {matched_misconceptions}")
+
+                            # Create a VideoProgress record only once for this video
+                            obj, created = VideoProgress.objects.get_or_create(
+                                student=student,
+                                video=video,
+                                subtopic=subtopic,
+                                defaults={"watched": False}
+                            )
+                            if created:
+                                print("  → VideoProgress created.")
+                            else:
+                                print("  → VideoProgress already exists. Skipping creation.")
+
+                    except Exception as inner_e:
+                        print(f"Error processing video ID {video.video_module_id if video else 'Unknown'}: {inner_e}")
+
+            except Exception as e:
+                print("Error while assigning videos based on misconceptions:", e)
 
             # Update progress model
             progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
@@ -344,15 +484,6 @@ def modules_view(request):
                     completion_status='not_started'
                 )
 
-                # Insert VideoProgress records for videos in the first subtopic
-                video_modules = VideoModule.objects.filter(topic=topic, subtopic=first_subtopic)
-                for video in video_modules:
-                    VideoProgress.objects.get_or_create(
-                        student=student,
-                        subtopic=first_subtopic,
-                        video=video,
-                        defaults={'watched': False, 'watched_at': None}
-                    )
 
             topic_data.append({
                 'topic': topic,
@@ -364,7 +495,7 @@ def modules_view(request):
         'topic_data': topic_data,
         'username': request.user.username
     }
-    print("Context - ", context)  # ✅ Debug Output
+    print("Context - ", context)  # Debug Output
 
     return render(request, 'my_app/modules.html', context)
 
@@ -372,43 +503,40 @@ def modules_view(request):
 @login_required
 def test_results(request, topic_id, subtopic_id):
     try:
-        # Get student details
         student = get_object_or_404(Student, user=request.user)
-
-        # Get topic and subtopic details
         topic = get_object_or_404(Topic, topic_id=topic_id)
         subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id, topic=topic)
 
-        # Fetch the latest assessment for the student on this topic
         assessment = Assessment.objects.filter(student=student, topic=topic).order_by("-date_taken").first()
         if not assessment:
             return JsonResponse({"error": "No assessment data found for this topic."}, status=404)
 
         # Fetch responses for the assessment
         responses = AssessmentResponse.objects.filter(assessment=assessment)
-
-        # Get the score
         score = assessment.score
 
-        # Get the video module (if available)
-        video_module = VideoModule.objects.filter(subtopic=subtopic).first()
-        print("Video Module (Subtopic):", video_module)
+        # Fetch video modules from VideoProgress instead of VideoModule directly
+        video_progress_entries = VideoProgress.objects.filter(student=student, subtopic=subtopic)
 
-        if not video_module:
-            video_module = VideoModule.objects.filter(topic=topic).first()  # Fallback to topic-level video
-            print("Video Module (Topic):", video_module)
-
-        # Get the progress for the student and subtopic
+        video_data = []
         progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
 
-        # Get video URL with the condition
-        video_url = video_module.url if video_module and progress and not progress.score_after else None
-        if video_url:
-            if "youtube.com/watch" in video_url:
-                video_url = video_url.replace("watch?v=", "embed/")
-        print("Video URL:", video_url)
+        for entry in video_progress_entries:
+            video_module = entry.video
+            video_url = video_module.url if video_module and progress and not progress.score_after else None
+            print("Video URL - ", video_url)
 
-        # Prepare context data for the template
+            if video_url:
+                if "drive.google.com/file/d/" in video_url:
+                    file_id = video_url.split('/d/')[1].split('/')[0]
+                    video_url = f"https://drive.google.com/file/d/{file_id}/preview"
+
+                video_data.append({
+                    "id": video_module.video_module_id,
+                    "title": video_module.title,
+                    "url": video_url
+                })
+
         context = {
             "student_name": f"{student.first_name} {student.last_name}",
             "topic": topic,
@@ -416,8 +544,9 @@ def test_results(request, topic_id, subtopic_id):
             "score": score,
             "date_taken": assessment.date_taken,
             "responses": responses,
+            "video_data": video_data,
             "video_url": video_url,
-            "student_id": student.student_id,  # Add student_id here
+            "student_id": student.student_id,
         }
 
         return render(request, "my_app/test_results.html", context)
@@ -432,24 +561,17 @@ def learning_video(request, topic_id, subtopic_id):
     try:
         print(f"Received topic_id: {topic_id}, subtopic_id: {subtopic_id}")
 
-        # Get the logged-in student
         student = get_object_or_404(Student, user=request.user)
-
-        # Get topic and subtopic
         topic = get_object_or_404(Topic, topic_id=topic_id)
         subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id, topic=topic)
 
         # Fetch videos linked to the subtopic
-        videos = VideoModule.objects.filter(subtopic=subtopic)
-
-        if not videos.exists():
-            print("No videos found for this subtopic.")
-
+        video_progress_entries = VideoProgress.objects.filter(student=student, subtopic=subtopic)
         video_data = []
-        for video in videos:
+        for entry in video_progress_entries:
+            video = entry.video
             video_url = video.url
 
-            # Convert Google Drive link to embeddable format
             if "drive.google.com/file/d/" in video_url:
                 file_id = video_url.split('/d/')[1].split('/')[0]
                 video_url = f"https://drive.google.com/file/d/{file_id}/preview"
@@ -460,16 +582,15 @@ def learning_video(request, topic_id, subtopic_id):
                 'url': video_url
             })
 
-        # Pass student.id to the context
-        context = {
-            "topic": topic,
-            "subtopic": subtopic,
-            "video_data": video_data,
-            "subtopic_id": subtopic_id,
-            "student_id": student.student_id,
-        }
+            context = {
+                "topic": topic,
+                "subtopic": subtopic,
+                "video_data": video_data,
+                "subtopic_id": subtopic_id,
+                "student_id": student.student_id,
+            }
 
-        return render(request, "my_app/learning_video.html", context)
+            return render(request, "my_app/learning_video.html", context)
 
     except Exception as e:
         print("Error in learning_video:", e)

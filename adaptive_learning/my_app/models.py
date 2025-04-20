@@ -136,6 +136,12 @@ class VideoModule(models.Model):
     subtopic = models.ForeignKey(Subtopic, related_name="video_modules", on_delete=models.CASCADE, null=True, blank=True)
     level = models.CharField(max_length=15)
     students = models.ManyToManyField(Student, through='Recommendation')
+    misconceptions = models.CharField(
+        max_length=255,
+        blank=True,
+        help_text="Comma-separated list of related misconception numbers like 'm1,m2,m5'"
+    )
+
 
     def __str__(self):
         return self.title
