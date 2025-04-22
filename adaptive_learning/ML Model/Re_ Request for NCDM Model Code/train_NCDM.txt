@@ -1,0 +1,150 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+from tqdm import tqdm
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+tce_analysis = pd.read_excel('TCE_Analysis.xlsx')
+tce_misunderstanding = pd.read_excel('TCE_Misunderstanding.xlsx')
+
+responses = tce_analysis.iloc[:, 1:].values  # Student responses (excluding item_id column)
+item_ids = tce_analysis['item_id'].values  # Item IDs
+misconception_matrix = tce_misunderstanding.iloc[:, 1:].values  # Knowledge (misconception) matrix
+
+num_students = responses.shape[1]
+num_items = responses.shape[0]
+
+data = []
+for item_idx in range(num_items):
+    for student_idx in range(num_students):
+        student_id = student_idx  # Student index (0-based)
+        item_id = item_idx  # Item index (0-based)
+        knowledge_embedding = misconception_matrix[item_idx]  # Knowledge embedding for this item
+        response = responses[item_idx, student_idx]  # Student's response to this item
+        data.append((student_id, item_id, knowledge_embedding, response))
+
+student_ids = np.array([d[0] for d in data])
+item_ids = np.array([d[1] for d in data])
+knowledge_embeddings = np.array([d[2] for d in data])
+responses = np.array([d[3] for d in data])
+
+train_indices, test_indices = train_test_split(np.arange(len(data)), test_size=0.2, random_state=42)
+
+train_data = [(torch.LongTensor([student_ids[i]]), torch.LongTensor([item_ids[i]]), 
+               torch.FloatTensor([knowledge_embeddings[i]]), torch.FloatTensor([responses[i]])) for i in train_indices]
+
+test_data = [(torch.LongTensor([student_ids[i]]), torch.LongTensor([item_ids[i]]), 
+              torch.FloatTensor([knowledge_embeddings[i]]), torch.FloatTensor([responses[i]])) for i in test_indices]
+
+class PosLinear(nn.Linear):
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        weight = 2 * F.relu(1 * torch.neg(self.weight)) + self.weight
+        return F.linear(input, weight, self.bias)
+
+class Net(nn.Module):
+    def __init__(self, knowledge_n, exer_n, student_n):
+        super(Net, self).__init__()
+        self.knowledge_dim = knowledge_n
+        self.exer_n = exer_n
+        self.emb_num = student_n
+        self.stu_dim = self.knowledge_dim
+        self.prednet_input_len = self.knowledge_dim
+        self.prednet_len1, self.prednet_len2 = 512, 256
+
+        self.student_emb = nn.Embedding(self.emb_num, self.stu_dim)
+        self.k_difficulty = nn.Embedding(self.exer_n, self.knowledge_dim)
+        self.e_difficulty = nn.Embedding(self.exer_n, 1)
+        self.prednet_full1 = PosLinear(self.prednet_input_len, self.prednet_len1)
+        self.drop_1 = nn.Dropout(p=0.5)
+        self.prednet_full2 = PosLinear(self.prednet_len1, self.prednet_len2)
+        self.drop_2 = nn.Dropout(p=0.5)
+        self.prednet_full3 = PosLinear(self.prednet_len2, 1)
+        
+        for name, param in self.named_parameters():
+            if 'weight' in name:
+                nn.init.xavier_normal_(param)
+
+    def forward(self, stu_id, input_exercise, input_knowledge_point):
+        stu_emb = self.student_emb(stu_id)
+        stat_emb = torch.sigmoid(stu_emb)
+        k_difficulty = torch.sigmoid(self.k_difficulty(input_exercise))
+        e_difficulty = torch.sigmoid(self.e_difficulty(input_exercise))
+        input_x = e_difficulty * (stat_emb - k_difficulty) * input_knowledge_point
+        input_x = self.drop_1(torch.sigmoid(self.prednet_full1(input_x)))
+        input_x = self.drop_2(torch.sigmoid(self.prednet_full2(input_x)))
+        output_1 = torch.sigmoid(self.prednet_full3(input_x))
+        return output_1.view(-1)
+
+    def get_knowledge_status(self, stu_id):
+        stu_emb = self.student_emb(stu_id)
+        return torch.sigmoid(stu_emb).cpu().detach().numpy()
+
+class NCDM:
+    def __init__(self, knowledge_n, exer_n, student_n):
+        self.ncdm_net = Net(knowledge_n, exer_n, student_n)
+
+    def train(self, train_data, test_data=None, epoch=5, device="cpu", lr=0.002, save_path='model.pth'):
+        self.ncdm_net = self.ncdm_net.to(device)
+        self.ncdm_net.train()
+        loss_function = nn.BCELoss()
+        optimizer = optim.Adam(self.ncdm_net.parameters(), lr=lr)
+
+        for epoch_i in range(epoch):
+            epoch_losses = []
+            for batch_data in tqdm(train_data, f"Epoch {epoch_i}"):
+                user_id, item_id, knowledge_emb, y = batch_data
+                user_id, item_id, knowledge_emb, y = user_id.to(device), item_id.to(device), knowledge_emb.to(device), y.to(device)
+                pred = self.ncdm_net(user_id, item_id, knowledge_emb)
+                loss = loss_function(pred, y)
+
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+
+                epoch_losses.append(loss.item())
+
+            print(f"[Epoch {epoch_i}] average loss: {np.mean(epoch_losses):.6f}")
+
+            if test_data:
+                self.eval(test_data, device)
+
+            # save
+            torch.save(self.ncdm_net.state_dict(), save_path)
+            print(f"Model saved to {save_path}")
+
+    def eval(self, test_data, device="cpu"):
+        self.ncdm_net.eval()
+        y_true, y_pred = [], []
+        with torch.no_grad():
+            for batch_data in tqdm(test_data, "Evaluating"):
+                user_id, item_id, knowledge_emb, y = batch_data
+                user_id, item_id, knowledge_emb, y = user_id.to(device), item_id.to(device), knowledge_emb.to(device), y.to(device)
+                pred = self.ncdm_net(user_id, item_id, knowledge_emb)
+                y_pred.extend(pred.cpu().numpy().tolist())
+                y_true.extend(y.cpu().numpy().tolist())
+
+        accuracy = np.mean(np.round(y_pred) == y_true)
+        print(f"Accuracy: {accuracy:.4f}")
+
+    def save_knowledge_status(self, file_path):
+        self.ncdm_net.eval()
+        knowledge_status_all = []
+        for stu_id in range(student_n):
+            knowledge_status = self.ncdm_net.get_knowledge_status(torch.LongTensor([stu_id]))
+            knowledge_status_all.append(knowledge_status.flatten())
+
+        knowledge_status_all = np.vstack(knowledge_status_all)
+        np.savetxt(file_path, knowledge_status_all, delimiter=',', fmt='%.4f')
+        print(f"Knowledge proficiency saved to {file_path}")
+
+knowledge_n = tce_misunderstanding.shape[1] - 1
+exer_n = num_items
+student_n = num_students
+
+ncdm_model = NCDM(knowledge_n, exer_n, student_n)
+ncdm_model.train(train_data, test_data, epoch=5, device="cpu", lr=0.002, save_path='ncdm_model.pth')
+
+ncdm_model.save_knowledge_status('student_knowledge_status.csv')
