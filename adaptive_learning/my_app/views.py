@@ -14,6 +14,7 @@ from .models import Assessment, Question, Student, AssessmentResponse, Option, V
 import logging
 import numpy as np
 from django.conf import settings
+
 BASE_DIR = settings.BASE_DIR
 
 logger = logging.getLogger(__name__)
@@ -337,34 +338,39 @@ def submit_test(request, topic_id, subtopic_id):
 
                 print(" misconception_videos :", misconception_videos)
 
+
                 for video in misconception_videos:
-                    try:
-                        # Assuming misconceptions are stored as comma-separated values in a CharField
-                        video_misconceptions = [
-                            int(m.strip()) for m in video.misconceptions.split(',') if m.strip().isdigit()
-                        ]
+                    if video.subtopic == subtopic:
+                        try:
+                            # Assuming misconceptions are stored as comma-separated values in a CharField
+                            video_misconceptions = [
+                                int(m.strip()) for m in video.misconceptions.split(',') if m.strip().isdigit()
+                            ]
 
-                        # Get intersection between video misconceptions and weak knowledge indices
-                        matched_misconceptions = list(set(video_misconceptions) & set(weak_knowledge_indices))
+                            # Get intersection between video misconceptions and weak knowledge indices
+                            matched_misconceptions = list(set(video_misconceptions) & set(weak_knowledge_indices))
 
-                        if matched_misconceptions:
-                            print(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
-                            print(f"  → Related to misconceptions: {matched_misconceptions}")
+                            if matched_misconceptions:
+                                print(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
+                                print(f"  → Related to misconceptions: {matched_misconceptions}")
 
-                            # Create a VideoProgress record only once for this video
-                            obj, created = VideoProgress.objects.get_or_create(
-                                student=student,
-                                video=video,
-                                subtopic=subtopic,
-                                defaults={"watched": False}
-                            )
-                            if created:
-                                print("  → VideoProgress created.")
-                            else:
-                                print("  → VideoProgress already exists. Skipping creation.")
+                                # Create a VideoProgress record only once for this video
+                                obj, created = VideoProgress.objects.get_or_create(
+                                    student=student,
+                                    video=video,
+                                    subtopic=subtopic,
+                                    defaults={"watched": False}
+                                )
+                                if created:
+                                    print("  → VideoProgress created.")
+                                else:
+                                    print("  → VideoProgress already exists. Skipping creation.")
 
-                    except Exception as inner_e:
-                        print(f"Error processing video ID {video.video_module_id if video else 'Unknown'}: {inner_e}")
+                        except Exception as inner_e:
+                            print(f"Error processing video ID {video.video_module_id if video else 'Unknown'}: {inner_e}")
+
+                        else:
+                            print("No Video for the given misconceptions found.")
 
             except Exception as e:
                 print("Error while assigning videos based on misconceptions:", e)
@@ -517,8 +523,10 @@ def test_results(request, topic_id, subtopic_id):
 
         # Fetch video modules from VideoProgress instead of VideoModule directly
         video_progress_entries = VideoProgress.objects.filter(student=student, subtopic=subtopic)
+        print("Video - test results - ", video_progress_entries)
 
         video_data = []
+        video_url = None
         progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
 
         for entry in video_progress_entries:
