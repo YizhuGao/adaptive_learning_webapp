@@ -68,7 +68,16 @@
                     Watch Learning Video
                 </a>
             {% else %}
-                <p>No video available or you might have already watched the video for this subtopic at the moment.</p>
+                {% if score_after %}
+                    <p>You’ve already completed this subtopic and watched the video.</p>
+                        <p>Click on the modules to see which is next subtopic.</p>
+
+                {% else %}
+                    <p>No video available or you might have already watched the video for this subtopic at the moment.</p>
+                    <a href="{% url 'test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="start-btn">
+                        Continue Test
+                    </a>
+                {% endif %}
             {% endif %}
         </div>
 <!--        <div class="learning-section">-->
