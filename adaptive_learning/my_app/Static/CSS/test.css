@@ -207,6 +207,12 @@ input[type="radio"]:checked + .option {
     transform: scale(1.05);
 }
 
+.submit-btn:disabled {
+    background-color: #e0e0e0;
+    color: #888;
+    cursor: not-allowed;
+    transform: none;
+}
 /* Feedback */
 #feedback {
     margin-top: 20px; /* Reduced margin */
