@@ -351,6 +351,7 @@ def submit_test(request, topic_id, subtopic_id):
 
                             # Get intersection between video misconceptions and weak knowledge indices
                             matched_misconceptions = list(set(video_misconceptions) & set(weak_knowledge_indices))
+                            print("matched_misconceptions - ", matched_misconceptions)
 
                             if matched_misconceptions:
                                 print(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
@@ -584,10 +585,13 @@ def learning_video(request, topic_id, subtopic_id):
 
         # Fetch videos linked to the subtopic
         video_progress_entries = VideoProgress.objects.filter(student=student, subtopic=subtopic)
+        print("video_progress_entries - ", video_progress_entries)
         video_data = []
         for entry in video_progress_entries:
             video = entry.video
             video_url = video.url
+
+            print("Inside For Loop")
 
             if "drive.google.com/file/d/" in video_url:
                 file_id = video_url.split('/d/')[1].split('/')[0]
@@ -599,15 +603,17 @@ def learning_video(request, topic_id, subtopic_id):
                 'url': video_url
             })
 
-            context = {
-                "topic": topic,
-                "subtopic": subtopic,
-                "video_data": video_data,
-                "subtopic_id": subtopic_id,
-                "student_id": student.student_id,
-            }
+        print("video_data - ", video_data)
 
-            return render(request, "my_app/learning_video.html", context)
+        context = {
+            "topic": topic,
+            "subtopic": subtopic,
+            "video_data": video_data,
+            "subtopic_id": subtopic_id,
+            "student_id": student.student_id,
+        }
+
+        return render(request, "my_app/learning_video.html", context)
 
     except Exception as e:
         print("Error in learning_video:", e)
