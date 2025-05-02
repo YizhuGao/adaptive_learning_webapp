@@ -5,19 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Assignments</title>
-    <link rel="stylesheet" href="{% static 'CSS/student_assignments.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'CSS/student_assignments.css' %}?v=5">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
 
 <!-- Navbar -->
 <nav class="navbar">
     <div class="left">
-        <span class="welcome-text">Your Assignments</span>
+        <span class="welcome-text">Welcome, {{ username }}</span>
     </div>
     <div class="right">
-        <a href="{% url 'home' %}" class="nav-link">Home</a>
-        <a href="{% url 'modules' %}" class="nav-link">Modules</a>
-        <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+        <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
+        <a href="{% url 'modules' %}" class="nav-link"><i class="fas fa-book"></i> Modules</a>
+        <a href="{% url 'profile_update' %}" class="nav-link"><i class="fas fa-user"></i> Profile</a>
+        <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
 </nav>
 

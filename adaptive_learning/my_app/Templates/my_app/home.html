@@ -5,9 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Adaptive Physics Learning</title>
-    <link rel="stylesheet" href="{% static 'CSS/home.css' %}?v=3">
-    <!-- Include Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'CSS/home.css' %}?v=4">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
 </head>
 <body>
@@ -23,29 +22,31 @@
         </div>
     </nav>
 
-    <!-- Main Landing Page Section -->
+    <!-- Landing Section -->
     <section class="landing">
         <div class="landing-content">
             <h1>Welcome to Adaptive Physics Learning</h1>
-            <p>Your personalized journey to mastering physics concepts.</p>
+            <p>Your personalized journey to mastering physics concepts starts here.</p>
+
             <div class="features">
                 <div class="feature">
                     <i class="fas fa-lightbulb"></i>
                     <h3>Interactive Learning</h3>
-                    <p>Engage with interactive modules that help you visualize complex physics concepts.</p>
+                    <p>Visualize and explore physics with hands-on simulations and modules.</p>
                 </div>
                 <div class="feature">
                     <i class="fas fa-chalkboard-teacher"></i>
-                    <h3>Expert Guidance</h3>
-                    <p>Learn from industry experts and renowned educators in the field of physics.</p>
+                    <h3>Expert Mentorship</h3>
+                    <p>Learn from top educators and stay on track with guided pathways.</p>
                 </div>
                 <div class="feature">
-                    <i class="fas fa-trophy"></i>
-                    <h3>Track Your Progress</h3>
-                    <p>Monitor your learning journey, set goals, and achieve mastery in physics.</p>
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Progress Tracking</h3>
+                    <p>Analyze your learning performance and master every concept efficiently.</p>
                 </div>
             </div>
-            <a href="{% url 'modules' %}" class="btn-cta">Get Started with Modules</a>
+
+            <a href="{% url 'modules' %}" class="btn-cta">Start Learning</a>
         </div>
     </section>
 

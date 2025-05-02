@@ -1,182 +1,155 @@
-/* General Styles */
+/* Reset */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Body */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: white; /* Clean white background */
-    color: #333; /* Dark text for readability */
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-}
-
-h1 {
-    font-size: 3rem;
-    margin-bottom: 20px;
-    color: #9e1b32; /* UGA Red */
-    font-weight: bold;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-p {
-    font-size: 1.2rem;
-    color: #333; /* Dark text */
-    margin-bottom: 40px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f9f9f9;
+    color: #222;
     line-height: 1.6;
 }
 
-/* Navbar Styles */
+/* Navbar */
 .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #111;
+    color: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
-    background-color: #000; /* Black background */
-    padding: 15px 30px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 10;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 1000;
 }
 
 .navbar .left .welcome-text {
-    font-size: 1.2rem;
-    color: white; /* White text for contrast */
+    font-size: 1rem;
+    font-weight: 500;
 }
 
 .navbar .right a {
-    color: white; /* White links */
+    color: #fff;
     text-decoration: none;
-    margin: 0 20px;
-    padding: 10px 20px;
-    font-size: 1.1rem;
+    margin-left: 1.2rem;
     font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
+    transition: 0.3s;
 }
 
 .navbar .right a:hover {
-    background-color: #9e1b32; /* UGA Red on hover */
-    border-radius: 5px;
-    transform: scale(1.05);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    color: #9e1b32;
 }
 
-.navbar .right a i {
-    margin-right: 8px;
-}
-
-/* Landing Page Section */
+/* Landing */
 .landing {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin-top: 100px;
+    padding: 2rem;
     text-align: center;
-    flex-direction: column;
-    height: calc(100vh - 80px); /* Adjust to prevent overlap with navbar */
-    padding: 20px;
-    margin-top: 80px; /* Space below navbar */
 }
 
-.landing h1 {
-    font-size: 3.5rem;
-    margin-bottom: 20px;
-    color: #9e1b32; /* UGA Red */
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-    letter-spacing: 1.5px;
+.landing-content h1 {
+    font-size: 3rem;
+    color: #9e1b32;
+    margin-bottom: 1rem;
     animation: fadeIn 1s ease-out;
 }
 
-.landing p {
-    font-size: 1.3rem;
-    color: #333; /* Dark text */
-    margin-bottom: 40px;
-    line-height: 1.8;
-    animation: fadeIn 1s ease-out;
+.landing-content p {
+    font-size: 1.2rem;
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    color: #444;
+    animation: fadeIn 1.2s ease-out;
 }
 
-/* Features Section */
+/* Features */
 .features {
     display: flex;
     justify-content: center;
-    gap: 40px;
-    margin-bottom: 50px;
     flex-wrap: wrap;
+    gap: 2rem;
+    margin-bottom: 3rem;
     animation: fadeIn 1.5s ease-out;
 }
 
 .feature {
-    background: rgba(0, 0, 0, 0.1); /* Subtle black background */
-    padding: 30px;
-    border-radius: 15px;
-    width: 250px;
-    text-align: center;
-    backdrop-filter: blur(8px);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    padding: 2rem;
+    max-width: 300px;
+    transition: transform 0.3s ease;
 }
 
 .feature i {
-    font-size: 3rem;
-    margin-bottom: 15px;
-    color: #9e1b32; /* UGA Red for icons */
+    font-size: 2.5rem;
+    color: #9e1b32;
+    margin-bottom: 1rem;
 }
 
 .feature h3 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
-    color: #333; /* Dark text */
-    font-weight: bold;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: #333;
 }
 
 .feature p {
-    font-size: 1rem;
-    color: #333; /* Dark text */
-    margin-bottom: 15px;
+    font-size: 0.95rem;
+    color: #666;
 }
 
 .feature:hover {
     transform: translateY(-10px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
-/* Call-to-Action Button */
+/* CTA Button */
 .btn-cta {
-    display: inline-block;
-    margin-top: 30px;
-    padding: 14px 30px;
-    background: #9e1b32; /* UGA Red */
-    color: white;
-    font-size: 1.2rem;
-    text-decoration: none;
+    background: #9e1b32;
+    color: #fff;
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
     border-radius: 8px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    text-decoration: none;
     font-weight: bold;
-    transition: all 0.3s ease;
+    transition: background 0.3s, transform 0.2s;
 }
 
 .btn-cta:hover {
-    background: #7a141d; /* Darker UGA Red */
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    background: #7a1424;
+    transform: scale(1.05);
 }
 
-/* Fade-in Animation */
+/* Animation */
 @keyframes fadeIn {
-    0% {
+    from {
         opacity: 0;
-        transform: translateY(50px);
+        transform: translateY(30px);
     }
-    100% {
+    to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .features {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .navbar {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .navbar .right a {
+        margin-left: 0;
     }
 }

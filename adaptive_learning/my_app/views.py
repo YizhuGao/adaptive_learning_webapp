@@ -120,7 +120,7 @@ def success_view(request):
 
 @login_required
 def home_view(request):
-    return render(request, 'my_app/home.html', {'username': request.user.username})
+    return render(request, 'my_app/home.html', {'username': request.user.student.first_name})
 
 
 
@@ -502,7 +502,7 @@ def modules_view(request):
 
     context = {
         'topic_data': topic_data,
-        'username': request.user.username
+        'username': request.user.student.first_name
     }
     print("Context - ", context)  # Debug Output
 
@@ -683,7 +683,7 @@ def student_assignments_view(request):
 
     context = {
         'assignments': assignments,
-        'username': request.user.username
+        'username': request.user.student.first_name
     }
     return render(request, 'my_app/student_assignments.html', context)
 

@@ -5,17 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Adaptive Physics Learning</title>
-    <link rel="stylesheet" href="{% static 'CSS/login.css' %}?v=5">
+    <link rel="stylesheet" href="{% static 'CSS/login.css' %}?v=7">
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="login-nav">
-        <a href="{% url 'index' %}" class="nav-logo">Adaptive Physics</a>
-        <div class="nav-links">
-            <a href="{% url 'index' %}">Home</a>
-            <a href="{% url 'index' %}">About</a>
-            <a href="{% url 'index' %}">Modules</a>
-            <a href="{% url 'signup' %}" class="login-btn">SignUp</a>
+    
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="left">
+            <a href="{% url 'index' %}">
+                <img src="{% static 'Images/BGL.png' %}" alt="Logo" class="logo">
+            </a>
+            {% comment %} <span><a href="{% url 'index' %}" class="welcome-text">Adaptive Physics</a></span> {% endcomment %}
+        </div>
+        <div class="right">
+            <a href="{% url 'index' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
         </div>
     </nav>
 
@@ -33,7 +38,6 @@
                 <div class="form-group password-container">
                     <label for="password">Password</label>
                     <input type="password" name="password" placeholder="Enter your password" required>
-                    <span id="toggle-password" class="toggle-password">👁️</span>
                 </div>
 
                 <button type="submit" class="submit-btn">Login</button>
@@ -51,6 +55,6 @@
         </div>
     </section>
 
-    <script src="{% static 'JS/login.js' %}"></script>
+    <script src="{% static 'JS/login.js' %}?v=7"></script>
 </body>
 </html>

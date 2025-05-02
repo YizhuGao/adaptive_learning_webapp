@@ -7,70 +7,50 @@
     scroll-behavior: smooth;
 }
 
-/* Navigation */
-.login-nav {
+/* Navbar */
+.navbar {
     position: fixed;
     top: 0;
     width: 100%;
-    padding: 1rem 3rem;
+    background-color: #111;
+    color: #fff;
     display: flex;
-    justify-content: space-between; /* Left & right alignment */
+    justify-content: space-between;
     align-items: center;
-    background: rgba(0, 0, 0, 0.9); /* Black background */
-    border-bottom: 2px solid #ddd;
-    z-index: 100;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
 }
 
-/* Logo (Adaptive physics on the left) */
-.nav-logo {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #9e1b32; /* UGA Red */
-    text-decoration: none;
-}
-
-/* Navbar Links (on the right) */
-.nav-links {
+.navbar .left {
     display: flex;
-    gap: 2rem;
+    align-items: center;
 }
 
-.nav-links a {
+.navbar .left .logo {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.navbar .left .welcome-text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #fff;
     text-decoration: none;
-    color: white; /* White text for links */
-    font-weight: 600;
-    padding: 12px 18px;
-    border-radius: 8px;
-    transition: all 0.3s ease;
 }
 
-/* Hover effects */
-.nav-links a:hover {
-    background-color: #9e1b32; /* UGA Red on hover */
-    color: white;
-    transform: scale(1.05);
+.navbar .right a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 1.2rem;
+    font-weight: bold;
+    transition: 0.3s;
 }
 
-/* Login Button */
-.nav-links a.login-btn {
-    background-color: #9e1b32; /* UGA Red */
-    color: white;
-    font-weight: 600;
+.navbar .right a:hover {
+    color: #9e1b32;
 }
 
-.nav-links a.login-btn:hover {
-    background-color: #7a141d; /* Darker UGA Red */
-}
-
-/* Ensure navbar is always visible */
-.nav-links a {
-    visibility: visible;
-}
-
-.nav-links a:hover {
-    visibility: visible;
-}
 
 /* Login Section */
 .login-section {
