@@ -112,6 +112,7 @@ class Assessment(models.Model):
     date_taken = models.DateTimeField(auto_now_add=True)
     score = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
     topic = models.ForeignKey(Topic, related_name="assessments", on_delete=models.CASCADE)
+    subtopic = models.ForeignKey(Subtopic, related_name="assessments", on_delete=models.CASCADE)
     level = models.CharField(max_length=15)
     questions = models.ManyToManyField(Question)
 

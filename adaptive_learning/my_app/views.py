@@ -199,6 +199,7 @@ def submit_test(request, topic_id, subtopic_id):
             assessment = Assessment.objects.create(
                 student=student,
                 topic=topic,
+                subtopic=subtopic,
                 date_taken=timezone.now()
             )
 
