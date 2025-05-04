@@ -17,50 +17,43 @@ body {
     overflow-x: hidden; /* Prevent horizontal overflow */
 }
 
-/* Navbar Styles */
+/* Navbar */
 .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #111;
+    color: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
-    background-color: #000; /* Black background for navbar */
-    padding: 20px 30px; /* Increased padding for slightly taller navbar */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 10;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 1000;
 }
 
 .navbar .left .welcome-text {
     font-size: 1rem;
-    color: white;
+    font-weight: 500;
 }
 
 .navbar .right a {
-    color: white;
+    color: #fff;
     text-decoration: none;
-    margin: 0 15px;
-    padding: 8px 15px;
-    font-size: 1rem;
+    margin-left: 1.2rem;
     font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    transition: all 0.3s ease;
+    transition: 0.3s;
 }
 
 .navbar .right a:hover {
-    background-color: #9e1b32; /* UGA Red on hover */
-    border-radius: 5px;
-    transform: scale(1.05);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    color: #9e1b32;
 }
 
 /* Test Page Container */
 .test-container {
-    margin-top: 120px; /* Adjust for the increased navbar height */
+    margin-top: 100px; /* Adjust for the increased navbar height */
     width: 75%;
-    max-width: 1000px;
+    /* max-width: 1000px; */
     padding: 25px;
     background-color: white;
     border-radius: 15px;

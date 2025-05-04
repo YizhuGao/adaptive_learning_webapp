@@ -171,7 +171,7 @@ def test_view(request, topic_id, subtopic_id):
         'topic': topic,
         'subtopic': subtopic,
         'questions': questions,
-        'username': request.user.username,
+        'username': request.user.student.first_name,
         'assigned_video': student_progress.video_watched,
         'load_video_link': load_video_link,  # Include this flag in the context
     }

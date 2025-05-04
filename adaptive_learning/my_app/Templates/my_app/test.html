@@ -5,26 +5,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ topic.topic_name }} - {{ subtopic.subtopic_name }} Test</title>
-    <link rel="stylesheet" href="{% static 'CSS/test.css' %}?v=4">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'CSS/test.css' %}?v=2">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    {% comment %} <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> {% endcomment %}
 </head>
 <body>
 
 <!-- Navbar -->
 <nav class="navbar">
     <div class="left">
-        <span class="welcome-text">Best Of Luck, {{ username }}</span>
+        <span class="welcome-text">All the Best 👍🏼, {{ username }}</span>
     </div>
     <div class="right">
-        <a href="{% url 'home' %}" class="nav-link">
-            <i class="fas fa-home"></i> Home
-        </a>
-        <a href="{% url 'modules' %}" class="nav-link">
-            <i class="fas fa-arrow-left"></i> Back to Modules
-        </a>
-        <a href="{% url 'logout' %}" class="nav-link">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
+        <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
+        <a href="{% url 'modules' %}" class="nav-link"><i class="fas fa-book"></i> Modules</a>
+        <a href="{% url 'profile_update' %}" class="nav-link"><i class="fas fa-user"></i> Profile</a>
+        <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
 </nav>
 
@@ -70,7 +66,7 @@
 <!-- Feedback Section -->
 <div id="feedback"></div>
 
-<script src="{% static 'JS/test.js' %}?v=9"></script>
+<script src="{% static 'JS/test.js' %}?v=2"></script>
 
 </body>
 </html>
