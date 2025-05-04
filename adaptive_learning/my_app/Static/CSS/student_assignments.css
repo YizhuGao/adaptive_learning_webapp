@@ -52,9 +52,9 @@ body {
 
 /* Main Container */
 .assignments-container {
-    margin-top: 120px;
+    margin-top: 30px;
     width: 90%;
-    max-width: 850px;
+    /* max-width: 850px; */
     text-align: center;
     padding: 2rem;
     background-color: #fafafa;
@@ -89,7 +89,7 @@ th, td {
 
 th {
     background-color: #9e1b32;
-    color: #bbd523;
+    color: #ececec;
     text-transform: uppercase;
     font-weight: 700;
     letter-spacing: 0.5px;

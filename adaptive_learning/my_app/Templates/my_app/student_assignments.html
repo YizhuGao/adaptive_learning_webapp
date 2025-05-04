@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Assignments</title>
-    <link rel="stylesheet" href="{% static 'CSS/student_assignments.css' %}?v=5">
+    <link rel="stylesheet" href="{% static 'CSS/student_assignments.css' %}?v=6">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
@@ -26,26 +26,6 @@
 <!-- Assignments Container -->
 <div class="assignments-container">
     <h2>Test History</h2>
-
-    {% comment %} <table>
-        <tr>
-            <th>Topic</th>
-            <th>Score</th>
-            <th>Date Taken</th>
-        </tr>
-        {% for assignment in assignments %}
-        <tr>
-            <td>{{ assignment.topic }}</td>
-            <td>{{ assignment.subtopic }}</td>
-            <td>{{ assignment.score }}%</td>
-            <td>{{ assignment.date_taken }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="3">No assignments taken yet.</td>
-        </tr>
-        {% endfor %}
-    </table> {% endcomment %}
 
     <table>
         <tr>
