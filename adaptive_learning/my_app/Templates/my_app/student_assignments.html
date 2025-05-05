@@ -64,23 +64,75 @@
 {% endfor %}
     </table>
 
-    <div class="chart-container" style="width: 50%; margin: auto;">
+    {% comment %} <div class="chart-container" style="width: 50%; margin: auto;">
         <h3 style="text-align:center; margin-bottom:10px;">Topic: {{ progress.current_subtopic.topic.topic_name}}</h3>
         <canvas id="scoreChart"></canvas>
-    </div>
+    </div> {% endcomment %}
 
     {% comment %} <a href="{% url 'profile_update' %}" class="back-link">Back to Profile</a> {% endcomment %}
-</div>
 
     {% comment %} <a href="{% url 'profile_update' %}" class="back-link">Back to Profile</a>
 </div> {% endcomment %}
-<script>
+{% comment %} <script>
     const chartLabels = {{ chart_subtopics|safe }};
     const chartScoreBefore = {{ chart_score_before|safe }};
     const chartScoreAfter = {{ chart_score_after|safe }};
-</script>
+</script> {% endcomment %}
 
-<script src="{% static 'JS/student_assignments.js' %}?v=7"></script>
+<!-- Charts Section -->
+{% for topic, data in grouped_chart_data.items %}
+<div class="chart-container" style="width: 50%; margin: auto; margin-bottom: 40px;">
+    <h3 style="text-align:center;">Topic: {{ topic }}</h3>
+    <canvas id="chart_{{ forloop.counter }}"></canvas>
+    <script>
+        const ctx{{ forloop.counter }} = document.getElementById('chart_{{ forloop.counter }}').getContext('2d');
+        new Chart(ctx{{ forloop.counter }}, {
+            type: 'line',
+            data: {
+                labels: {{ data.subtopics|safe }},
+                datasets: [
+                    {
+                        label: 'Score Before',
+                        data: {{ data.before|safe }},
+                        borderColor: 'blue',
+                        backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                        fill: false,
+                        tension: 0.2
+                    },
+                    {
+                        label: 'Score After',
+                        data: {{ data.after|safe }},
+                        borderColor: 'red',
+                        backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                        fill: false,
+                        tension: 0.2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Progress for {{ topic }}'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 120
+                    }
+                }
+            }
+        });
+    </script>
+</div>
+{% endfor %}
+
+<script src="{% static 'JS/student_assignments.js' %}?v=8"></script>
 
 </body>
 </html>
