@@ -795,8 +795,6 @@ def complete_video(request):
             video_id = data.get('video_id')
             subtopic_id = data.get('subtopic_id')
 
-            print(f"DEBUG: Received Subtopic ID: {subtopic_id}, Video ID: {video_id}")
-
             # Get the student object from the logged-in user
             student = get_object_or_404(Student, user=request.user)
 
@@ -810,19 +808,25 @@ def complete_video(request):
                     student=student, video=video, subtopic=subtopic
                 )
             except VideoProgress.DoesNotExist:
-                raise Exception(f"VideoProgress entry not found for student {student.id}, video {video.id}, subtopic {subtopic.id}")
+                raise Exception(f"VideoProgress entry not found for student {student.student_id}, video {video.video_module_id}, subtopic {subtopic.subtopic_id}")
+
+            print(f"DEBUG: VideoProgress entry found for student {student.student_id}, video {video.video_module_id}, subtopic {subtopic.subtopic_id}")
+            print(video_progress)
 
             # If the video hasn't been watched already, mark it as watched
             if not video_progress.watched:
+                print("inside if")
                 video_progress.watched = True
                 video_progress.watched_at = timezone.now()
                 video_progress.save()
 
                 # Check if all videos for this subtopic are watched
-                total_videos = VideoModule.objects.filter(subtopic=subtopic).count()
+                total_videos = VideoProgress.objects.filter(subtopic=subtopic, student=student).count()
+                print(f"DEBUG: Total videos for subtopic {subtopic_id}: {total_videos}")
                 watched_videos = VideoProgress.objects.filter(
                     student=student, subtopic=subtopic, watched=True
                 ).count()
+                print(f"DEBUG: Watched videos for subtopic {subtopic_id}: {watched_videos}")
 
                 if watched_videos == total_videos:
                     progress = student.progress_set.filter(current_subtopic=subtopic).first()
