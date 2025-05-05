@@ -677,18 +677,45 @@ def profile_update_view(request):
     return render(request, 'my_app/profile_update.html', {'student': student})
 
 
-@login_required
+# @login_required
+# def student_assignments_view(request):
+#     student = get_object_or_404(Student, user=request.user)
+#     assignments = Assessment.objects.filter(student=student).order_by('-date_taken')  # Fetch assignments
+
+#     context = {
+#         'assignments': assignments,
+#         'username': request.user.student.first_name
+#     }
+#     return render(request, 'my_app/student_assignments.html', context)
+
 def student_assignments_view(request):
     student = get_object_or_404(Student, user=request.user)
-    assignments = Assessment.objects.filter(student=student).order_by('-date_taken')  # Fetch assignments
 
+    progress_data = Progress.objects.filter(student=student).select_related(
+        'current_subtopic__topic'
+    ).order_by('-last_accessed')
+
+    subtopics = []
+    score_before = []
+    score_after = []
+
+    for p in progress_data:
+        if p.current_subtopic and p.score_before is not None and p.score_after is not None:
+            subtopics.append(p.current_subtopic.subtopic_name)
+            score_before.append(float(p.score_before))
+            score_after.append(float(p.score_after))
+
+# Add to context
     context = {
-        'assignments': assignments,
-        'username': request.user.student.first_name
+        'progress_data': progress_data,
+        'username': student.first_name,
+        'chart_subtopics': subtopics,
+        'chart_score_before': score_before,
+        'chart_score_after': score_after,
     }
+
+
     return render(request, 'my_app/student_assignments.html', context)
-
-
 
 
 @csrf_exempt

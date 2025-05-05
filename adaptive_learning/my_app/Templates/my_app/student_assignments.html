@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Assignments</title>
-    <link rel="stylesheet" href="{% static 'CSS/student_assignments.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'CSS/student_assignments.css' %}?v=7">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -31,30 +32,55 @@
         <tr>
             <th>Topic</th>
             <th>Subtopic</th>
-            <th>Score</th>
+            <th>Score Before</th>
+            <th>Score After</th>
             <th>Date Taken</th>
         </tr>
-        {% for assignment in assignments %}
-        <tr>
-            <td>{{ assignment.topic }}</td>
-            <td>{{ assignment.subtopic }}</td>
-            <td>{{ assignment.score }}%</td>
-            <td>{{ assignment.date_taken }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="4">No assignments taken yet.</td>
-        </tr>
-        {% endfor %}
+        {% comment %} {% for assignment in assignments %}
+<tr>
+    <td>{{ assignment.topic }}</td>
+    <td>{{ assignment.subtopic }}</td>
+    <td>{{ assignment.score }}%</td>
+    <td>{{ assignment.date_taken }}</td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="4">No assignments taken yet.</td>
+</tr>
+{% endfor %} {% endcomment %}
+
+        {% for progress in progress_data %}
+<tr>
+    <td>{{ progress.current_subtopic.topic.topic_name }}</td>
+    <td>{{ progress.current_subtopic.subtopic_name }}</td>
+    <td>{{ progress.score_before }}%</td>
+    <td>{{ progress.score_after }}%</td>
+    <td>{{ progress.last_accessed|date:"Y-m-d H:i" }}</td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="4">No progress data available yet.</td>
+</tr>
+{% endfor %}
     </table>
 
-    <a href="{% url 'profile_update' %}" class="back-link">Back to Profile</a>
+    <div class="chart-container" style="width: 50%; margin: auto;">
+        <h3 style="text-align:center; margin-bottom:10px;">Topic: {{ progress.current_subtopic.topic.topic_name}}</h3>
+        <canvas id="scoreChart"></canvas>
+    </div>
+
+    {% comment %} <a href="{% url 'profile_update' %}" class="back-link">Back to Profile</a> {% endcomment %}
 </div>
 
     {% comment %} <a href="{% url 'profile_update' %}" class="back-link">Back to Profile</a>
 </div> {% endcomment %}
+<script>
+    const chartLabels = {{ chart_subtopics|safe }};
+    const chartScoreBefore = {{ chart_score_before|safe }};
+    const chartScoreAfter = {{ chart_score_after|safe }};
+</script>
 
-<script src="{% static 'JS/student_assignments.js' %}?v=3"></script>
+<script src="{% static 'JS/student_assignments.js' %}?v=7"></script>
 
 </body>
 </html>
