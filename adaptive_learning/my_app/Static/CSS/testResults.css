@@ -1,224 +1,224 @@
-/* General Styles */
+/* ======================
+   Global Styles
+====================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
-
-body {
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
     font-family: 'Arial', sans-serif;
-    background-color: white; /* Clean white background */
-    color: #333; /* Dark text for readability */
+    background-color: #fff;
+    color: #333;
     height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     align-items: center;
-}
-
-/* Navbar Styles */
-.navbar {
+  }
+  
+  /* ======================
+     Navbar
+  ====================== */
+  .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 1rem 2rem;
+    background-color: #111;
+    color: #fff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
-    background-color: #000; /* Black background */
-    padding: 15px 30px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 10;
-}
-
-.navbar .left .welcome-text {
-    font-size: 1.2rem;
-    color: white; /* White text for contrast */
-}
-
-.navbar .right a {
-    color: white; /* White links */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+  }
+  
+  .navbar .left .welcome-text {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  .navbar .right a {
+    margin-left: 1.2rem;
+    color: #fff;
     text-decoration: none;
-    margin: 0 20px;
-    padding: 10px 20px;
-    font-size: 1.1rem;
     font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
-}
-
-.navbar .right a:hover {
-    background-color: #9e1b32; /* UGA Red on hover */
-    border-radius: 5px;
-    transform: scale(1.05);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-}
-
-.navbar .right a i {
-    margin-right: 8px;
-}
-
-/* Results Container */
-.results-container {
+    transition: color 0.3s ease;
+  }
+  
+  .navbar .right a:hover {
+    color: #9e1b32;
+  }
+  
+  /* ======================
+     Results Container
+  ====================== */
+  .results-container {
     margin-top: 100px;
-    width: 100%;
     max-width: 900px;
-    text-align: center;
+    width: 100%;
     padding: 15px;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 15px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-}
-
-/* Title Styling */
-.results-container h1, h2 {
+    text-align: center;
+  }
+  
+  .results-container h1,
+  .results-container h2 {
     margin-bottom: 10px;
-    color: #9e1b32; /* UGA Red */
+    color: #9e1b32;
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Score Styling */
-.score {
+  }
+  
+  /* ======================
+     Score & Feedback
+  ====================== */
+  .score {
     font-size: 2.5rem;
     font-weight: bold;
-    color: #490202; /* Soft red */
-}
-
-/* Feedback Messages */
-.feedback-message {
+    color: #490202;
+  }
+  
+  .feedback-message {
+    margin-top: 10px;
+    padding: 12px;
     font-size: 1.3rem;
     font-weight: bold;
-    padding: 12px;
-    margin-top: 10px;
-    border-radius: 10px;
     text-align: center;
+    border-radius: 10px;
     transition: all 0.5s ease-in-out;
-}
-
-/* Different Colors for Messages */
-.success {
-    background: #27AE60; /* Green */
-    color: white;
-}
-
-.warning {
-    background: #F39C12; /* Orange */
-    color: black;
-}
-
-.error {
-    background: #E74C3C; /* Red */
-    color: white;
-}
-
-/* Results Table */
-.results-table {
+  }
+  
+  .feedback-message.success {
+    background: #27ae60;
+    color: #fff;
+  }
+  
+  .feedback-message.warning {
+    background: #f39c12;
+    color: #000;
+  }
+  
+  .feedback-message.error {
+    background: #e74c3c;
+    color: #fff;
+  }
+  
+  /* ======================
+     Results Table
+  ====================== */
+  .results-table {
     width: 100%;
     margin-top: 20px;
     border-collapse: collapse;
-}
-
-.results-table th, .results-table td {
+  }
+  
+  .results-table th,
+  .results-table td {
     padding: 12px;
-    border: 1px solid #ddd;
     text-align: left;
-}
-
-.results-table th {
-    background-color: #9e1b32; /* UGA Red */
-    color: white;
-}
-
-/* Correct Answer */
-.correct-answer {
-    color: #27AE60; /* Green */
+    border: 1px solid #ddd;
+  }
+  
+  .results-table th {
+    background-color: #9e1b32;
+    color: #fff;
+  }
+  
+  /* Answer Highlights */
+  .correct-answer {
+    color: #27ae60;
     font-weight: bold;
-}
-
-/* Incorrect Answer */
-.incorrect-answer {
-    color: #E74C3C; /* Red */
-    background-color: #FADBD8;
+  }
+  
+  .incorrect-answer {
+    color: #e74c3c;
+    background-color: #fadbd8;
     font-weight: bold;
-}
-
-/* Status Column Styling */
-.status {
+  }
+  
+  /* Status Tags */
+  .status {
+    padding: 6px 10px;
     font-size: 1.1rem;
     font-weight: bold;
-    padding: 6px 10px;
     border-radius: 8px;
     display: inline-block;
-}
-
-/* Correct Status */
-.status.correct {
-    color: #27AE60;
+  }
+  
+  .status.correct {
+    color: #27ae60;
     background-color: #eafbea;
-}
-
-/* Incorrect Status */
-.status.incorrect {
-    color: #E74C3C;
+  }
+  
+  .status.incorrect {
+    color: #e74c3c;
     background-color: #fadbd8;
-}
-
-/* Learning Section */
-.learning-section {
+  }
+  
+  /* ======================
+     Learning Section
+  ====================== */
+  .learning-section {
     margin-top: 20px;
-}
-
-.watch-video-button {
+  }
+  
+  .watch-video-button {
     display: inline-block;
     padding: 12px 20px;
-    background: #9e1b32; /* UGA Red */
-    color: white;
-    font-weight: bold;
+    background: #9e1b32;
+    color: #fff;
     font-size: 1rem;
+    font-weight: bold;
     border: none;
     border-radius: 5px;
+    text-decoration: none;
     cursor: pointer;
     transition: all 0.3s ease;
-    text-decoration: none;
-}
-
-.watch-video-button:hover {
-    background: #7a141d; /* Darker UGA Red */
+  }
+  
+  .watch-video-button:hover {
+    background: #7a141d;
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
+  }
+  
+  /* ======================
+     Responsive Design
+  ====================== */
+  @media (max-width: 768px) {
     .navbar {
-        padding: 12px 20px;
+      padding: 12px 20px;
     }
-
+  
     .navbar .right a {
-        font-size: 1rem;
-        padding: 8px 12px;
+      font-size: 1rem;
+      padding: 8px 12px;
     }
-
+  
     .results-container {
-        padding: 20px;
+      padding: 20px;
     }
-}
-
-/* Smooth Scrolling */
-html {
-    scroll-behavior: smooth;
-}
-
-/* Fade-in Animation */
-@keyframes fadeIn {
+  }
+  
+  /* ======================
+     Animations
+  ====================== */
+  @keyframes fadeIn {
     0% {
-        opacity: 0;
-        transform: translateY(50px);
+      opacity: 0;
+      transform: translateY(50px);
     }
     100% {
-        opacity: 1;
-        transform: translateY(0);
+      opacity: 1;
+      transform: translateY(0);
     }
-}
+  }
+  

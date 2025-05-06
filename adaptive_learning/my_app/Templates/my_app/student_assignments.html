@@ -1,4 +1,5 @@
 {% load static %}
+{% load tz %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,7 +56,7 @@
     <td>{{ progress.current_subtopic.subtopic_name }}</td>
     <td>{{ progress.score_before }}</td>
     <td>{{ progress.score_after }}</td>
-    <td>{{ progress.last_accessed|date:"Y-m-d H:i" }}</td>
+    <td>{{ progress.last_accessed|timezone:"America/New_York"|date:"Y-m-d H:i" }}</td>
 </tr>
 {% empty %}
 <tr>
