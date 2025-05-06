@@ -120,7 +120,20 @@
                         text: 'Progress for {{ topic }}'
                     }
                 },
+                layout: {
+                    padding: {
+                        left: 50 // Approx 1 cm
+                    }
+                },
                 scales: {
+                    x: {
+                        offset: true, // Shifts the first tick away from the Y axis
+                        ticks: {
+                            font: {
+                                weight: 'bold' // <-- Bold subtopic names
+                            }
+                        }
+                    },
                     y: {
                         beginAtZero: true,
                         max: 120
