@@ -734,8 +734,25 @@ def student_assignments_view(request):
     #         grouped_data[topic]['subtopics'].append(p.current_subtopic.subtopic_name)
     #         grouped_data[topic]['before'].append(float(p.score_before))
     #         grouped_data[topic]['after'].append(float(p.score_after))
+    
 
-    for p in progress_data:
+    # for p in progress_data:
+    #     if p.current_subtopic:
+    #         topic = p.current_subtopic.topic.topic_name
+    #         grouped_data[topic]['subtopics'].append(p.current_subtopic.subtopic_name)
+    #         grouped_data[topic]['before'].append(float(p.score_before) if p.score_before is not None else 'null')
+    #         grouped_data[topic]['after'].append(float(p.score_after) if p.score_after is not None else 'null')
+
+    
+    # context = {
+    #     'progress_data': progress_data,
+    #     'username': student.first_name,
+    #     'grouped_chart_data': dict(grouped_data),
+    # }
+
+    sorted_progress_data = sorted(progress_data, key=lambda p: p.progress_id)  # or p.progress_id if that's the actual attribute name
+
+    for p in sorted_progress_data:
         if p.current_subtopic:
             topic = p.current_subtopic.topic.topic_name
             grouped_data[topic]['subtopics'].append(p.current_subtopic.subtopic_name)
@@ -743,10 +760,11 @@ def student_assignments_view(request):
             grouped_data[topic]['after'].append(float(p.score_after) if p.score_after is not None else 'null')
 
     context = {
-        'progress_data': progress_data,
+        'progress_data': sorted_progress_data,
         'username': student.first_name,
         'grouped_chart_data': dict(grouped_data),
     }
+
 
     return render(request, 'my_app/student_assignments.html', context)
 
