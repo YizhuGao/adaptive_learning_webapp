@@ -134,6 +134,28 @@ td[colspan='4'] {
     transform: scale(1.05);
 }
 
+.chart-container {
+    width: 80%;
+    max-width: 800px;
+    margin: 40px auto;
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 20px 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.chart-container:hover {
+    transform: scale(1.02);
+}
+
+.chart-container h3 {
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+    color: #333;
+    margin-bottom: 20px;
+}
+
 /* Fade-in Animation */
 @keyframes fadeIn {
     0% {

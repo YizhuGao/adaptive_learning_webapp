@@ -1,36 +1,202 @@
+/* Global Styles */
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f4f4f4;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+    padding: 0;
+    color: #2c3e50;
 }
 
+/* Navbar */
 .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #111;
+    color: #fff;
     display: flex;
     justify-content: space-between;
-    background: #333;
-    padding: 15px;
-    color: white;
+    align-items: center;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 1000;
 }
 
-.nav-link {
-    color: white;
+.navbar .left .welcome-text {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.navbar .right a {
+    color: #fff;
     text-decoration: none;
-    margin: 0 10px;
+    margin-left: 1.2rem;
+    font-weight: bold;
+    transition: 0.3s;
 }
 
+.navbar .right a:hover {
+    color: #9e1b32;
+}
+
+/* Section Title */
+.section-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-top: 60px;
+    margin-bottom: 30px;
+    color: #2c3e50;
+}
+
+/* Video Wrapper */
+.video-wrapper {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 30px auto;
+    max-width: 850px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.8s ease-in-out;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+}
+
+.video-wrapper:hover {
+    transform: scale(1.01);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+}
+
+/* Video Title */
+.video-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #34495e;
+}
+
+/* Video Container */
 .video-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.video-frame {
+    width: 100%;
+    height: 400px;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Button */
+.mark-watched-btn {
+    background-color: #9e1b32;
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.mark-watched-btn:hover {
+    background-color: #7a141d;
+    transform: scale(1.05);
+}
+
+/* No Videos Message */
+.no-videos-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #e74c3c;
     margin-top: 50px;
 }
 
-.watch-video-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    margin-top: 10px;
+.test-navigation {
+    width: 100%; /* Make it full width */
+    padding: 2rem;
+    background-color: #fafafa;
+    border-radius: 16px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.watch-video-button:hover {
-    background-color: #0056b3;
+
+.test-navigation:hover {
+    transform: scale(1.015);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.test-prompt {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.start-btn {
+    background-color: #9e1b32;
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.start-btn:hover {
+    background-color: #7a141d;
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .test-prompt {
+        font-size: 1.05rem;
+    }
+
+    .start-btn {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+    }
+
+    .test-navigation {
+        padding: 1.5rem;
+    }
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(40px);
+  }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .video-frame {
+        height: 250px;
+    }
+
+    .mark-watched-btn {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+    }
+
+    .video-wrapper {
+        padding: 1.5rem;
+        margin: 20px 16px;
+    }
 }

@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
     <title>Learning Video</title>
-    <link rel="stylesheet" href="{% static 'CSS/learningVideo.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'CSS/learningVideo.css' %}?v=8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
@@ -22,39 +23,39 @@
     </div>
 </nav>
 
-<p>Subtopic ID: {{ subtopic_id }}</p>
-<p>Video IDs:</p>
-<ul>
-    {% for video in video_data %}
-        <li>{{ video.id }}: {{ video.title }}</li>
-    {% endfor %}
-</ul>
+<!-- Video Section -->
+<section class="video-section">
+    <h2 class="section-title">🎬 Learning Videos</h2>
 
-<div class="video-container">
-    <h2>Watch the Video</h2>
     {% if video_data %}
         {% for video in video_data %}
-        <div class="video-container">
-            <iframe class="video-frame"
-                    width="560"
-                    height="315"
-                    src="{{ video.url }}"
-                    frameborder="0"
-                    allow="autoplay; fullscreen"
-                    allowfullscreen
-                    data-video-id="{{ video.id }}"
-                    data-subtopic-id="{{ subtopic_id }}"
-                    id="video-{{ video.id }}">
-            </iframe>
+        <div class="video-wrapper">
+            <div class="video-title">
+                <i class="fas fa-video"></i> {{ video.title }}
+            </div>
+            <div class="video-container">
+                <div class="video-overlay">
+                    {% comment %} <i class="fas fa-play-circle play-icon"></i> {% endcomment %}
+                </div>
+                <iframe class="video-frame"
+                        src="{{ video.url }}"
+                        frameborder="0"
+                        allow="autoplay; fullscreen"
+                        allowfullscreen
+                        data-video-id="{{ video.id }}"
+                        data-subtopic-id="{{ subtopic_id }}"
+                        id="video-{{ video.id }}">
+                </iframe>
+            </div>
             <button class="mark-watched-btn" data-video-id="{{ video.id }}" data-subtopic-id="{{ subtopic_id }}">
                 Mark as Watched
             </button>
         </div>
         {% endfor %}
     {% else %}
-        <p>No video modules available for this subtopic.</p>
+        <p class="no-videos-message">🚫 No video modules available for this subtopic.</p>
     {% endif %}
-</div>
+</section>
 
 <div class="test-navigation">
     <p class="test-prompt">Finished watching videos?<br>Now test what you learned!</p>
@@ -63,6 +64,6 @@
     </a>
 </div>
 
-<script src="{% static 'JS/video.js' %}?v=5"></script>
+<script src="{% static 'JS/video.js' %}?v=6"></script>
 </body>
 </html>
