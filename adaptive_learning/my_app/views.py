@@ -181,7 +181,6 @@ def test_view(request, topic_id, subtopic_id):
 
 
 
-
 @login_required
 def submit_test(request, topic_id, subtopic_id):
     if request.method == "POST":
@@ -212,11 +211,11 @@ def submit_test(request, topic_id, subtopic_id):
             question_ids_list = []
             correctness_list = []
 
-            print(BASE_DIR)
+            # print(BASE_DIR)
             TCE_Misunderstanding_path = os.path.join(BASE_DIR, 'my_app', 'ML', 'TCE_Misunderstanding.xlsx')
 
-            print(BASE_DIR)
-            print("Excel file path - ", TCE_Misunderstanding_path)
+            # print(BASE_DIR)
+            # print("Excel file path - ", TCE_Misunderstanding_path)
 
             tce_misunderstanding = pd.read_excel(TCE_Misunderstanding_path)
             knowledge_n = tce_misunderstanding.shape[1] - 1
@@ -234,16 +233,24 @@ def submit_test(request, topic_id, subtopic_id):
                         question=question,
                         selected_option=selected_option
                     )
-
-                    # Track question ID
-                    question_ids_list.append(question.question_id - 13)
-
+                    # if question.question_id - 39 >= 1 and question.question_id - 39 <= 1:
+                    #     question.question_id = question.question_id - 39
+                    # else:
+                    #     question.question_id = (question.question_id - 39) / 2
+                    # # Track question ID
+                    # print("Question ID - ", question.question_id)
+                    # if question.assigned_at == 0:
+                    question_ids_list.append(question.question_id - 39)
+                        # print("Question ID - ", question.question_id)
+                    # else:
+                        # print(f"Skipping question ID {question.question_id} as assigned_at = {question.assigned_at}")
                     # Check correctness
                     if selected_option.is_correct:
                         correct_count += 1
                         correctness_list.append(1)
                     else:
                         correctness_list.append(0)
+
                     total_questions += 1
 
                     # Track assigned_at values
@@ -253,6 +260,8 @@ def submit_test(request, topic_id, subtopic_id):
                         assigned_at_1_count += 1
 
             # Calculate score
+            print("correct_count", correct_count)
+            print("total_questions", total_questions)
             score = (correct_count / total_questions) * 100 if total_questions > 0 else 0
 
             assessment.score = score
@@ -541,20 +550,21 @@ def test_results(request, topic_id, subtopic_id):
             progress.save()
 
         for entry in video_progress_entries:
-            video_module = entry.video
-            video_url = video_module.url if video_module and progress and not progress.score_after else None
-            print("Video URL - ", video_url)
+            if not entry.watched:
+                video_module = entry.video
+                video_url = video_module.url if video_module and progress and not progress.score_after else None
+                print("Video URL - ", video_url)
 
-            if video_url:
-                if "drive.google.com/file/d/" in video_url:
-                    file_id = video_url.split('/d/')[1].split('/')[0]
-                    video_url = f"https://drive.google.com/file/d/{file_id}/preview"
+                if video_url:
+                    if "drive.google.com/file/d/" in video_url:
+                        file_id = video_url.split('/d/')[1].split('/')[0]
+                        video_url = f"https://drive.google.com/file/d/{file_id}/preview"
 
-                video_data.append({
-                    "id": video_module.video_module_id,
-                    "title": video_module.title,
-                    "url": video_url
-                })
+                    video_data.append({
+                        "id": video_module.video_module_id,
+                        "title": video_module.title,
+                        "url": video_url
+                    })
 
         context = {
             "student_name": f"{student.first_name} {student.last_name}",
