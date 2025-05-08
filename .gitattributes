@@ -1,3 +1,5 @@
+
+*.py linguist-language=Python
 *.py linguist-detectable=true
 # Force GitHub to detect Python files
 *.py linguist-detectable=true
