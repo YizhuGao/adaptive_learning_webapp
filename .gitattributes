@@ -1,1 +1,12 @@
 *.py linguist-detectable=true
+# Force GitHub to detect Python files
+*.py linguist-detectable=true
+*.html linguist-detectable=true
+*.css linguist-detectable=true
+*.js linguist-detectable=true
+
+# Ignore static frontend files from being counted toward language stats
+/static/** linguist-vendored
+/staticfiles/** linguist-vendored
+*.svg linguist-vendored
+*.map linguist-vendored
