@@ -128,16 +128,30 @@
                 },
                 scales: {
                     x: {
-                        offset: true, // Shifts the first tick away from the Y axis
+                        offset: true,
+                        grid: {
+                            display: true
+                        }, // Shifts the first tick away from the Y axis
                         ticks: {
                             font: {
                                 weight: 'bold' // <-- Bold subtopic names
-                            }
+                            },
+                            color: '#8B0000' 
+                            
                         }
                     },
                     y: {
                         beginAtZero: true,
-                        max: 120
+                        max: 120,
+                        ticks: {
+                            font: {
+                                weight: 'bold'
+                            },
+                            color: '#4169E1'  // 🔸 Change this to your desired color (e.g., red-orange)
+                        },
+                        grid: {
+                            display: false
+                        } 
                     }
                 }
             }

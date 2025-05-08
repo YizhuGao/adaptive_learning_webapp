@@ -30,21 +30,21 @@
             <p>Your personalized journey to mastering physics concepts starts here.</p>
 
             <div class="features">
-                <div class="feature">
+                <a href="{% url 'modules' %}" class="feature" style="text-decoration: none; color: inherit;">
                     <i class="fas fa-lightbulb"></i>
                     <h3>Interactive Learning</h3>
                     <p>Visualize and explore physics with hands-on simulations and modules.</p>
-                </div>
-                <div class="feature">
+                </a>
+                <a href="{% url 'modules' %}" class="feature" style="text-decoration: none; color: inherit;">
                     <i class="fas fa-chalkboard-teacher"></i>
                     <h3>Expert Mentorship</h3>
                     <p>Learn from top educators and stay on track with guided pathways.</p>
-                </div>
-                <div class="feature">
+                </a>
+                <a href="{% url 'student_assignments' %}" class="feature" style="text-decoration: none; color: inherit;">
                     <i class="fas fa-chart-line"></i>
                     <h3>Progress Tracking</h3>
                     <p>Analyze your learning performance and master every concept efficiently.</p>
-                </div>
+                </a>
             </div>
 
             <a href="{% url 'modules' %}" class="btn-cta">Start Learning</a>
