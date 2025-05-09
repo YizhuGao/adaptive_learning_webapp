@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Learning Videos</title>
+    <link rel="stylesheet" href="{% static 'CSS/learningVideo.css' %}?v=9">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="left">
+        <span class="welcome-text">📚 All Learning Videos</span>
+    </div>
+    <div class="right">
+        <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
+        <a href="{% url 'modules' %}" class="nav-link"><i class="fas fa-book"></i> Modules</a>
+        <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+</nav>
+
+<!-- Videos -->
+<section class="video-section">
+    <h2 class="section-title">🎬 Learning Videos</h2>
+
+    {% if video_data_grouped %}
+        {% for video in video_data_grouped %}
+        <div class="video-wrapper">
+            <div class="video-title">
+                <i class="fas fa-video"></i> {{ video.video_title }}
+            </div>
+             <div class="video-details">
+                <p><strong>Topic:</strong> {{ video.topic_name }}</p>
+                <p><strong>Subtopic:</strong> {{ video.subtopic_name }}</p>
+            </div>
+            <div class="video-container">
+                <div class="video-overlay">
+                    {% comment %} <i class="fas fa-play-circle play-icon"></i> {% endcomment %}
+                </div>
+                <iframe class="video-frame"
+                        src="{{ video.video_url }}"
+                        frameborder="0"
+                        allow="autoplay; fullscreen"
+                        allowfullscreen
+                        data-video-id="{{ video.video_id }}"
+                        data-subtopic-id="{{ video.subtopic_id }}"
+                        id="video-{{ video.video_id }}">
+                </iframe>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="no-videos-message">🚫 No video modules available for this subtopic.</p>
+    {% endif %}
+</section>
+
+</body>
+</html>

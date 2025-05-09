@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Results</title>
+    <link rel="stylesheet" href="{% static 'CSS/testResults.css' %}?v=7">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="left">
+            <span class="welcome-text">Results for {{ student_name }}</span>
+        </div>
+        <div class="right">
+            <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
+            <a href="{% url 'modules' %}" class="nav-link"><i class="fas fa-book"></i> Modules</a>
+            <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </nav>
+
+    <!-- Results Container -->
+    <div class="results-container">
+        <h1>Test Results</h1>
+        <p><strong>Topic:</strong> {{ topic.topic_name }}</p>
+        <p><strong>Subtopic:</strong> {{ subtopic.subtopic_name }}</p>
+        <p><strong>Score:</strong> <span class="score">{{ score }}%</span></p>
+
+        <!-- Dynamic Feedback Message -->
+        <div id="feedback-message"></div>
+
+        <h2>Questions and Answers</h2>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Selected Answer</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+    {% for response in responses %}
+    <tr>
+        <td>{{ response.question_text }}</td>
+        <td class="{% if response.is_correct %}correct-answer{% else %}incorrect-answer{% endif %}">
+            {{ response.selected_option }}
+        </td>
+        <td>
+            {% if response.is_correct %}
+                ✅ Correct
+            {% else %}
+                ❌ Incorrect
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+        </table>
+
+    </div>
+
+    <script src="{% static 'JS/testResults.js' %}?v=3"></script>
+</body>
+</html>

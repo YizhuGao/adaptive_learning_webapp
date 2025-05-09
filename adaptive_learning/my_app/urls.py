@@ -22,5 +22,9 @@ urlpatterns = [
     path('profile/assignments/', student_assignments_view, name='student_assignments'),
     path('update-progress/', update_video_progress, name='update_progress'),
     path('simulation/', simulation_view, name='simulation'),
-
+    path('experimental/', views.display_experiment_test, name='experimental'),
+    path('submit_experimental_test/', views.submit_experimental_test, name='submit_experimental_test'),
+    path('experiment-results/', views.experiment_test_results, name='experiment_test_results'),
+    path('all_videos/', views.all_learning_videos, name='all_learning_videos'),
+    path('experiment-home/', views.experiment_home, name='experiment_home'),
 ]

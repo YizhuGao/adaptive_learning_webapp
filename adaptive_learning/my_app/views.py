@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import Assessment, Question, Student, AssessmentResponse, Option, VideoModule, Subtopic, Progress, Topic, \
-    VideoProgress
+    VideoProgress, ExperimentAssessmentScore
 import logging
 import numpy as np
 from django.conf import settings
@@ -890,3 +890,126 @@ def simulation_view(request):
         return HttpResponse(simulation_content)
     else:
         return HttpResponse("Simulation file not found.", status=404)
+
+
+@login_required
+def experiment_home(request):
+    return render(request, 'my_app/experiment_home.html')
+
+
+
+@login_required()
+def display_experiment_test(request):
+    # Fetch questions assigned at '0' (Before Assignment) or '1' (After Assignment)
+    questions = Question.objects.filter(assigned_at=0)  # Change the filter if needed
+
+    question_data = []
+
+    for question in questions:
+        # Fetch the options for each question
+        options = Option.objects.filter(question=question)
+        question_data.append({
+            "question": question,
+            "options": options
+        })
+
+    print(question_data)
+
+    # Pass the question and options data to the template
+    return render(request, 'my_app/experiment_test.html', {'question_data': question_data})
+
+
+@login_required()
+def submit_experimental_test(request):
+    student = get_object_or_404(Student, user=request.user)
+    questions = Question.objects.all()
+
+    total_score = 0
+    total_questions = 0
+    response_data = []  # To collect data per question
+
+    for question in questions:
+        selected_option_id = request.POST.get(f'question_{question.pk}')
+        selected_option = None
+        is_correct = False
+
+        if selected_option_id:
+            selected_option = Option.objects.get(pk=selected_option_id)
+            is_correct = selected_option.is_correct
+            if is_correct:
+                total_score += 1
+
+        total_questions += 1
+
+        response_data.append({
+            'question_text': question.question_text,
+            'selected_option': selected_option.option_text if selected_option else "No Answer",
+            'is_correct': is_correct
+        })
+
+    score_percentage = (total_score / total_questions) * 100 if total_questions > 0 else 0
+
+    ExperimentAssessmentScore.objects.create(
+        student=student,
+        score=total_score
+    )
+
+    # Store data in session
+    request.session['experiment_score'] = round(score_percentage, 2)
+    request.session['experiment_responses'] = response_data
+    request.session['student_name'] = request.user.get_full_name() or request.user.username
+
+    messages.success(request, f"Test submitted successfully! Score: {total_score}/{total_questions}")
+
+    return redirect('my_app/experiment_test_results')
+
+
+@login_required
+def experiment_test_results(request):
+    context = {
+        'score': request.session.get('experiment_score'),
+        'responses': request.session.get('experiment_responses', []),
+        'student_name': request.session.get('student_name', request.user.username),
+    }
+    return render(request, 'my_app/experiment_test_results.html', context)
+
+
+@login_required
+def all_learning_videos(request):
+    try:
+        # Fetch all videos from VideoModule
+        videos = VideoModule.objects.all()
+        print("videos - ", videos)
+
+        video_data_grouped = []
+
+        for video in videos:
+            subtopic = video.subtopic
+            topic = subtopic.topic
+            video_url = video.url
+
+            if "drive.google.com/file/d/" in video_url:
+                file_id = video_url.split('/d/')[1].split('/')[0]
+                video_url = f"https://drive.google.com/file/d/{file_id}/preview"
+
+            video_data_grouped.append({
+                "topic_name": topic.topic_name,
+                "subtopic_name": subtopic.subtopic_name,
+                "video_title": video.title,
+                "video_url": video_url,
+                "video_id": video.video_module_id,
+                "subtopic_id": subtopic.subtopic_id
+            })
+
+        print("video_data_grouped - ", video_data_grouped)
+
+
+        context = {
+            "video_data_grouped": video_data_grouped
+        }
+
+        return render(request, "my_app/all_learning_videos.html", context)
+
+    except Exception as e:
+        print("Error in all_learning_videos:", e)
+        return JsonResponse({"error": str(e)}, status=400)

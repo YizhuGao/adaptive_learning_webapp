@@ -183,8 +183,6 @@ class Progress(models.Model):
 
 
 
-
-
 class VideoProgress(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     subtopic = models.ForeignKey(Subtopic, on_delete=models.CASCADE)
@@ -194,3 +192,12 @@ class VideoProgress(models.Model):
 
     class Meta:
         unique_together = ('student', 'video')  # Ensure one entry per student-video
+
+
+class ExperimentAssessmentScore(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, to_field="student_id")
+    taken_at = models.DateTimeField(auto_now_add=True)
+    score = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+
+    def __str__(self):
+        return f"{self.student.user.username} - Score: {self.score} - Taken at: {self.taken_at}"
