@@ -54,6 +54,7 @@ class Student(models.Model):
         ('prefer_not_to_answer', 'Prefer not to answer')
     ]
     race = models.ManyToManyField('Race', blank=True)
+    can_take_experimental_test = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
