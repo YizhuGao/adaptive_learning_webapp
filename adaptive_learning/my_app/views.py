@@ -952,7 +952,7 @@ def submit_experimental_test(request):
 
     ExperimentAssessmentScore.objects.create(
         student=student,
-        score=total_score
+        score=score_percentage
     )
 
     # Store data in session
