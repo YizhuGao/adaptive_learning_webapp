@@ -922,7 +922,7 @@ def display_experiment_test(request):
 @login_required()
 def submit_experimental_test(request):
     student = get_object_or_404(Student, user=request.user)
-    questions = Question.objects.all()
+    questions = Question.objects.filter(assigned_at=0)
 
     total_score = 0
     total_questions = 0
@@ -948,6 +948,7 @@ def submit_experimental_test(request):
         })
 
     score_percentage = (total_score / total_questions) * 100 if total_questions > 0 else 0
+    print(f"DEBUG: Total score: {total_score}, Total questions: {total_questions}, Score percentage: {score_percentage}")
 
     ExperimentAssessmentScore.objects.create(
         student=student,
@@ -961,7 +962,7 @@ def submit_experimental_test(request):
 
     messages.success(request, f"Test submitted successfully! Score: {total_score}/{total_questions}")
 
-    return redirect('my_app/experiment_test_results')
+    return redirect('experiment_test_results')
 
 
 @login_required
