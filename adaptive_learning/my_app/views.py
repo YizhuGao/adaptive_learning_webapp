@@ -121,7 +121,11 @@ def success_view(request):
 
 @login_required
 def home_view(request):
-    return render(request, 'my_app/home.html', {'username': request.user.student.first_name})
+    student = get_object_or_404(Student, user=request.user)
+    if not student.can_take_experimental_test:
+        return render(request, 'my_app/home.html', {'username': request.user.student.first_name})
+    messages.error(request, "You are not authorized to access the normal test section.")
+    return redirect('experiment_home')  # Replace with appropriate view name
 
 
 
@@ -136,513 +140,536 @@ def logout_view(request):
 @login_required
 def test_view(request, topic_id, subtopic_id):
     student = get_object_or_404(Student, user=request.user)
+    if not student.can_take_experimental_test:
+        topic = get_object_or_404(Topic, topic_id=topic_id)
+        subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id, topic=topic)
 
-    # Fetch Topic and Subtopic
-    topic = get_object_or_404(Topic, topic_id=topic_id)
-    subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id, topic=topic)
+        # Fetch related module
+        module = VideoModule.objects.filter(topic=topic).first()
+        if not module:
+            return HttpResponse("No associated module found for this topic.", status=400)
 
-    # Fetch related module
-    module = VideoModule.objects.filter(topic=topic).first()
-    if not module:
-        return HttpResponse("No associated module found for this topic.", status=400)
+        # Fetch the student's progress for this subtopic (record must already exist)
+        student_progress = Progress.objects.filter(
+            student=student,
+            current_subtopic=subtopic
+        ).first()
 
-    # Fetch the student's progress for this subtopic (record must already exist)
-    student_progress = Progress.objects.filter(
-        student=student,
-        current_subtopic=subtopic
-    ).first()
+        if not student_progress:
+            return HttpResponse("Progress record not found. Ensure progress is created in the module view.", status=400)
 
-    if not student_progress:
-        return HttpResponse("Progress record not found. Ensure progress is created in the module view.", status=400)
+        # Determine if video link should be loaded
+        load_video_link = not student_progress.video_watched
 
-    # Determine if video link should be loaded
-    load_video_link = not student_progress.video_watched
+        # Determine assigned value based on video_watched and score_before
+        if student_progress.video_watched and student_progress.score_before is not None:
+            assigned_value = 1
+        else:
+            assigned_value = 0
 
-    # Determine assigned value based on video_watched and score_before
-    if student_progress.video_watched and student_progress.score_before is not None:
-        assigned_value = 1
-    else:
-        assigned_value = 0
+        print("Assigned Value - ", assigned_value)
 
-    print("Assigned Value - ", assigned_value)
+        questions = Question.objects.filter(topic=topic, subtopic=subtopic, assigned_at=assigned_value)
 
-    questions = Question.objects.filter(topic=topic, subtopic=subtopic, assigned_at=assigned_value)
+        context = {
+            'topic': topic,
+            'subtopic': subtopic,
+            'questions': questions,
+            'username': request.user.student.first_name,
+            'assigned_video': student_progress.video_watched,
+            'load_video_link': load_video_link,  # Include this flag in the context
+        }
 
-    context = {
-        'topic': topic,
-        'subtopic': subtopic,
-        'questions': questions,
-        'username': request.user.student.first_name,
-        'assigned_video': student_progress.video_watched,
-        'load_video_link': load_video_link,  # Include this flag in the context
-    }
+        return render(request, 'my_app/test.html', context)
 
-    return render(request, 'my_app/test.html', context)
-
+    messages.error(request, "You are not authorized to access the normal test section.")
+    return redirect('experiment_home')  # Replace with appropriate view name
 
 
 @login_required
 def submit_test(request, topic_id, subtopic_id):
-    if request.method == "POST":
-        print("Form Submitted: ", request.POST)  # Debugging line
+    student = get_object_or_404(Student, user=request.user)
+    if not student.can_take_experimental_test:
+        if request.method == "POST":
+            print("Form Submitted: ", request.POST)  # Debugging line
 
-        if not request.POST:
-            print("No data received in POST request.")
-            return JsonResponse({"error": "No data received"}, status=400)
-
-        try:
-            student = get_object_or_404(Student, user=request.user)
-            topic = get_object_or_404(Topic, topic_id=topic_id)
-            subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id, topic=topic)
-
-            # Create an assessment entry
-            assessment = Assessment.objects.create(
-                student=student,
-                topic=topic,
-                subtopic=subtopic,
-                date_taken=timezone.now()
-            )
-
-            correct_count = 0
-            total_questions = 0
-            assigned_at_0_count = 0
-            assigned_at_1_count = 0
-
-            question_ids_list = []
-            correctness_list = []
-
-            # print(BASE_DIR)
-            TCE_Misunderstanding_path = os.path.join(BASE_DIR, 'my_app', 'ML', 'TCE_Misunderstanding.xlsx')
-
-            # print(BASE_DIR)
-            # print("Excel file path - ", TCE_Misunderstanding_path)
-
-            tce_misunderstanding = pd.read_excel(TCE_Misunderstanding_path)
-            knowledge_n = tce_misunderstanding.shape[1] - 1
-
-
-            for key, value in request.POST.items():
-                if key.startswith("question_"):
-                    question_id = key.split("_")[1]
-                    question = get_object_or_404(Question, pk=question_id)
-                    selected_option = get_object_or_404(Option, pk=value)
-
-                    # Save response
-                    AssessmentResponse.objects.create(
-                        assessment=assessment,
-                        question=question,
-                        selected_option=selected_option
-                    )
-                    # if question.question_id - 39 >= 1 and question.question_id - 39 <= 1:
-                    #     question.question_id = question.question_id - 39
-                    # else:
-                    #     question.question_id = (question.question_id - 39) / 2
-                    # # Track question ID
-                    # print("Question ID - ", question.question_id)
-                    # if question.assigned_at == 0:
-                    question_ids_list.append(question.question_id - 39)
-                        # print("Question ID - ", question.question_id)
-                    # else:
-                        # print(f"Skipping question ID {question.question_id} as assigned_at = {question.assigned_at}")
-                    # Check correctness
-                    if selected_option.is_correct:
-                        correct_count += 1
-                        correctness_list.append(1)
-                    else:
-                        correctness_list.append(0)
-
-                    total_questions += 1
-
-                    # Track assigned_at values
-                    if question.assigned_at == 0:
-                        assigned_at_0_count += 1
-                    elif question.assigned_at == 1:
-                        assigned_at_1_count += 1
-
-            # Calculate score
-            print("correct_count", correct_count)
-            print("total_questions", total_questions)
-            score = (correct_count / total_questions) * 100 if total_questions > 0 else 0
-
-            assessment.score = score
-            assessment.save()
-
-            answers_df = pd.DataFrame({
-                "question_id": question_ids_list,
-                "correct": correctness_list
-            })
-
-            print(answers_df)
-            model_path = os.path.join(BASE_DIR, 'my_app', 'ML', 'ncdm_model.pth')
-            num_questions = answers_df.shape[0]
-            device = "cpu"
-
-            model = load_model(model_path, knowledge_n, num_questions, 1, device)
-
-            misconception_matrix = tce_misunderstanding
-            print(question_ids_list)
-
-            weak_knowledge_indices = set()
-
-            for que in question_ids_list:
-                try:
-                    # Fetch the knowledge embedding for this specific question
-                    item_id = f"Item_{que}"  # construct the matching string
-
-                    question_row = misconception_matrix[misconception_matrix['item_id'] == item_id]
-
-
-                    if question_row.empty:
-                        print(f"Question ID {que} not found in misunderstanding matrix.")
-                        continue
-
-                    # Extract the knowledge vector from the row (skipping question_id column)
-                    knowledge_vector = question_row.iloc[0, 1:].to_numpy(dtype=float).reshape(1, -1)
-
-                    # Predict using the model
-                    prediction, proficiency_vector  = predict(model, student.student_id, int(que), knowledge_vector, device)
-
-                    print(f"\nQuestion ID: Q{que}")
-                    print(f"Prediction: {prediction:.4f}")
-                    print(f"Proficiency Vector: {proficiency_vector}")
-
-                    knowledge_vector_np = np.array(knowledge_vector).flatten()
-
-                    active_knowledge_indices = np.where(knowledge_vector_np == 1)[0]
-
-                    selected_proficiencies = proficiency_vector[active_knowledge_indices]
-
-                    # If answer is correct do we need to show him the video
-                    for idx in active_knowledge_indices:
-                        prof_value = proficiency_vector[idx]
-
-                        if prof_value > 0.6:
-                            weak_knowledge_indices.add(idx)
-                            print(f"High misconception likelihood: prof={prof_value:.4f} → Added idx {idx + 1 } from Q{que}")
-
-                        elif 0.4 <= prof_value <= 0.6:
-                            if correctness_list[question_ids_list.index(int(que))] == 0:  # Student answered incorrectly
-                                weak_knowledge_indices.add(idx)
-                                print(
-                                    f"Moderate prof + incorrect answer: prof={prof_value:.4f} → Added idx {idx + 1 } from Q{que}")
-                            else:
-                                print(
-                                    f"Moderate prof + correct answer: prof={prof_value:.4f} → Not Added idx {idx + 1 } from Q{que}")
-                        elif prediction < 0.7:
-                            weak_knowledge_indices.add(idx)
-                            # print(f"Low prediction ({prediction:.4f}) → Added idx {idx + 1 } from Q{que}")
-
-                        elif prof_value < 0.48:
-                            print(
-                                f"Low misconception probability (prof={prof_value:.4f}) → Skipped idx {idx + 1 } for Q{que}")
-
-                        else:
-                            print(f"No condition met for prof={prof_value:.4f}, idx {idx + 1 }, Q{que}")
-
-                except Exception as e:
-                    print(f"Prediction error for Q{que}: {e}")
-
-            weak_knowledge_indices = sorted([int(idx) + 1 for idx in weak_knowledge_indices])
-
-            print("Final Weak Knowledge Indices:", weak_knowledge_indices)
+            if not request.POST:
+                print("No data received in POST request.")
+                return JsonResponse({"error": "No data received"}, status=400)
 
             try:
-                misconception_videos = VideoModule.objects.filter(subtopic=subtopic)
+                topic = get_object_or_404(Topic, topic_id=topic_id)
+                subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id, topic=topic)
 
-                print(" misconception_videos :", misconception_videos)
+                # Create an assessment entry
+                assessment = Assessment.objects.create(
+                    student=student,
+                    topic=topic,
+                    subtopic=subtopic,
+                    date_taken=timezone.now()
+                )
+
+                correct_count = 0
+                total_questions = 0
+                assigned_at_0_count = 0
+                assigned_at_1_count = 0
+
+                question_ids_list = []
+                correctness_list = []
+
+                # print(BASE_DIR)
+                TCE_Misunderstanding_path = os.path.join(BASE_DIR, 'my_app', 'ML', 'TCE_Misunderstanding.xlsx')
+
+                # print(BASE_DIR)
+                # print("Excel file path - ", TCE_Misunderstanding_path)
+
+                tce_misunderstanding = pd.read_excel(TCE_Misunderstanding_path)
+                knowledge_n = tce_misunderstanding.shape[1] - 1
 
 
-                for video in misconception_videos:
-                    if video.subtopic == subtopic:
-                        try:
-                            # Assuming misconceptions are stored as comma-separated values in a CharField
-                            video_misconceptions = [
-                                int(m.strip()) for m in video.misconceptions.split(',') if m.strip().isdigit()
-                            ]
+                for key, value in request.POST.items():
+                    if key.startswith("question_"):
+                        question_id = key.split("_")[1]
+                        question = get_object_or_404(Question, pk=question_id)
+                        selected_option = get_object_or_404(Option, pk=value)
 
-                            # Get intersection between video misconceptions and weak knowledge indices
-                            matched_misconceptions = list(set(video_misconceptions) & set(weak_knowledge_indices))
-                            print("matched_misconceptions - ", matched_misconceptions)
-
-                            if matched_misconceptions:
-                                print(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
-                                print(f"  → Related to misconceptions: {matched_misconceptions}")
-
-                                # Create a VideoProgress record only once for this video
-                                obj, created = VideoProgress.objects.get_or_create(
-                                    student=student,
-                                    video=video,
-                                    subtopic=subtopic,
-                                    defaults={"watched": False}
-                                )
-                                if created:
-                                    print("  → VideoProgress created.")
-                                else:
-                                    print("  → VideoProgress already exists. Skipping creation.")
-
-                        except Exception as inner_e:
-                            print(f"Error processing video ID {video.video_module_id if video else 'Unknown'}: {inner_e}")
-
+                        # Save response
+                        AssessmentResponse.objects.create(
+                            assessment=assessment,
+                            question=question,
+                            selected_option=selected_option
+                        )
+                        # if question.question_id - 39 >= 1 and question.question_id - 39 <= 1:
+                        #     question.question_id = question.question_id - 39
+                        # else:
+                        #     question.question_id = (question.question_id - 39) / 2
+                        # # Track question ID
+                        # print("Question ID - ", question.question_id)
+                        # if question.assigned_at == 0:
+                        question_ids_list.append(question.question_id - 39)
+                            # print("Question ID - ", question.question_id)
+                        # else:
+                            # print(f"Skipping question ID {question.question_id} as assigned_at = {question.assigned_at}")
+                        # Check correctness
+                        if selected_option.is_correct:
+                            correct_count += 1
+                            correctness_list.append(1)
                         else:
-                            print("No Video for the given misconceptions found.")
+                            correctness_list.append(0)
+
+                        total_questions += 1
+
+                        # Track assigned_at values
+                        if question.assigned_at == 0:
+                            assigned_at_0_count += 1
+                        elif question.assigned_at == 1:
+                            assigned_at_1_count += 1
+
+                # Calculate score
+                print("correct_count", correct_count)
+                print("total_questions", total_questions)
+                score = (correct_count / total_questions) * 100 if total_questions > 0 else 0
+
+                assessment.score = score
+                assessment.save()
+
+                answers_df = pd.DataFrame({
+                    "question_id": question_ids_list,
+                    "correct": correctness_list
+                })
+
+                print(answers_df)
+                model_path = os.path.join(BASE_DIR, 'my_app', 'ML', 'ncdm_model.pth')
+                num_questions = answers_df.shape[0]
+                device = "cpu"
+
+                model = load_model(model_path, knowledge_n, num_questions, 1, device)
+
+                misconception_matrix = tce_misunderstanding
+                print(question_ids_list)
+
+                weak_knowledge_indices = set()
+
+                for que in question_ids_list:
+                    try:
+                        # Fetch the knowledge embedding for this specific question
+                        item_id = f"Item_{que}"  # construct the matching string
+
+                        question_row = misconception_matrix[misconception_matrix['item_id'] == item_id]
+
+
+                        if question_row.empty:
+                            print(f"Question ID {que} not found in misunderstanding matrix.")
+                            continue
+
+                        # Extract the knowledge vector from the row (skipping question_id column)
+                        knowledge_vector = question_row.iloc[0, 1:].to_numpy(dtype=float).reshape(1, -1)
+
+                        # Predict using the model
+                        prediction, proficiency_vector  = predict(model, student.student_id, int(que), knowledge_vector, device)
+
+                        print(f"\nQuestion ID: Q{que}")
+                        print(f"Prediction: {prediction:.4f}")
+                        print(f"Proficiency Vector: {proficiency_vector}")
+
+                        knowledge_vector_np = np.array(knowledge_vector).flatten()
+
+                        active_knowledge_indices = np.where(knowledge_vector_np == 1)[0]
+
+                        selected_proficiencies = proficiency_vector[active_knowledge_indices]
+
+                        # If answer is correct do we need to show him the video
+                        for idx in active_knowledge_indices:
+                            prof_value = proficiency_vector[idx]
+
+                            if prof_value > 0.6:
+                                weak_knowledge_indices.add(idx)
+                                print(f"High misconception likelihood: prof={prof_value:.4f} → Added idx {idx + 1 } from Q{que}")
+
+                            elif 0.4 <= prof_value <= 0.6:
+                                if correctness_list[question_ids_list.index(int(que))] == 0:  # Student answered incorrectly
+                                    weak_knowledge_indices.add(idx)
+                                    print(
+                                        f"Moderate prof + incorrect answer: prof={prof_value:.4f} → Added idx {idx + 1 } from Q{que}")
+                                else:
+                                    print(
+                                        f"Moderate prof + correct answer: prof={prof_value:.4f} → Not Added idx {idx + 1 } from Q{que}")
+                            elif prediction < 0.7:
+                                weak_knowledge_indices.add(idx)
+                                # print(f"Low prediction ({prediction:.4f}) → Added idx {idx + 1 } from Q{que}")
+
+                            elif prof_value < 0.48:
+                                print(
+                                    f"Low misconception probability (prof={prof_value:.4f}) → Skipped idx {idx + 1 } for Q{que}")
+
+                            else:
+                                print(f"No condition met for prof={prof_value:.4f}, idx {idx + 1 }, Q{que}")
+
+                    except Exception as e:
+                        print(f"Prediction error for Q{que}: {e}")
+
+                weak_knowledge_indices = sorted([int(idx) + 1 for idx in weak_knowledge_indices])
+
+                print("Final Weak Knowledge Indices:", weak_knowledge_indices)
+
+                try:
+                    misconception_videos = VideoModule.objects.filter(subtopic=subtopic)
+
+                    print(" misconception_videos :", misconception_videos)
+
+
+                    for video in misconception_videos:
+                        if video.subtopic == subtopic:
+                            try:
+                                # Assuming misconceptions are stored as comma-separated values in a CharField
+                                video_misconceptions = [
+                                    int(m.strip()) for m in video.misconceptions.split(',') if m.strip().isdigit()
+                                ]
+
+                                # Get intersection between video misconceptions and weak knowledge indices
+                                matched_misconceptions = list(set(video_misconceptions) & set(weak_knowledge_indices))
+                                print("matched_misconceptions - ", matched_misconceptions)
+
+                                if matched_misconceptions:
+                                    print(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
+                                    print(f"  → Related to misconceptions: {matched_misconceptions}")
+
+                                    # Create a VideoProgress record only once for this video
+                                    obj, created = VideoProgress.objects.get_or_create(
+                                        student=student,
+                                        video=video,
+                                        subtopic=subtopic,
+                                        defaults={"watched": False}
+                                    )
+                                    if created:
+                                        print("  → VideoProgress created.")
+                                    else:
+                                        print("  → VideoProgress already exists. Skipping creation.")
+
+                            except Exception as inner_e:
+                                print(f"Error processing video ID {video.video_module_id if video else 'Unknown'}: {inner_e}")
+
+                            else:
+                                print("No Video for the given misconceptions found.")
+
+                except Exception as e:
+                    print("Error while assigning videos based on misconceptions:", e)
+
+                # Update progress model
+                progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
+                if progress:
+                    if assigned_at_0_count > 0:
+                        progress.score_before = score
+                        progress.completion_status = "In Progress"
+                    if assigned_at_1_count > 0:
+                        progress.score_after = score
+                        progress.completion_status = "Completed"
+
+                    progress.save()
+
+                # Redirect to the test results page
+                return redirect('test_results', topic_id=topic_id, subtopic_id=subtopic_id)
 
             except Exception as e:
-                print("Error while assigning videos based on misconceptions:", e)
+                print("Error:", e)
+                return JsonResponse({"error": str(e)}, status=400)
 
-            # Update progress model
-            progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
-            if progress:
-                if assigned_at_0_count > 0:
-                    progress.score_before = score
-                    progress.completion_status = "In Progress"
-                if assigned_at_1_count > 0:
-                    progress.score_after = score
-                    progress.completion_status = "Completed"
+        return redirect("modules")  # Redirect if accessed incorrectly
 
-                progress.save()
-
-            # Redirect to the test results page
-            return redirect('test_results', topic_id=topic_id, subtopic_id=subtopic_id)
-
-        except Exception as e:
-            print("Error:", e)
-            return JsonResponse({"error": str(e)}, status=400)
-
-    return redirect("modules")  # Redirect if accessed incorrectly
+    messages.error(request, "You are not authorized to access the normal test section.")
+    return redirect('experiment_home')  # Replace with appropriate view name
 
 
 
 @login_required
 def modules_view(request):
     student = get_object_or_404(Student, user=request.user)
-    topics = Topic.objects.all()
-    topic_data = []
+    if not student.can_take_experimental_test:
+        # return render(request, 'my_app/home.html', {'username': request.user.student.first_name})
+        topics = Topic.objects.all()
+        topic_data = []
 
-    for topic in topics:
-        # Get all completed subtopics for this student and topic
-        completed_subtopics = list(Progress.objects.filter(
-            student=student,
-            current_topic=topic,
-            completion_status='Completed'
-        ).values_list('current_subtopic__subtopic_name', flat=True))
+        for topic in topics:
+            # Get all completed subtopics for this student and topic
+            completed_subtopics = list(Progress.objects.filter(
+                student=student,
+                current_topic=topic,
+                completion_status='Completed'
+            ).values_list('current_subtopic__subtopic_name', flat=True))
 
-        # Get the latest progress for this topic
-        progress = Progress.objects.filter(student=student, current_topic=topic).order_by('-last_accessed').first()
+            # Get the latest progress for this topic
+            progress = Progress.objects.filter(student=student, current_topic=topic).order_by('-last_accessed').first()
 
-        if progress:
-            current_subtopic = progress.current_subtopic
+            if progress:
+                current_subtopic = progress.current_subtopic
 
-            # Check if the current subtopic is completed before creating progress for the next one
-            if progress.completion_status == 'Completed':
-                next_subtopic = Subtopic.objects.filter(
-                    topic=topic,
-                    subtopic_order_number__gt=current_subtopic.subtopic_order_number
-                ).order_by('subtopic_order_number').first() if current_subtopic else None
+                # Check if the current subtopic is completed before creating progress for the next one
+                if progress.completion_status == 'Completed':
+                    next_subtopic = Subtopic.objects.filter(
+                        topic=topic,
+                        subtopic_order_number__gt=current_subtopic.subtopic_order_number
+                    ).order_by('subtopic_order_number').first() if current_subtopic else None
 
-                if next_subtopic:
-                    next_progress = Progress.objects.filter(
-                        student=student,
-                        current_topic=topic,
-                        current_subtopic=next_subtopic
-                    ).first()
-
-                    if not next_progress:
-                        # Create progress for the next subtopic
-                        new_progress = Progress.objects.create(
+                    if next_subtopic:
+                        next_progress = Progress.objects.filter(
                             student=student,
                             current_topic=topic,
-                            current_subtopic=next_subtopic,
-                            next_subtopic=Subtopic.objects.filter(
-                                topic=topic,
-                                subtopic_order_number__gt=next_subtopic.subtopic_order_number
-                            ).order_by('subtopic_order_number').first(),
-                            module=VideoModule.objects.filter(subtopic=current_subtopic).first(),
-                            completion_status='not_started',
-                            video_watched=False
-                        )
-                        progress = new_progress
+                            current_subtopic=next_subtopic
+                        ).first()
 
-                    # Add to topic_data (added completed_subtopics)
+                        if not next_progress:
+                            # Create progress for the next subtopic
+                            new_progress = Progress.objects.create(
+                                student=student,
+                                current_topic=topic,
+                                current_subtopic=next_subtopic,
+                                next_subtopic=Subtopic.objects.filter(
+                                    topic=topic,
+                                    subtopic_order_number__gt=next_subtopic.subtopic_order_number
+                                ).order_by('subtopic_order_number').first(),
+                                module=VideoModule.objects.filter(subtopic=current_subtopic).first(),
+                                completion_status='not_started',
+                                video_watched=False
+                            )
+                            progress = new_progress
+
+                        # Add to topic_data (added completed_subtopics)
+                        topic_data.append({
+                            'topic': topic,
+                            'subtopic': progress.current_subtopic,
+                            'completed_subtopics': completed_subtopics
+                        })
+
+                    else:
+                        progress.completion_status = 'Completed'
+                        progress.save()
+
+                        # Add to topic_data (added completed_subtopics)
+                        topic_data.append({
+                            'topic': topic,
+                            'subtopic': None,
+                            'completed_subtopics': completed_subtopics
+                        })
+
+                else:
+                    # If current subtopic is not complete, do not create next subtopic progress
                     topic_data.append({
                         'topic': topic,
                         'subtopic': progress.current_subtopic,
                         'completed_subtopics': completed_subtopics
                     })
 
-                else:
-                    progress.completion_status = 'Completed'
-                    progress.save()
-
-                    # Add to topic_data (added completed_subtopics)
-                    topic_data.append({
-                        'topic': topic,
-                        'subtopic': None,
-                        'completed_subtopics': completed_subtopics
-                    })
-
             else:
-                # If current subtopic is not complete, do not create next subtopic progress
+                # If no progress exists, start from the first subtopic
+                first_subtopic = Subtopic.objects.filter(topic=topic).order_by('subtopic_order_number').first()
+                if first_subtopic:
+                    progress = Progress.objects.create(
+                        student=student,
+                        current_topic=topic,
+                        current_subtopic=first_subtopic,
+                        next_subtopic=Subtopic.objects.filter(
+                            topic=topic,
+                            subtopic_order_number__gt=first_subtopic.subtopic_order_number
+                        ).order_by('subtopic_order_number').first(),
+                        module=VideoModule.objects.filter(topic=topic).first(),
+                        completion_status='not_started'
+                    )
+
+
                 topic_data.append({
                     'topic': topic,
-                    'subtopic': progress.current_subtopic,
+                    'subtopic': progress.current_subtopic if progress else None,
                     'completed_subtopics': completed_subtopics
                 })
 
-        else:
-            # If no progress exists, start from the first subtopic
-            first_subtopic = Subtopic.objects.filter(topic=topic).order_by('subtopic_order_number').first()
-            if first_subtopic:
-                progress = Progress.objects.create(
-                    student=student,
-                    current_topic=topic,
-                    current_subtopic=first_subtopic,
-                    next_subtopic=Subtopic.objects.filter(
-                        topic=topic,
-                        subtopic_order_number__gt=first_subtopic.subtopic_order_number
-                    ).order_by('subtopic_order_number').first(),
-                    module=VideoModule.objects.filter(topic=topic).first(),
-                    completion_status='not_started'
-                )
+        context = {
+            'topic_data': topic_data,
+            'username': request.user.student.first_name
+        }
+        print("Context - ", context)  # Debug Output
 
+        return render(request, 'my_app/modules.html', context)
 
-            topic_data.append({
-                'topic': topic,
-                'subtopic': progress.current_subtopic if progress else None,
-                'completed_subtopics': completed_subtopics
-            })
-
-    context = {
-        'topic_data': topic_data,
-        'username': request.user.student.first_name
-    }
-    print("Context - ", context)  # Debug Output
-
-    return render(request, 'my_app/modules.html', context)
+    messages.error(request, "You are not authorized to access the normal test section.")
+    return redirect('experiment_home')  # Replace with appropriate view name
 
 
 @login_required
 def test_results(request, topic_id, subtopic_id):
-    try:
-        student = get_object_or_404(Student, user=request.user)
-        topic = get_object_or_404(Topic, topic_id=topic_id)
-        subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id, topic=topic)
+    student = get_object_or_404(Student, user=request.user)
+    if not student.can_take_experimental_test:
+        try:
+            topic = get_object_or_404(Topic, topic_id=topic_id)
+            subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id, topic=topic)
 
-        assessment = Assessment.objects.filter(student=student, topic=topic).order_by("-date_taken").first()
-        if not assessment:
-            return JsonResponse({"error": "No assessment data found for this topic."}, status=404)
+            assessment = Assessment.objects.filter(student=student, topic=topic).order_by("-date_taken").first()
+            if not assessment:
+                return JsonResponse({"error": "No assessment data found for this topic."}, status=404)
 
-        # Fetch responses for the assessment
-        responses = AssessmentResponse.objects.filter(assessment=assessment)
-        score = assessment.score
+            # Fetch responses for the assessment
+            responses = AssessmentResponse.objects.filter(assessment=assessment)
+            score = assessment.score
 
-        # Fetch video modules from VideoProgress instead of VideoModule directly
-        print(subtopic)
-        video_progress_entries = VideoProgress.objects.filter(student=student, subtopic=subtopic)
-        print("Video - test results - ", video_progress_entries)
+            # Fetch video modules from VideoProgress instead of VideoModule directly
+            print(subtopic)
+            video_progress_entries = VideoProgress.objects.filter(student=student, subtopic=subtopic)
+            print("Video - test results - ", video_progress_entries)
 
-        video_data = []
-        video_url = None
-        progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
-        print("Progress - ", progress)
+            video_data = []
+            video_url = None
+            progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
+            print("Progress - ", progress)
 
-        if not video_progress_entries.exists() and progress:
-            progress.video_watched = True
-            progress.save()
+            if not video_progress_entries.exists() and progress:
+                progress.video_watched = True
+                progress.save()
 
-        for entry in video_progress_entries:
-            if not entry.watched:
-                video_module = entry.video
-                video_url = video_module.url if video_module and progress and not progress.score_after else None
-                print("Video URL - ", video_url)
+            for entry in video_progress_entries:
+                if not entry.watched:
+                    video_module = entry.video
+                    video_url = video_module.url if video_module and progress and not progress.score_after else None
+                    print("Video URL - ", video_url)
 
-                if video_url:
-                    if "drive.google.com/file/d/" in video_url:
-                        file_id = video_url.split('/d/')[1].split('/')[0]
-                        video_url = f"https://drive.google.com/file/d/{file_id}/preview"
+                    if video_url:
+                        if "drive.google.com/file/d/" in video_url:
+                            file_id = video_url.split('/d/')[1].split('/')[0]
+                            video_url = f"https://drive.google.com/file/d/{file_id}/preview"
 
-                    video_data.append({
-                        "id": video_module.video_module_id,
-                        "title": video_module.title,
-                        "url": video_url
-                    })
+                        video_data.append({
+                            "id": video_module.video_module_id,
+                            "title": video_module.title,
+                            "url": video_url
+                        })
 
-        context = {
-            "student_name": f"{student.first_name} {student.last_name}",
-            "topic": topic,
-            "subtopic": subtopic,
-            "score": score,
-            "date_taken": assessment.date_taken,
-            "responses": responses,
-            "video_data": video_data,
-            "video_url": video_url,
-            "student_id": student.student_id,
-            "score_after": progress.score_after if progress else None,
-        }
+            context = {
+                "student_name": f"{student.first_name} {student.last_name}",
+                "topic": topic,
+                "subtopic": subtopic,
+                "score": score,
+                "date_taken": assessment.date_taken,
+                "responses": responses,
+                "video_data": video_data,
+                "video_url": video_url,
+                "student_id": student.student_id,
+                "score_after": progress.score_after if progress else None,
+            }
 
-        return render(request, "my_app/test_results.html", context)
+            return render(request, "my_app/test_results.html", context)
 
-    except Exception as e:
-        print("Error in test_results:", e)
-        return JsonResponse({"error": str(e)}, status=400)
+        except Exception as e:
+            print("Error in test_results:", e)
+            return JsonResponse({"error": str(e)}, status=400)
+
+    messages.error(request, "You are not authorized to access the normal test section.")
+    return redirect('experiment_home')  # Replace with appropriate view name
 
 
 @login_required
 def learning_video(request, topic_id, subtopic_id):
-    try:
-        print(f"Received topic_id: {topic_id}, subtopic_id: {subtopic_id}")
+    student = get_object_or_404(Student, user=request.user)
+    if not student.can_take_experimental_test:
+        try:
+            print(f"Received topic_id: {topic_id}, subtopic_id: {subtopic_id}")
 
-        student = get_object_or_404(Student, user=request.user)
-        topic = get_object_or_404(Topic, topic_id=topic_id)
-        subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id, topic=topic)
+            student = get_object_or_404(Student, user=request.user)
+            topic = get_object_or_404(Topic, topic_id=topic_id)
+            subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id, topic=topic)
 
-        # Fetch videos linked to the subtopic
-        video_progress_entries = VideoProgress.objects.filter(student=student, subtopic=subtopic)
-        print("video_progress_entries - ", video_progress_entries)
-        video_data = []
-        for entry in video_progress_entries:
-            video = entry.video
-            video_url = video.url
+            # Fetch videos linked to the subtopic
+            video_progress_entries = VideoProgress.objects.filter(student=student, subtopic=subtopic)
+            print("video_progress_entries - ", video_progress_entries)
+            video_data = []
+            for entry in video_progress_entries:
+                video = entry.video
+                video_url = video.url
 
-            print("Inside For Loop")
+                print("Inside For Loop")
 
-            if "drive.google.com/file/d/" in video_url:
-                file_id = video_url.split('/d/')[1].split('/')[0]
-                video_url = f"https://drive.google.com/file/d/{file_id}/preview"
+                if "drive.google.com/file/d/" in video_url:
+                    file_id = video_url.split('/d/')[1].split('/')[0]
+                    video_url = f"https://drive.google.com/file/d/{file_id}/preview"
 
-            video_data.append({
-                'id': video.video_module_id,
-                'title': video.title,
-                'url': video_url
-            })
+                video_data.append({
+                    'id': video.video_module_id,
+                    'title': video.title,
+                    'url': video_url
+                })
 
-        print("video_data - ", video_data)
+            print("video_data - ", video_data)
 
-        context = {
-            "topic": topic,
-            "subtopic": subtopic,
-            "video_data": video_data,
-            "subtopic_id": subtopic_id,
-            "student_id": student.student_id,
-        }
+            context = {
+                "topic": topic,
+                "subtopic": subtopic,
+                "video_data": video_data,
+                "subtopic_id": subtopic_id,
+                "student_id": student.student_id,
+            }
 
-        return render(request, "my_app/learning_video.html", context)
+            return render(request, "my_app/learning_video.html", context)
 
-    except Exception as e:
-        print("Error in learning_video:", e)
-        return JsonResponse({"error": str(e)}, status=400)
+        except Exception as e:
+            print("Error in learning_video:", e)
+            return JsonResponse({"error": str(e)}, status=400)
+
+    messages.error(request, "You are not authorized to access the normal test section.")
+    return redirect('experiment_home')  # Replace with appropriate view name
 
 
 
 @login_required
 def video_module_view(request):
+    student = get_object_or_404(Student, user=request.user)
+    if not student.can_take_experimental_test:
     # Fetch all VideoModules
-    video_modules = VideoModule.objects.all()
+        video_modules = VideoModule.objects.all()
 
-    context = {
-        'video_modules': video_modules
-    }
+        context = {
+            'video_modules': video_modules
+        }
 
-    return render(request, 'my_app/learning_video.html', context)
+        return render(request, 'my_app/learning_video.html', context)
+    messages.error(request, "You are not authorized to access the normal test section.")
+    return redirect('experiment_home')  # Replace with appropriate view name
 
 
 @login_required
@@ -730,150 +757,139 @@ def profile_update_view(request):
 
 # ----------------------------------------------------------------------------Updated view for topic name ------------------------------------
 def student_assignments_view(request):
+
     student = get_object_or_404(Student, user=request.user)
+    if not student.can_take_experimental_test:
+        progress_data = Progress.objects.filter(student=student).select_related(
+            'current_subtopic__topic'
+        ).order_by('-last_accessed')
 
-    progress_data = Progress.objects.filter(student=student).select_related(
-        'current_subtopic__topic'
-    ).order_by('-last_accessed')
+        grouped_data = defaultdict(lambda: {'subtopics': [], 'before': [], 'after': []})
+        sorted_progress_data = sorted(progress_data, key=lambda p: p.progress_id)  # or p.progress_id if that's the actual attribute name
 
-    grouped_data = defaultdict(lambda: {'subtopics': [], 'before': [], 'after': []})
+        for p in sorted_progress_data:
+            if p.current_subtopic:
+                topic = p.current_subtopic.topic.topic_name
+                grouped_data[topic]['subtopics'].append(p.current_subtopic.subtopic_name)
+                grouped_data[topic]['before'].append(float(p.score_before) if p.score_before is not None else 'null')
+                grouped_data[topic]['after'].append(float(p.score_after) if p.score_after is not None else 'null')
 
-    # for p in progress_data:
-    #     if p.current_subtopic and p.score_before is not None and p.score_after is not None:
-    #         topic = p.current_subtopic.topic.topic_name
-    #         grouped_data[topic]['subtopics'].append(p.current_subtopic.subtopic_name)
-    #         grouped_data[topic]['before'].append(float(p.score_before))
-    #         grouped_data[topic]['after'].append(float(p.score_after))
-    
+        context = {
+            'progress_data': sorted_progress_data,
+            'username': student.first_name,
+            'grouped_chart_data': dict(grouped_data),
+        }
 
-    # for p in progress_data:
-    #     if p.current_subtopic:
-    #         topic = p.current_subtopic.topic.topic_name
-    #         grouped_data[topic]['subtopics'].append(p.current_subtopic.subtopic_name)
-    #         grouped_data[topic]['before'].append(float(p.score_before) if p.score_before is not None else 'null')
-    #         grouped_data[topic]['after'].append(float(p.score_after) if p.score_after is not None else 'null')
+        return render(request, 'my_app/student_assignments.html', context)
 
-    
-    # context = {
-    #     'progress_data': progress_data,
-    #     'username': student.first_name,
-    #     'grouped_chart_data': dict(grouped_data),
-    # }
-
-    sorted_progress_data = sorted(progress_data, key=lambda p: p.progress_id)  # or p.progress_id if that's the actual attribute name
-
-    for p in sorted_progress_data:
-        if p.current_subtopic:
-            topic = p.current_subtopic.topic.topic_name
-            grouped_data[topic]['subtopics'].append(p.current_subtopic.subtopic_name)
-            grouped_data[topic]['before'].append(float(p.score_before) if p.score_before is not None else 'null')
-            grouped_data[topic]['after'].append(float(p.score_after) if p.score_after is not None else 'null')
-
-    context = {
-        'progress_data': sorted_progress_data,
-        'username': student.first_name,
-        'grouped_chart_data': dict(grouped_data),
-    }
-
-
-    return render(request, 'my_app/student_assignments.html', context)
-
+    messages.error(request, "You are not authorized to access the normal test section.")
+    return redirect('experiment_home')  # Replace with appropriate view name
 
 @csrf_exempt
 @login_required
 def update_video_progress(request):
-    if request.method == 'POST':
-        # Parse the incoming data (subtopic ID, student ID)
-        data = json.loads(request.body)
-        subtopic_id = data.get('subtopic_id')
-        student_id = data.get('student_id')
+    student = get_object_or_404(Student, user=request.user)
+    if not student.can_take_experimental_test:
+        if request.method == 'POST':
+            # Parse the incoming data (subtopic ID, student ID)
+            data = json.loads(request.body)
+            subtopic_id = data.get('subtopic_id')
+            student_id = data.get('student_id')
 
-        try:
-            # Fetch the subtopic and associated topic from the database
-            subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id)
-            topic = subtopic.topic  # Access the related topic
+            try:
+                # Fetch the subtopic and associated topic from the database
+                subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id)
+                topic = subtopic.topic  # Access the related topic
 
-            # Update or create the progress entry for the student and subtopic
-            progress, created = Progress.objects.update_or_create(
-                student_id=student_id,
-                current_subtopic_id=subtopic_id,  # Update with correct field
-                defaults={'video_watched': True}
-            )
+                # Update or create the progress entry for the student and subtopic
+                progress, created = Progress.objects.update_or_create(
+                    student_id=student_id,
+                    current_subtopic_id=subtopic_id,  # Update with correct field
+                    defaults={'video_watched': True}
+                )
 
-            # Return a JSON response with the topic and subtopic names to facilitate the redirect
-            return JsonResponse({
-                'status': 'success',
-                'message': 'Progress updated.',
-                'topic_name': topic.topic_name,  # Ensure you include the topic name
-                'subtopic_name': subtopic.subtopic_name  # Include the subtopic name
-            })
+                # Return a JSON response with the topic and subtopic names to facilitate the redirect
+                return JsonResponse({
+                    'status': 'success',
+                    'message': 'Progress updated.',
+                    'topic_name': topic.topic_name,  # Ensure you include the topic name
+                    'subtopic_name': subtopic.subtopic_name  # Include the subtopic name
+                })
 
-        except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+            except Exception as e:
+                return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
+
+    messages.error(request, "You are not authorized to access the normal test section.")
+    return redirect('experiment_home')  # Replace with appropriate view name
 
 
 @login_required
 def complete_video(request):
-    print("Inside the complete_video")
-    if request.method == 'POST':
-        try:
-            # Parse the JSON request data
-            data = json.loads(request.body)
-            video_id = data.get('video_id')
-            subtopic_id = data.get('subtopic_id')
-
-            # Get the student object from the logged-in user
-            student = get_object_or_404(Student, user=request.user)
-
-            # Get the subtopic and video
-            subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id)
-            video = get_object_or_404(VideoModule, video_module_id=video_id, subtopic=subtopic)
-
-            # Try to get the VideoProgress entry; raise an exception if not found
+    student = get_object_or_404(Student, user=request.user)
+    if not student.can_take_experimental_test:
+        print("Inside the complete_video")
+        if request.method == 'POST':
             try:
-                video_progress = VideoProgress.objects.get(
-                    student=student, video=video, subtopic=subtopic
-                )
-            except VideoProgress.DoesNotExist:
-                raise Exception(f"VideoProgress entry not found for student {student.student_id}, video {video.video_module_id}, subtopic {subtopic.subtopic_id}")
+                # Parse the JSON request data
+                data = json.loads(request.body)
+                video_id = data.get('video_id')
+                subtopic_id = data.get('subtopic_id')
 
-            print(f"DEBUG: VideoProgress entry found for student {student.student_id}, video {video.video_module_id}, subtopic {subtopic.subtopic_id}")
-            print(video_progress)
+                # Get the student object from the logged-in user
+                student = get_object_or_404(Student, user=request.user)
 
-            # If the video hasn't been watched already, mark it as watched
-            if not video_progress.watched:
-                print("inside if")
-                video_progress.watched = True
-                video_progress.watched_at = timezone.now()
-                video_progress.save()
+                # Get the subtopic and video
+                subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id)
+                video = get_object_or_404(VideoModule, video_module_id=video_id, subtopic=subtopic)
 
-                # Check if all videos for this subtopic are watched
-                total_videos = VideoProgress.objects.filter(subtopic=subtopic, student=student).count()
-                print(f"DEBUG: Total videos for subtopic {subtopic_id}: {total_videos}")
-                watched_videos = VideoProgress.objects.filter(
-                    student=student, subtopic=subtopic, watched=True
-                ).count()
-                print(f"DEBUG: Watched videos for subtopic {subtopic_id}: {watched_videos}")
+                # Try to get the VideoProgress entry; raise an exception if not found
+                try:
+                    video_progress = VideoProgress.objects.get(
+                        student=student, video=video, subtopic=subtopic
+                    )
+                except VideoProgress.DoesNotExist:
+                    raise Exception(f"VideoProgress entry not found for student {student.student_id}, video {video.video_module_id}, subtopic {subtopic.subtopic_id}")
 
-                if watched_videos == total_videos:
-                    progress = student.progress_set.filter(current_subtopic=subtopic).first()
-                    if progress:
-                        progress.video_watched = True
-                        progress.save()
-                        print(f"DEBUG: All videos watched for subtopic {subtopic_id}. Progress updated.")
-                    else:
-                        print(f"DEBUG: No progress record found for subtopic {subtopic_id} for student {student}.")
+                print(f"DEBUG: VideoProgress entry found for student {student.student_id}, video {video.video_module_id}, subtopic {subtopic.subtopic_id}")
+                print(video_progress)
 
-                return JsonResponse({"success": True, "message": "Video marked as watched"})
-            else:
-                return JsonResponse({"success": False, "message": "Video already watched"})
+                # If the video hasn't been watched already, mark it as watched
+                if not video_progress.watched:
+                    print("inside if")
+                    video_progress.watched = True
+                    video_progress.watched_at = timezone.now()
+                    video_progress.save()
 
-        except Exception as e:
-            print(f"Error in complete_video: {e}")
-            return JsonResponse({"success": False, "message": str(e)}, status=500)
-    else:
-        return JsonResponse({"success": False, "message": "Invalid request method"}, status=400)
+                    # Check if all videos for this subtopic are watched
+                    total_videos = VideoProgress.objects.filter(subtopic=subtopic, student=student).count()
+                    print(f"DEBUG: Total videos for subtopic {subtopic_id}: {total_videos}")
+                    watched_videos = VideoProgress.objects.filter(
+                        student=student, subtopic=subtopic, watched=True
+                    ).count()
+                    print(f"DEBUG: Watched videos for subtopic {subtopic_id}: {watched_videos}")
+
+                    if watched_videos == total_videos:
+                        progress = student.progress_set.filter(current_subtopic=subtopic).first()
+                        if progress:
+                            progress.video_watched = True
+                            progress.save()
+                            print(f"DEBUG: All videos watched for subtopic {subtopic_id}. Progress updated.")
+                        else:
+                            print(f"DEBUG: No progress record found for subtopic {subtopic_id} for student {student}.")
+
+                    return JsonResponse({"success": True, "message": "Video marked as watched"})
+                else:
+                    return JsonResponse({"success": False, "message": "Video already watched"})
+
+            except Exception as e:
+                print(f"Error in complete_video: {e}")
+                return JsonResponse({"success": False, "message": str(e)}, status=500)
+        else:
+            return JsonResponse({"success": False, "message": "Invalid request method"}, status=400)
+
+    messages.error(request, "You are not authorized to access the normal test section.")
+    return redirect('experiment_home')  # Replace with appropriate view name
 
 
 @login_required()
@@ -894,12 +910,20 @@ def simulation_view(request):
 
 @login_required
 def experiment_home(request):
+    student = get_object_or_404(Student, user=request.user)
+    if not student.can_take_experimental_test:
+        messages.error(request, "You are not authorized to take the experimental test.")
+        return redirect('home')  # or some other appropriate page
     return render(request, 'my_app/experiment_home.html')
 
 
 
 @login_required()
 def display_experiment_test(request):
+    student = get_object_or_404(Student, user=request.user)
+    if not student.can_take_experimental_test:
+        messages.error(request, "You are not authorized to take the experimental test.")
+        return redirect('home')  # or some other appropriate page
     # Fetch questions assigned at '0' (Before Assignment) or '1' (After Assignment)
     questions = Question.objects.filter(assigned_at=0)  # Change the filter if needed
 
@@ -914,14 +938,21 @@ def display_experiment_test(request):
         })
 
     print(question_data)
+    context = {
+        'question_data': question_data,
+        "username": student.first_name
+    }
 
     # Pass the question and options data to the template
-    return render(request, 'my_app/experiment_test.html', {'question_data': question_data})
+    return render(request, 'my_app/experiment_test.html', context)
 
 
 @login_required()
 def submit_experimental_test(request):
     student = get_object_or_404(Student, user=request.user)
+    if not student.can_take_experimental_test:
+        messages.error(request, "You are not authorized to take the experimental test.")
+        return redirect('home')  # or some other appropriate page
     questions = Question.objects.filter(assigned_at=0)
 
     total_score = 0
@@ -967,7 +998,12 @@ def submit_experimental_test(request):
 
 @login_required
 def experiment_test_results(request):
+    student = get_object_or_404(Student, user=request.user)
+    if not student.can_take_experimental_test:
+        messages.error(request, "You are not authorized to take the experimental test.")
+        return redirect('home')  # or some other appropriate page
     context = {
+        "username": student.first_name,
         'score': request.session.get('experiment_score'),
         'responses': request.session.get('experiment_responses', []),
         'student_name': request.session.get('student_name', request.user.username),
@@ -977,6 +1013,10 @@ def experiment_test_results(request):
 
 @login_required
 def all_learning_videos(request):
+    student = get_object_or_404(Student, user=request.user)
+    if not student.can_take_experimental_test:
+        messages.error(request, "You are not authorized to take the experimental test.")
+        return redirect('home')  # or some other appropriate page
     try:
         # Fetch all videos from VideoModule
         videos = VideoModule.objects.all()
@@ -994,6 +1034,7 @@ def all_learning_videos(request):
                 video_url = f"https://drive.google.com/file/d/{file_id}/preview"
 
             video_data_grouped.append({
+                "username": student.first_name,
                 "topic_name": topic.topic_name,
                 "subtopic_name": subtopic.subtopic_name,
                 "video_title": video.title,
