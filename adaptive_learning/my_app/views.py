@@ -33,7 +33,7 @@ def login_view(request):
         password = request.POST.get('password')
 
         # Manually authenticate user using email instead of username
-        print(f"Attempting to authenticate user: {email}")
+        # print(f"Attempting to authenticate user: {email}")
         user = authenticate(request, username=email, password=password)
         if user is not None:
             print(f"Authentication successful: {user.email}")
