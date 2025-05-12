@@ -4,7 +4,7 @@ from datetime import timezone
 from .ML.ncdm_inference import load_model, predict
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import logout
+from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
@@ -15,21 +15,17 @@ from .models import Assessment, Question, Student, AssessmentResponse, Option, V
 import logging
 import numpy as np
 from django.conf import settings
+from django.contrib import messages
+from django.shortcuts import render, redirect
+import pandas as pd
 
 BASE_DIR = settings.BASE_DIR
-
 logger = logging.getLogger(__name__)
-import pandas as pd
 
 
 def index(request):
     return render(request, 'my_app/index.html')
 
-
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate, login
-from django.contrib import messages
-from django.shortcuts import render, redirect
 
 def login_view(request):
     if request.method == 'POST':
@@ -167,7 +163,7 @@ def test_view(request, topic_id, subtopic_id):
         else:
             assigned_value = 0
 
-        print("Assigned Value - ", assigned_value)
+        # print("Assigned Value - ", assigned_value)
 
         questions = Question.objects.filter(topic=topic, subtopic=subtopic, assigned_at=assigned_value)
 
@@ -526,7 +522,7 @@ def modules_view(request):
             'topic_data': topic_data,
             'username': request.user.student.first_name
         }
-        print("Context - ", context)  # Debug Output
+        # print("Context - ", context)  # Debug Output
 
         return render(request, 'my_app/modules.html', context)
 
@@ -551,14 +547,14 @@ def test_results(request, topic_id, subtopic_id):
             score = assessment.score
 
             # Fetch video modules from VideoProgress instead of VideoModule directly
-            print(subtopic)
+            # print(subtopic)
             video_progress_entries = VideoProgress.objects.filter(student=student, subtopic=subtopic)
-            print("Video - test results - ", video_progress_entries)
+            # print("Video - test results - ", video_progress_entries)
 
             video_data = []
             video_url = None
             progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
-            print("Progress - ", progress)
+            # print("Progress - ", progress)
 
             if not video_progress_entries.exists() and progress:
                 progress.video_watched = True
@@ -568,7 +564,7 @@ def test_results(request, topic_id, subtopic_id):
                 if not entry.watched:
                     video_module = entry.video
                     video_url = video_module.url if video_module and progress and not progress.score_after else None
-                    print("Video URL - ", video_url)
+                    # print("Video URL - ", video_url)
 
                     if video_url:
                         if "drive.google.com/file/d/" in video_url:
@@ -609,7 +605,7 @@ def learning_video(request, topic_id, subtopic_id):
     student = get_object_or_404(Student, user=request.user)
     if not student.can_take_experimental_test:
         try:
-            print(f"Received topic_id: {topic_id}, subtopic_id: {subtopic_id}")
+            # print(f"Received topic_id: {topic_id}, subtopic_id: {subtopic_id}")
 
             student = get_object_or_404(Student, user=request.user)
             topic = get_object_or_404(Topic, topic_id=topic_id)
@@ -617,13 +613,13 @@ def learning_video(request, topic_id, subtopic_id):
 
             # Fetch videos linked to the subtopic
             video_progress_entries = VideoProgress.objects.filter(student=student, subtopic=subtopic)
-            print("video_progress_entries - ", video_progress_entries)
+            # print("video_progress_entries - ", video_progress_entries)
             video_data = []
             for entry in video_progress_entries:
                 video = entry.video
                 video_url = video.url
 
-                print("Inside For Loop")
+                # print("Inside For Loop")
 
                 if "drive.google.com/file/d/" in video_url:
                     file_id = video_url.split('/d/')[1].split('/')[0]
@@ -635,7 +631,7 @@ def learning_video(request, topic_id, subtopic_id):
                     'url': video_url
                 })
 
-            print("video_data - ", video_data)
+            # print("video_data - ", video_data)
 
             context = {
                 "topic": topic,
@@ -715,47 +711,6 @@ def profile_update_view(request):
     return render(request, 'my_app/profile_update.html', {'student': student})
 
 
-# @login_required
-# def student_assignments_view(request):
-#     student = get_object_or_404(Student, user=request.user)
-#     assignments = Assessment.objects.filter(student=student).order_by('-date_taken')  # Fetch assignments
-
-#     context = {
-#         'assignments': assignments,
-#         'username': request.user.student.first_name
-#     }
-#     return render(request, 'my_app/student_assignments.html', context)
-
-# def student_assignments_view(request):
-#     student = get_object_or_404(Student, user=request.user)
-
-#     progress_data = Progress.objects.filter(student=student).select_related(
-#         'current_subtopic__topic'
-#     ).order_by('-last_accessed')
-
-#     subtopics = []
-#     score_before = []
-#     score_after = []
-
-#     for p in progress_data:
-#         if p.current_subtopic and p.score_before is not None and p.score_after is not None:
-#             subtopics.append(p.current_subtopic.subtopic_name)
-#             score_before.append(float(p.score_before))
-#             score_after.append(float(p.score_after))
-    
-
-# # Add to context
-#     context = {
-#         'progress_data': progress_data,
-#         'username': student.first_name,
-#         'chart_subtopics': subtopics,
-#         'chart_score_before': score_before,
-#         'chart_score_after': score_after,
-#     }
-
-#     return render(request, 'my_app/student_assignments.html', context)
-
-# ----------------------------------------------------------------------------Updated view for topic name ------------------------------------
 def student_assignments_view(request):
 
     student = get_object_or_404(Student, user=request.user)
@@ -852,22 +807,22 @@ def complete_video(request):
                     raise Exception(f"VideoProgress entry not found for student {student.student_id}, video {video.video_module_id}, subtopic {subtopic.subtopic_id}")
 
                 print(f"DEBUG: VideoProgress entry found for student {student.student_id}, video {video.video_module_id}, subtopic {subtopic.subtopic_id}")
-                print(video_progress)
+                # print(video_progress)
 
                 # If the video hasn't been watched already, mark it as watched
                 if not video_progress.watched:
-                    print("inside if")
+                    # print("inside if")
                     video_progress.watched = True
                     video_progress.watched_at = timezone.now()
                     video_progress.save()
 
                     # Check if all videos for this subtopic are watched
                     total_videos = VideoProgress.objects.filter(subtopic=subtopic, student=student).count()
-                    print(f"DEBUG: Total videos for subtopic {subtopic_id}: {total_videos}")
+                    # print(f"DEBUG: Total videos for subtopic {subtopic_id}: {total_videos}")
                     watched_videos = VideoProgress.objects.filter(
                         student=student, subtopic=subtopic, watched=True
                     ).count()
-                    print(f"DEBUG: Watched videos for subtopic {subtopic_id}: {watched_videos}")
+                    # print(f"DEBUG: Watched videos for subtopic {subtopic_id}: {watched_videos}")
 
                     if watched_videos == total_videos:
                         progress = student.progress_set.filter(current_subtopic=subtopic).first()
@@ -941,7 +896,7 @@ def display_experiment_test(request):
             "options": options
         })
 
-    print(question_data)
+    # print(question_data)
     context = {
         'question_data': question_data,
         "username": student.first_name
@@ -983,7 +938,7 @@ def submit_experimental_test(request):
         })
 
     score_percentage = (total_score / total_questions) * 100 if total_questions > 0 else 0
-    print(f"DEBUG: Total score: {total_score}, Total questions: {total_questions}, Score percentage: {score_percentage}")
+    # print(f"DEBUG: Total score: {total_score}, Total questions: {total_questions}, Score percentage: {score_percentage}")
 
     ExperimentAssessmentScore.objects.create(
         student=student,
@@ -1024,7 +979,7 @@ def all_learning_videos(request):
     try:
         # Fetch all videos from VideoModule
         videos = VideoModule.objects.all()
-        print("videos - ", videos)
+        # print("videos - ", videos)
 
         video_data_grouped = []
 
@@ -1047,13 +1002,10 @@ def all_learning_videos(request):
                 "subtopic_id": subtopic.subtopic_id
             })
 
-        print("video_data_grouped - ", video_data_grouped)
-
-
+        # print("video_data_grouped - ", video_data_grouped)
         context = {
             "video_data_grouped": video_data_grouped
         }
-
         return render(request, "my_app/all_learning_videos.html", context)
 
     except Exception as e:
