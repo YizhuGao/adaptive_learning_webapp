@@ -914,7 +914,11 @@ def experiment_home(request):
     if not student.can_take_experimental_test:
         messages.error(request, "You are not authorized to take the experimental test.")
         return redirect('home')  # or some other appropriate page
-    return render(request, 'my_app/experiment_home.html')
+    
+    context = {
+        'username': request.user.student.first_name
+    }
+    return render(request, 'my_app/experiment_home.html',context)
 
 
 

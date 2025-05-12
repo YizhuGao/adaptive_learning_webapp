@@ -1,10 +1,13 @@
 /* Global Styles */
 body {
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f6f9;
     margin: 0;
     padding: 0;
     color: #2c3e50;
+    line-height: 1.6;
+    padding-top: 80px;
+    overflow-x: hidden;
 }
 
 /* Navbar */
@@ -27,6 +30,10 @@ body {
     font-weight: 500;
 }
 
+.navbar .right {
+    padding-right: 2.5rem; /* or 24px */
+}
+
 .navbar .right a {
     color: #fff;
     text-decoration: none;
@@ -39,12 +46,14 @@ body {
     color: #9e1b32;
 }
 
+
+
 /* Section Title */
 .section-title {
     text-align: center;
     font-size: 2rem;
-    margin-top: 60px;
-    margin-bottom: 30px;
+    margin-top: 25px;
+    margin-bottom: 15px;
     color: #2c3e50;
 }
 
