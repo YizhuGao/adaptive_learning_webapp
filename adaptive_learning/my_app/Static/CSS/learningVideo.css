@@ -1,13 +1,20 @@
 /* Global Styles */
 body {
+<<<<<<< Updated upstream
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+=======
+    font-family: 'Segoe UI', sans-serif;
+>>>>>>> Stashed changes
     background-color: #f4f6f9;
     margin: 0;
     padding: 0;
     color: #2c3e50;
+<<<<<<< Updated upstream
     line-height: 1.6;
     padding-top: 80px;
     overflow-x: hidden;
+=======
+>>>>>>> Stashed changes
 }
 
 /* Navbar */
@@ -30,10 +37,13 @@ body {
     font-weight: 500;
 }
 
+<<<<<<< Updated upstream
 .navbar .right {
     padding-right: 2.5rem; /* or 24px */
 }
 
+=======
+>>>>>>> Stashed changes
 .navbar .right a {
     color: #fff;
     text-decoration: none;
@@ -46,14 +56,22 @@ body {
     color: #9e1b32;
 }
 
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
 /* Section Title */
 .section-title {
     text-align: center;
     font-size: 2rem;
+<<<<<<< Updated upstream
     margin-top: 25px;
     margin-bottom: 15px;
+=======
+    margin-top: 60px;
+    margin-bottom: 30px;
+>>>>>>> Stashed changes
     color: #2c3e50;
 }
 
