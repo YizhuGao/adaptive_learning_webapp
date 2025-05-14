@@ -59,7 +59,7 @@ Clone this repository or download the ZIP.
 
 ```bash
 git clone https://github.com/ypjoshi18/adaptive_learning_webapp.git
-cd YOUR_LAPTOP_PATH\adaptive_learning_webapp\adaptive_learning
+cd FOLDER_PATH_ON_YOUR_SYSTEM\adaptive_learning_webapp\adaptive_learning
 ```
 
 Or download the ZIP and extract it manually.
