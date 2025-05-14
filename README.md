@@ -57,7 +57,7 @@ pip --version
 Clone this repository or download the ZIP.
 
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
+git clone https://github.com/ypjoshi18/adaptive_learning_webapp.git
 cd your-repo-name
 ```
 
