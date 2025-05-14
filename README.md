@@ -18,6 +18,7 @@ Code Running Instructions after Installing Django:
 6) Run the Command : python manage.py runserver
 7) Click on the link to view the web site 
 
+
 # 🎬 Django Web Application
 
 This is a Django-based web application. This guide will walk you through setting it up from scratch, including Python installation, environment setup, and running the server.
@@ -58,36 +59,15 @@ Clone this repository or download the ZIP.
 
 ```bash
 git clone https://github.com/ypjoshi18/adaptive_learning_webapp.git
-cd your-repo-name
+cd YOUR_LAPTOP_PATH\adaptive_learning_webapp\adaptive_learning
 ```
 
 Or download the ZIP and extract it manually.
 
 ---
 
-### 3️⃣ Create & Activate Virtual Environment
 
-Create a virtual environment (recommended):
-
-```bash
-python -m venv venv
-```
-
-Activate it:
-
-- **Windows**:
-  ```bash
-  .\venv\Scripts\activate
-  ```
-
-- **macOS/Linux**:
-  ```bash
-  source venv/bin/activate
-  ```
-
----
-
-### 4️⃣ Install Dependencies
+### 3️⃣ Install Dependencies
 
 Install all required Python packages:
 
@@ -95,15 +75,8 @@ Install all required Python packages:
 pip install -r requirements.txt
 ```
 
-> If you don't have a `requirements.txt` yet, you can create one by running:
->
-> ```bash
-> pip freeze > requirements.txt
-> ```
 
----
-
-### 5️⃣ Apply Migrations
+### 4️⃣ Apply Migrations
 
 Run database migrations to set up the initial schema:
 
@@ -114,19 +87,8 @@ python manage.py migrate
 
 ---
 
-### 6️⃣ Create a Superuser (Admin Access)
 
-Create an admin account to access the Django admin panel:
-
-```bash
-python manage.py createsuperuser
-```
-
-Follow the prompts to set a username, email, and password.
-
----
-
-### 7️⃣ Run the Server
+### 5️⃣ Run the Server
 
 Start the development server:
 
@@ -160,39 +122,13 @@ your-username/your-repo-name/
 
 ---
 
-## 📄 Sample `requirements.txt`
 
-Here’s what a minimal `requirements.txt` might look like:
 
-```txt
-Django>=3.2
-numpy
-pandas
-```
-
-You can regenerate this file from your virtual environment anytime:
-
-```bash
-pip freeze > requirements.txt
-```
-
----
-
-## ❓ Troubleshooting
-
-- Use `python3` instead of `python` if needed (Linux/macOS).
-- Ensure you activate your virtual environment before installing or running.
-- Use `pip3` if `pip` does not work.
-
----
 
 ## 👨‍💻 Author
 
-**Your Name**  
-GitHub: [https://github.com/your-username](https://github.com/your-username)
+**Abhishek Patwardhan**  
+GitHub: https://github.com/AbhiMP2804
 
 ---
 
-## 📜 License
-
-This project is licensed under the MIT License.
