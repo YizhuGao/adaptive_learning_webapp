@@ -882,7 +882,8 @@ def display_experiment_test(request):
     # Fetch questions assigned at '0' (Before Assignment) or '1' (After Assignment)
     questions = Question.objects.filter(assigned_at=0)  # Change the filter if needed
 
-    question_data = []
+    # It is for Questions
+    question_data = []  
 
     for question in questions:
         # Fetch the options for each question
