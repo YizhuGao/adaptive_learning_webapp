@@ -1026,8 +1026,7 @@ client = InferenceClient(
 
 @csrf_exempt
 def phi3_chat(request):
-    print("Inside the chatbot chat.")
-
+    # print("Inside the chatbot chat.")
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
