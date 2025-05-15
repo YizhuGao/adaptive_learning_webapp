@@ -46,10 +46,23 @@ Download and install Python from the official website:
 
 To verify installation:
 
+<details>
+<summary>Windows</summary>
+
 ```bash
 python --version
 pip --version
 ```
+</details>
+
+<details>
+<summary>macOS/Linux</summary>
+
+```bash
+python3 --version
+pip3 --version
+```
+</details>
 
 ---
 
@@ -58,45 +71,129 @@ pip --version
 Clone this repository or download the ZIP.
 
 ```bash
-git clone https://github.com/ypjoshi18/adaptive_learning_webapp.git
-cd FOLDER_PATH_ON_YOUR_SYSTEM\adaptive_learning_webapp\adaptive_learning
+git clone https://github.com/AbhiMP2804/your-repo-name.git
+cd your-repo-name
 ```
 
 Or download the ZIP and extract it manually.
 
 ---
 
+### 3️⃣ Create & Activate Virtual Environment
 
-### 3️⃣ Install Dependencies
+Create a virtual environment:
+
+<details>
+<summary>Windows</summary>
+
+```bash
+python -m venv venv
+.\venv\Scripts\activate
+```
+</details>
+
+<details>
+<summary>macOS/Linux</summary>
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+</details>
+
+---
+
+### 4️⃣ Install Dependencies
 
 Install all required Python packages:
+
+<details>
+<summary>Windows</summary>
 
 ```bash
 pip install -r requirements.txt
 ```
+</details>
 
+<details>
+<summary>macOS/Linux</summary>
 
-### 4️⃣ Apply Migrations
+```bash
+pip3 install -r requirements.txt
+```
+</details>
 
-Run database migrations to set up the initial schema:
+> If you don't have a `requirements.txt` yet, you can create one:
+
+```bash
+pip freeze > requirements.txt
+```
+
+---
+
+### 5️⃣ Apply Migrations
+
+Run database migrations:
+
+<details>
+<summary>Windows</summary>
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
+</details>
+
+<details>
+<summary>macOS/Linux</summary>
+
+```bash
+python3 manage.py makemigrations
+python3 manage.py migrate
+```
+</details>
 
 ---
 
+### 6️⃣ Create a Superuser (Admin Access)
 
-### 5️⃣ Run the Server
+<details>
+<summary>Windows</summary>
 
-Start the development server:
+```bash
+python manage.py createsuperuser
+```
+</details>
+
+<details>
+<summary>macOS/Linux</summary>
+
+```bash
+python3 manage.py createsuperuser
+```
+</details>
+
+---
+
+### 7️⃣ Run the Server
+
+<details>
+<summary>Windows</summary>
 
 ```bash
 python manage.py runserver
 ```
+</details>
 
-Visit the site in your browser:
+<details>
+<summary>macOS/Linux</summary>
+
+```bash
+python3 manage.py runserver
+```
+</details>
+
+Now open your browser and go to:
 
 - App: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 - Admin Panel: [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin)
@@ -106,7 +203,7 @@ Visit the site in your browser:
 ## 📂 Project Structure (Sample)
 
 ```
-your-username/your-repo-name/
+your-repo-name/
 ├── manage.py
 ├── requirements.txt
 ├── README.md
@@ -122,13 +219,47 @@ your-username/your-repo-name/
 
 ---
 
+## 📄 Sample `requirements.txt`
 
+```txt
+Django>=3.2
+numpy
+pandas
+```
 
+Generate it any time:
+
+<details>
+<summary>Windows</summary>
+
+```bash
+pip freeze > requirements.txt
+```
+</details>
+
+<details>
+<summary>macOS/Linux</summary>
+
+```bash
+pip3 freeze > requirements.txt
+```
+</details>
+
+---
+
+## ❓ Troubleshooting
+
+- If `python` or `pip` does not work on macOS/Linux, try `python3` and `pip3`.
+- Always activate the virtual environment before running commands.
+- Use `deactivate` to exit the virtual environment.
+
+---
 
 ## 👨‍💻 Author
 
 **Abhishek Patwardhan**  
-GitHub: https://github.com/AbhiMP2804
+GitHub: [https://github.com/AbhiMP2804](https://github.com/AbhiMP2804)
 
 ---
+
 
