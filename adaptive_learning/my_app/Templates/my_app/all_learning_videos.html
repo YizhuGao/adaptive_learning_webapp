@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Learning Videos</title>
-    <link rel="stylesheet" href="{% static 'CSS/learningVideo.css' %}?v=8">
+    <link rel="stylesheet" href="{% static 'CSS/expLearningVideos.css' %}?v=8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
 </head>
@@ -26,11 +26,11 @@
 
 <!-- Videos -->
 <section class="video-section">
-    <h2 class="section-title">🎬 Learning Videos</h2>
+    {% comment %} <center><h2 class="section-title">🎬 Learning Videos</h2></center> {% endcomment %}
 
     {% if video_data_grouped %}
         {% for video in video_data_grouped %}
-        <div class="video-wrapper">
+        <div class="video-wrapper video-tile">
             <div class="video-title">
                 <i class="fas fa-video"></i> {{ video.video_title }}
             </div>
@@ -40,7 +40,7 @@
             </div>
             <div class="video-container">
                 <div class="video-overlay">
-                    {% comment %} <i class="fas fa-play-circle play-icon"></i> {% endcomment %}
+                    <i class="play-icon"></i>
                 </div>
                 <iframe class="video-frame"
                         src="{{ video.video_url }}"
@@ -59,5 +59,14 @@
     {% endif %}
 </section>
 
+<div id="videoModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <iframe id="modalVideoFrame" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+        {% comment %} <iframe id="modalVideoFrame" src="" frameborder="0"></iframe> {% endcomment %}
+    </div>
+</div>
+
+<script src="{% static 'JS/expVideo.js' %}?v=5"></script>
 </body>
 </html>
