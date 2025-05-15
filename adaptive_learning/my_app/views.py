@@ -1017,7 +1017,7 @@ def all_learning_videos(request):
 
 
 
-HF_API_KEY = "***REMOVED***"
+HF_API_KEY = "Secrete Key"
 client = InferenceClient(
     model="microsoft/Phi-3-mini-4k-instruct",
     token=HF_API_KEY
