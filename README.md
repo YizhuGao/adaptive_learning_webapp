@@ -111,6 +111,7 @@ Install all required Python packages:
 <summary>Windows</summary>
 
 ```bash
+pip install Django numpy pandas torch
 pip install -r requirements.txt
 ```
 </details>
@@ -119,6 +120,7 @@ pip install -r requirements.txt
 <summary>macOS/Linux</summary>
 
 ```bash
+pip3 install Django numpy pandas torch
 pip3 install -r requirements.txt
 ```
 </details>
