@@ -65,5 +65,115 @@
 </div>
 
 <script src="{% static 'JS/video.js' %}?v=6"></script>
+
+
+<!-- Chatbot Button -->
+<div id="chatbot-btn" onclick="toggleChatbot()">💬</div>
+
+<!-- Chatbot Popup -->
+<div id="chatbot-popup" class="chat-popup">
+    <div class="chat-header">Ask the Assistant <span onclick="toggleChatbot()" style="float:right;cursor:pointer;">&times;</span></div>
+    <div class="chat-messages" id="chat-messages"></div>
+    <div class="chat-input">
+        <input type="text" id="chat-input-box" placeholder="Type your question..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<style>
+#chatbot-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #007BFF;
+    color: white;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+    z-index: 1000;
+}
+.chat-popup {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 300px;
+    background: #f1f1f1;
+    border: 1px solid #ccc;
+    display: none;
+    flex-direction: column;
+    z-index: 1001;
+    border-radius: 10px;
+}
+.chat-header {
+    background: #007BFF;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.chat-messages {
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 10px;
+}
+.chat-input {
+    display: flex;
+    border-top: 1px solid #ccc;
+}
+.chat-input input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+}
+.chat-input button {
+    border: none;
+    background: #007BFF;
+    color: white;
+    padding: 10px;
+}
+</style>
+
+<script>
+function toggleChatbot() {
+    const popup = document.getElementById('chatbot-popup');
+    popup.style.display = popup.style.display === 'flex' ? 'none' : 'flex';
+}
+
+function sendMessage() {
+    const inputBox = document.getElementById("chat-input-box");
+    const message = inputBox.value.trim();
+    if (!message) return;
+
+    const chatBox = document.getElementById("chat-messages");
+    chatBox.innerHTML += `<div><strong>You:</strong> ${message}</div>`;
+    inputBox.value = "";
+
+    fetch("{% url 'phi3_chat' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": document.querySelector('[name=csrf-token]').content
+        },
+        body: JSON.stringify({ message: message })
+    })
+    .then(response => response.json())
+    .then(data => {
+        chatBox.innerHTML += `<div><strong>Bot:</strong> ${data.response}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    })
+    .catch(err => {
+        chatBox.innerHTML += `<div><strong>Error:</strong> Something went wrong</div>`;
+    });
+}
+</script>
+
+
+
+
 </body>
 </html>

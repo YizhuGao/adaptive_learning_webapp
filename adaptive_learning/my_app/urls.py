@@ -27,4 +27,6 @@ urlpatterns = [
     path('experiment-results/', views.experiment_test_results, name='experiment_test_results'),
     path('all_videos/', views.all_learning_videos, name='all_learning_videos'),
     path('experiment-home/', views.experiment_home, name='experiment_home'),
+    path('api/phi3-chat/', views.phi3_chat, name='phi3_chat'),
+
 ]

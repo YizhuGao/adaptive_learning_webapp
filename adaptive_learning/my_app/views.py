@@ -18,6 +18,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, redirect
 import pandas as pd
+import requests
+from huggingface_hub import InferenceClient
 
 BASE_DIR = settings.BASE_DIR
 logger = logging.getLogger(__name__)
@@ -1012,3 +1014,46 @@ def all_learning_videos(request):
     except Exception as e:
         print("Error in all_learning_videos:", e)
         return JsonResponse({"error": str(e)}, status=400)
+
+
+
+HF_API_KEY = "***REMOVED***"
+client = InferenceClient(
+    model="microsoft/Phi-3-mini-4k-instruct",
+    token=HF_API_KEY
+)
+
+
+@csrf_exempt
+def phi3_chat(request):
+    print("Inside the chatbot chat.")
+
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            user_input = data.get('message')
+
+            if not user_input:
+                return JsonResponse({"response": "No message provided."}, status=400)
+
+            # Call Hugging Face's chat API
+            response = client.chat_completion(
+                messages=[
+                    {"role": "user", "content": user_input}
+                ],
+                max_tokens=3000,
+                temperature=0.7,
+                top_p=0.95
+            )
+
+            # Extract assistant reply
+            reply = response.choices[0].message["content"].strip()
+
+            print("HF Response:", reply)
+            return JsonResponse({"response": reply})
+
+        except Exception as e:
+            print("Error:", str(e))
+            return JsonResponse({"response": f"Server error: {str(e)}"}, status=500)
+
+    return JsonResponse({"error": "Invalid request method"}, status=405)
