@@ -262,6 +262,9 @@ pip3 freeze > requirements.txt
 **Abhishek Patwardhan**  
 GitHub: [https://github.com/AbhiMP2804](https://github.com/AbhiMP2804)
 
+**Yash Joshi**  
+GitHub: [GitHub](https://github.com/ypjoshi18)
+
 ---
 
 
