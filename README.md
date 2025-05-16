@@ -232,6 +232,38 @@ pip3 freeze > requirements.txt
 
 ---
 
+## 🔐 How to Create a Hugging Face API Key for Phi-3 Access
+
+To use the **Phi-3** model or any other hosted model on Hugging Face via API, you need to generate an API key. Follow these steps:
+
+### 📌 Step-by-Step Instructions
+
+#### 1. Sign in or Sign up
+- Visit [https://huggingface.co](https://huggingface.co)
+- Log in to your account, or create one if you don’t already have it.
+
+#### 2. Navigate to Access Tokens
+- Click on your profile picture in the top-right corner.
+- Select **"Settings"** from the dropdown menu.
+- From the left sidebar, click on **"Access Tokens**" or go directly to:  
+  [https://huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)
+
+#### 3. Generate a New Token
+- Click **"New token"**
+- Enter a name (e.g., `phi3-token`)
+- Choose a role:
+  - Select **"Read"** if you only need to access and use models.
+  - For most use cases, **"Read" is sufficient**.
+- Click **"Generate"**
+
+#### 4. Copy and Save the Token
+- Copy the token shown — **you won’t be able to see it again**.
+- Store it securely (e.g., in an environment variable or a secret manager).
+- ⚠️ **Do NOT commit this token to version control (e.g., GitHub).**
+
+---
+
+
 ## ❓ Troubleshooting
 
 - If `python` or `pip` does not work on macOS/Linux, try `python3` and `pip3`.
