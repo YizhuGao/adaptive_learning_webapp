@@ -143,6 +143,7 @@ class VideoModule(models.Model):
         blank=True,
         help_text="Comma-separated list of related misconception numbers like 'm1,m2,m5'"
     )
+    embedding = models.BinaryField(null=True, blank=True)  # New field
 
 
     def __str__(self):

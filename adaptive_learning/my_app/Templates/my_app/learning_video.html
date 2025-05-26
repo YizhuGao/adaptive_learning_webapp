@@ -46,6 +46,7 @@
                         allowfullscreen
                         data-video-id="{{ video.id }}"
                         data-subtopic-id="{{ subtopic_id }}"
+                        data-video-title="{{ video.title }}"
                         id="video-{{ video.id }}">
                 </iframe>
             </div>
@@ -85,11 +86,17 @@
 <div id="chatbot-btn" onclick="toggleChatbot()">💬</div>
 
 <div id="chatbot-popup" class="chat-popup">
-    <div class="chat-header">Ask Assistant</div>
+    <div class="chat-header">
+        Ask Assistant
+        <select id="video-select">
+            <option value="">Select a video...</option>
+        </select>
+        <span id="selected-video-title" style="margin-left:10px; font-weight:bold;"></span>
+    </div>
     <div id="chat-messages" class="chat-messages"></div>
     <div class="chat-input">
-        <input type="text" id="chat-input-box" placeholder="Type your message..." />
-        <button onclick="sendMessage()">Send</button>
+        <input type="text" id="chat-input-box" placeholder="Type your message..." disabled />
+        <button id="chat-send-btn" onclick="sendMessage()" disabled>Send</button>
     </div>
 </div>
 

@@ -18,8 +18,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render, redirect
 import pandas as pd
-import requests
 from huggingface_hub import InferenceClient
+from my_app.chatbot_utils import get_chatbot_resources
 
 BASE_DIR = settings.BASE_DIR
 logger = logging.getLogger(__name__)
@@ -1017,7 +1017,15 @@ def all_learning_videos(request):
 
 
 
-HF_API_KEY = "Secrete Key"
+# Load embeddings and metadata only once
+# model = SentenceTransformer("all-MiniLM-L6-v2")
+# index = faiss.read_index("video_index.faiss")
+
+# with open("video_metadata.json", "r") as f:
+#     video_data = json.load(f)
+
+
+HF_API_KEY = "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"
 client = InferenceClient(
     model="microsoft/Phi-3-mini-4k-instruct",
     token=HF_API_KEY
@@ -1026,33 +1034,52 @@ client = InferenceClient(
 
 @csrf_exempt
 def phi3_chat(request):
-    # print("Inside the chatbot chat.")
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            user_input = data.get('message')
+    if request.method != 'POST':
+        return JsonResponse({"error": "Invalid request method."}, status=405)
 
-            if not user_input:
-                return JsonResponse({"response": "No message provided."}, status=400)
+    try:
+        data = json.loads(request.body)
+        user_input = data.get('message', '').strip()
+        selected_video_title = data.get('video_title', '').strip()
 
-            # Call Hugging Face's chat API
-            response = client.chat_completion(
-                messages=[
-                    {"role": "user", "content": user_input}
-                ],
-                max_tokens=3000,
-                temperature=0.7,
-                top_p=0.95
-            )
+        if not user_input or not selected_video_title:
+            return JsonResponse({"response": "Message and video title are required."}, status=400)
 
-            # Extract assistant reply
-            reply = response.choices[0].message["content"].strip()
+        # Load resources
+        model, faiss_index, video_data = get_chatbot_resources()
 
-            print("HF Response:", reply)
-            return JsonResponse({"response": reply})
+        # Get video by title
+        matched_video = next((v for v in video_data if v.get('title') == selected_video_title), None)
+        if not matched_video:
+            return JsonResponse({"response": "Selected video not found."}, status=404)
 
-        except Exception as e:
-            print("Error:", str(e))
-            return JsonResponse({"response": f"Server error: {str(e)}"}, status=500)
+        title = matched_video.get('title', 'Untitled')
+        description = matched_video.get('description', 'No description available.')
 
-    return JsonResponse({"error": "Invalid request method"}, status=405)
+        # Build prompt
+        prompt = f"""Keep below content in mind while answering the question:
+
+Title: {title}
+Description: {description}
+
+Now, answer this student question:
+{user_input}
+"""
+
+        # LLM response
+        response = client.chat_completion(
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=3000,
+            temperature=0.7,
+            top_p=0.95
+        )
+
+        reply = response.choices[0].message["content"].strip()
+        return JsonResponse({"response": reply})
+
+    except json.JSONDecodeError:
+        return JsonResponse({"response": "Invalid JSON format."}, status=400)
+
+    except Exception as e:
+        print("Error:", str(e))
+        return JsonResponse({"response": f"Server error: {str(e)}"}, status=500)
