@@ -8,7 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "adaptive_learning.settings")
 django.setup()
 
-from my_app.models import VideoModule  # Changed to absolute import
+from ..my_app.models import VideoModule  # Changed to absolute import
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 

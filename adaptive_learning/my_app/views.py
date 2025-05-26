@@ -19,7 +19,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 import pandas as pd
 from huggingface_hub import InferenceClient
-from my_app.chatbot_utils import get_chatbot_resources
+from ..my_app.chatbot_utils import get_chatbot_resources
 
 BASE_DIR = settings.BASE_DIR
 logger = logging.getLogger(__name__)
