@@ -21956,3 +21956,4 @@
 /.venv/Scripts/python.exe
 secrets.txt
 /Learning Videos/
+.env

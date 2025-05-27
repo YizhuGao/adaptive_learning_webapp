@@ -19,7 +19,9 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 import pandas as pd
 from huggingface_hub import InferenceClient
-from ..my_app.chatbot_utils import get_chatbot_resources
+from my_app.chatbot_utils import get_chatbot_resources
+from dotenv import load_dotenv
+load_dotenv()
 
 BASE_DIR = settings.BASE_DIR
 logger = logging.getLogger(__name__)
@@ -1025,7 +1027,10 @@ def all_learning_videos(request):
 #     video_data = json.load(f)
 
 
-HF_API_KEY = "Secrete Key"
+
+HF_API_KEY = os.environ.get("HF_API_KEY")
+if not HF_API_KEY:
+    raise ValueError("HF_API_KEY environment variable not set!")
 client = InferenceClient(
     model="microsoft/Phi-3-mini-4k-instruct",
     token=HF_API_KEY
