@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-)-6-6n_o8jj4@@29g4mtxaeyp#w2-7uf1-5^^kg^v#g*zemhwz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*", "adaptive-learning-webapp.onrender.com"]
+ALLOWED_HOSTS = ["adaptive-learning-webapp.onrender.com", "localhost", "127.0.0.1"]
 
 
 # Application definition
