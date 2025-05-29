@@ -1,0 +1,5 @@
+# created by virtualenv automatically
+
+# Ignore Python cache files
+*.pyc
+__pycache__/
