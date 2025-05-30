@@ -28,7 +28,7 @@
     <section class="login-section">
         <div class="login-container">
             <h2>Login to Your Account</h2>
-            <form action="{% url 'login' %}" method="POST">
+            <form method="post">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="email">Email</label>

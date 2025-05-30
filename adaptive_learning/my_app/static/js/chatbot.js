@@ -57,21 +57,32 @@ function sendMessage() {
         return;
     }
 
-    fetch(phi3ChatURL, {
-        method: "POST",
+    fetch('/api/phi3-chat/', {
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": document.querySelector('[name=csrf-token]').content
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ message: message, video_title: selectedVideoTitle })
+        body: JSON.stringify({
+            message: message,
+            video_title: selectedVideoTitle
+        })
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log("HF API status:", response.status);
+        console.log("HF API content:", response.text);
+        if (response.ok) {
+            return response.json();
+        } else {
+            console.error("HF API error:", response.statusText);
+            return Promise.reject(new Error("HF API did not return valid JSON."));
+        }
+    })
     .then(data => {
         chatBox.innerHTML += `<div class="bot-message">${data.response}</div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
     })
     .catch(err => {
-        chatBox.innerHTML += `<div><strong>Error:</strong> Something went wrong</div>`;
+        chatBox.innerHTML += `<div><strong>Error:</strong> ${err.message}</div>`;
     });
 }
 

@@ -21,7 +21,9 @@ import pandas as pd
 from huggingface_hub import InferenceClient
 from my_app.chatbot_utils import get_chatbot_resources
 from dotenv import load_dotenv
+import requests
 load_dotenv()
+
 
 BASE_DIR = settings.BASE_DIR
 logger = logging.getLogger(__name__)
@@ -751,7 +753,7 @@ def update_video_progress(request):
     if not student.can_take_experimental_test:
         if request.method == 'POST':
             # Parse the incoming data (subtopic ID, student ID)
-            data = json.loads(request.body)
+            data = json.loads(request.body.decode('utf-8'))
             subtopic_id = data.get('subtopic_id')
             student_id = data.get('student_id')
 
@@ -1029,13 +1031,8 @@ def all_learning_videos(request):
 
 
 HF_API_KEY = os.environ.get("HF_API_KEY")
-if not HF_API_KEY:
-    raise ValueError("HF_API_KEY environment variable not set!")
-client = InferenceClient(
-    model="microsoft/Phi-3-mini-4k-instruct",
-    token=HF_API_KEY
-)
-
+API_URL = "https://api-inference.huggingface.co/models/microsoft/Phi-3-mini-4k-instruct"
+headers = {"Authorization": f"Bearer {HF_API_KEY}"}
 
 @csrf_exempt
 def phi3_chat(request):
@@ -1043,7 +1040,9 @@ def phi3_chat(request):
         return JsonResponse({"error": "Invalid request method."}, status=405)
 
     try:
-        data = json.loads(request.body)
+        print("RAW BODY:", request.body)
+        print("CONTENT TYPE:", request.META.get("CONTENT_TYPE"))
+        data = json.loads(request.body.decode('utf-8'))
         user_input = data.get('message', '').strip()
         selected_video_title = data.get('video_title', '').strip()
 
@@ -1053,7 +1052,7 @@ def phi3_chat(request):
         # Load resources
         model, faiss_index, video_data = get_chatbot_resources()
 
-        # Get video by title
+        # Find the selected video by title
         matched_video = next((v for v in video_data if v.get('title') == selected_video_title), None)
         if not matched_video:
             return JsonResponse({"response": "Selected video not found."}, status=404)
@@ -1061,30 +1060,49 @@ def phi3_chat(request):
         title = matched_video.get('title', 'Untitled')
         description = matched_video.get('description', 'No description available.')
 
-        # Build prompt
-        prompt = f"""Keep below content in mind while answering the question:
+        # Create prompt
+        prompt = f"""Student is watching this video:
 
 Title: {title}
 Description: {description}
 
-Now, answer this student question:
-{user_input}
-"""
+Student asks: {user_input}
+Answer in approximately 300 to 400 words:"""
 
-        # LLM response
-        response = client.chat_completion(
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=3000,
-            temperature=0.7,
-            top_p=0.95
-        )
+        # Prepare conversational payload
+        payload = {
+            "inputs": prompt
+        }
 
-        reply = response.choices[0].message["content"].strip()
+        response = requests.post(API_URL, headers=headers, json=payload)
+        print("HF API status:", response.status_code)
+        print("HF API content:", response.content)
+        try:
+            result = response.json()
+        except Exception as e:
+            print("HF API JSONDecodeError:", str(e))
+            return JsonResponse({"response": "HF API did not return valid JSON. Status: {} Content: {}".format(response.status_code, response.content.decode(errors='replace'))}, status=500)
+
+        # Error handling for API
+        if isinstance(result, dict) and "error" in result:
+            return JsonResponse({"response": f"HF API error: {result['error']}"}, status=500)
+
+        # Handle the list response with generated_text
+        if isinstance(result, list) and len(result) > 0 and "generated_text" in result[0]:
+            full_response = result[0]["generated_text"]
+            # Remove the prompt from the start to get only the answer
+            if full_response.startswith(prompt):
+                reply = full_response[len(prompt):].lstrip("\n")
+            else:
+                reply = full_response
+        else:
+            reply = "No response generated."
+
         return JsonResponse({"response": reply})
 
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as e:
+        print("JSONDecodeError:", str(e))
         return JsonResponse({"response": "Invalid JSON format."}, status=400)
-
     except Exception as e:
-        print("Error:", str(e))
+        print("General Exception:", str(e))
         return JsonResponse({"response": f"Server error: {str(e)}"}, status=500)
