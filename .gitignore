@@ -21957,3 +21957,5 @@
 secrets.txt
 /Learning Videos/
 .env
+
+__pycache__/
