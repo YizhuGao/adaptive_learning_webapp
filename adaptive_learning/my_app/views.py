@@ -1,7 +1,7 @@
 from collections import defaultdict
 import os
 from datetime import timezone
-from .ML.ncdm_inference import load_model, predict
+from .ml.ncdm_inference import load_model, predict
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import logout, authenticate, login, get_user_model
