@@ -4,7 +4,7 @@ from datetime import timezone
 from .ML.ncdm_inference import load_model, predict
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import logout, authenticate, login
+from django.contrib.auth import logout, authenticate, login, get_user_model
 from django.contrib.auth.models import User
 from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
@@ -1106,3 +1106,11 @@ Answer in approximately 300 to 400 words:"""
     except Exception as e:
         print("General Exception:", str(e))
         return JsonResponse({"response": f"Server error: {str(e)}"}, status=500)
+
+
+def create_superuser_view(request):
+    User = get_user_model()
+    if not User.objects.filter(username="admin").exists():
+        User.objects.create_superuser("admin", "admin@example.com", "adminpassword")
+        return HttpResponse("Superuser created.")
+    return HttpResponse("Superuser already exists.")

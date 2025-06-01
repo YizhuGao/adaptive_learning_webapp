@@ -28,5 +28,5 @@ urlpatterns = [
     path('all_videos/', views.all_learning_videos, name='all_learning_videos'),
     path('experiment-home/', views.experiment_home, name='experiment_home'),
     path('api/phi3-chat/', views.phi3_chat, name='phi3_chat'),
-
+    path('create-superuser/', views.create_superuser_view),
 ]
