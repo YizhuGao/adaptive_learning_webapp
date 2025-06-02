@@ -40,15 +40,15 @@ def login_view(request):
         password = request.POST.get('password')
 
         # Manually authenticate user using email instead of username
-        print(f"Attempting to authenticate user: {email}")
+        logger.info(f"Attempting to authenticate user: {email}")
         user = authenticate(request, username=email, password=password)
         if user is not None:
-            print(f"Authentication successful: {user.email}")
+            logger.info(f"Authentication successful: {user.email}")
             login(request, user)
             messages.success(request, f"Welcome back, {email}!")
             return redirect('home')  # Redirect to success page after login
         else:
-            print("Authentication failed")
+            logger.warning("Authentication failed")
             messages.error(request, "Invalid email or password.")
     return render(request, 'my_app/login.html')
 
@@ -170,8 +170,6 @@ def test_view(request, topic_id, subtopic_id):
         else:
             assigned_value = 0
 
-        # print("Assigned Value - ", assigned_value)
-
         questions = Question.objects.filter(topic=topic, subtopic=subtopic, assigned_at=assigned_value)
 
         context = {
@@ -194,10 +192,10 @@ def submit_test(request, topic_id, subtopic_id):
     student = get_object_or_404(Student, user=request.user)
     if not student.can_take_experimental_test:
         if request.method == "POST":
-            print("Form Submitted: ", request.POST)  # Debugging line
+            logger.info("Form Submitted: ", request.POST)  # Debugging line
 
             if not request.POST:
-                print("No data received in POST request.")
+                logger.warning("No data received in POST request.")
                 return JsonResponse({"error": "No data received"}, status=400)
 
             try:
@@ -220,11 +218,7 @@ def submit_test(request, topic_id, subtopic_id):
                 question_ids_list = []
                 correctness_list = []
 
-                # print(BASE_DIR)
                 TCE_Misunderstanding_path = os.path.join(BASE_DIR, 'my_app', 'ML', 'TCE_Misunderstanding.xlsx')
-
-                # print(BASE_DIR)
-                # print("Excel file path - ", TCE_Misunderstanding_path)
 
                 tce_misunderstanding = pd.read_excel(TCE_Misunderstanding_path)
                 knowledge_n = tce_misunderstanding.shape[1] - 1
@@ -242,17 +236,7 @@ def submit_test(request, topic_id, subtopic_id):
                             question=question,
                             selected_option=selected_option
                         )
-                        # if question.question_id - 39 >= 1 and question.question_id - 39 <= 1:
-                        #     question.question_id = question.question_id - 39
-                        # else:
-                        #     question.question_id = (question.question_id - 39) / 2
-                        # # Track question ID
-                        # print("Question ID - ", question.question_id)
-                        # if question.assigned_at == 0:
-                        question_ids_list.append(question.question_id - 39)
-                            # print("Question ID - ", question.question_id)
-                        # else:
-                            # print(f"Skipping question ID {question.question_id} as assigned_at = {question.assigned_at}")
+                        question_ids_list.append(question.question_id)
                         # Check correctness
                         if selected_option.is_correct:
                             correct_count += 1
@@ -269,8 +253,8 @@ def submit_test(request, topic_id, subtopic_id):
                             assigned_at_1_count += 1
 
                 # Calculate score
-                print("correct_count", correct_count)
-                print("total_questions", total_questions)
+                logger.warning(f"correct_count: {correct_count}")
+                logger.warning(f"total_questions: {total_questions}")
                 score = (correct_count / total_questions) * 100 if total_questions > 0 else 0
 
                 assessment.score = score
@@ -281,7 +265,7 @@ def submit_test(request, topic_id, subtopic_id):
                     "correct": correctness_list
                 })
 
-                print(answers_df)
+                logger.warning(f"answers_df:\n{answers_df}")
                 model_path = os.path.join(BASE_DIR, 'my_app', 'ML', 'ncdm_model.pth')
                 num_questions = answers_df.shape[0]
                 device = "cpu"
@@ -291,7 +275,7 @@ def submit_test(request, topic_id, subtopic_id):
                 logger.warning("=== ML MODEL CALL: END ===")
 
                 misconception_matrix = tce_misunderstanding
-                print(question_ids_list)
+                logger.warning(f"question_ids_list: {question_ids_list}")
 
                 weak_knowledge_indices = set()
 
@@ -302,21 +286,20 @@ def submit_test(request, topic_id, subtopic_id):
 
                         question_row = misconception_matrix[misconception_matrix['item_id'] == item_id]
 
-
                         if question_row.empty:
-                            print(f"Question ID {que} not found in misunderstanding matrix.")
+                            logger.warning(f"Question ID {que} not found in misunderstanding matrix.")
                             continue
 
                         # Extract the knowledge vector from the row (skipping question_id column)
                         knowledge_vector = question_row.iloc[0, 1:].to_numpy(dtype=float).reshape(1, -1)
 
-                        print(f"Calling predict for student {student.student_id}, question {que}")
+                        logger.warning(f"Calling predict for student {student.student_id}, question {que}")
                         # Predict using the model
                         prediction, proficiency_vector  = predict(model, student.student_id, int(que), knowledge_vector, device)
 
-                        print(f"\nQuestion ID: Q{que}")
-                        print(f"Prediction: {prediction:.4f}")
-                        print(f"Proficiency Vector: {proficiency_vector}")
+                        logger.warning(f"\nQuestion ID: Q{que}")
+                        logger.warning(f"Prediction: {prediction:.4f}")
+                        logger.warning(f"Proficiency Vector: {proficiency_vector}")
 
                         knowledge_vector_np = np.array(knowledge_vector).flatten()
 
@@ -330,38 +313,36 @@ def submit_test(request, topic_id, subtopic_id):
 
                             if prof_value > 0.6:
                                 weak_knowledge_indices.add(idx)
-                                print(f"High misconception likelihood: prof={prof_value:.4f} → Added idx {idx + 1 } from Q{que}")
+                                logger.info(f"High misconception likelihood: prof={prof_value:.4f} → Added idx {idx + 1 } from Q{que}")
 
                             elif 0.4 <= prof_value <= 0.6:
                                 if correctness_list[question_ids_list.index(int(que))] == 0:  # Student answered incorrectly
                                     weak_knowledge_indices.add(idx)
-                                    print(
+                                    logger.info(
                                         f"Moderate prof + incorrect answer: prof={prof_value:.4f} → Added idx {idx + 1 } from Q{que}")
                                 else:
-                                    print(
+                                    logger.info(
                                         f"Moderate prof + correct answer: prof={prof_value:.4f} → Not Added idx {idx + 1 } from Q{que}")
                             elif prediction < 0.7:
                                 weak_knowledge_indices.add(idx)
-                                # print(f"Low prediction ({prediction:.4f}) → Added idx {idx + 1 } from Q{que}")
-
                             elif prof_value < 0.48:
-                                print(
+                                logger.info(
                                     f"Low misconception probability (prof={prof_value:.4f}) → Skipped idx {idx + 1 } for Q{que}")
 
                             else:
-                                print(f"No condition met for prof={prof_value:.4f}, idx {idx + 1 }, Q{que}")
+                                logger.info(f"No condition met for prof={prof_value:.4f}, idx {idx + 1 }, Q{que}")
 
                     except Exception as e:
-                        print(f"Prediction error for Q{que}: {e}")
+                        logger.error(f"Prediction error for Q{que}: {e}")
 
                 weak_knowledge_indices = sorted([int(idx) + 1 for idx in weak_knowledge_indices])
 
-                print("Final Weak Knowledge Indices:", weak_knowledge_indices)
+                logger.info("Final Weak Knowledge Indices:", weak_knowledge_indices)
 
                 try:
                     misconception_videos = VideoModule.objects.filter(subtopic=subtopic)
 
-                    print(" misconception_videos :", misconception_videos)
+                    logger.info(" misconception_videos :", misconception_videos)
 
 
                     for video in misconception_videos:
@@ -374,11 +355,11 @@ def submit_test(request, topic_id, subtopic_id):
 
                                 # Get intersection between video misconceptions and weak knowledge indices
                                 matched_misconceptions = list(set(video_misconceptions) & set(weak_knowledge_indices))
-                                print("matched_misconceptions - ", matched_misconceptions)
+                                logger.info("matched_misconceptions - ", matched_misconceptions)
 
                                 if matched_misconceptions:
-                                    print(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
-                                    print(f"  → Related to misconceptions: {matched_misconceptions}")
+                                    logger.info(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
+                                    logger.info(f"  → Related to misconceptions: {matched_misconceptions}")
 
                                     # Create a VideoProgress record only once for this video
                                     obj, created = VideoProgress.objects.get_or_create(
@@ -388,18 +369,18 @@ def submit_test(request, topic_id, subtopic_id):
                                         defaults={"watched": False}
                                     )
                                     if created:
-                                        print("  → VideoProgress created.")
+                                        logger.info("  → VideoProgress created.")
                                     else:
-                                        print("  → VideoProgress already exists. Skipping creation.")
+                                        logger.info("  → VideoProgress already exists. Skipping creation.")
 
                             except Exception as inner_e:
-                                print(f"Error processing video ID {video.video_module_id if video else 'Unknown'}: {inner_e}")
+                                logger.error(f"Error processing video ID {video.video_module_id if video else 'Unknown'}: {inner_e}")
 
                             else:
-                                print("No Video for the given misconceptions found.")
+                                logger.info("No Video for the given misconceptions found.")
 
                 except Exception as e:
-                    print("Error while assigning videos based on misconceptions:", e)
+                    logger.error("Error while assigning videos based on misconceptions:", e)
 
                 # Update progress model
                 progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
@@ -417,7 +398,7 @@ def submit_test(request, topic_id, subtopic_id):
                 return redirect('test_results', topic_id=topic_id, subtopic_id=subtopic_id)
 
             except Exception as e:
-                print("Error:", e)
+                logger.error("Error:", e)
                 return JsonResponse({"error": str(e)}, status=400)
 
         return redirect("modules")  # Redirect if accessed incorrectly
@@ -431,7 +412,6 @@ def submit_test(request, topic_id, subtopic_id):
 def modules_view(request):
     student = get_object_or_404(Student, user=request.user)
     if not student.can_take_experimental_test:
-        # return render(request, 'my_app/home.html', {'username': request.user.student.first_name})
         topics = Topic.objects.all()
         topic_data = []
 
@@ -532,8 +512,6 @@ def modules_view(request):
             'topic_data': topic_data,
             'username': request.user.student.first_name
         }
-        # print("Context - ", context)  # Debug Output
-
         return render(request, 'my_app/modules.html', context)
 
     messages.error(request, "You are not authorized to access the normal test section.")
@@ -557,14 +535,10 @@ def test_results(request, topic_id, subtopic_id):
             score = assessment.score
 
             # Fetch video modules from VideoProgress instead of VideoModule directly
-            # print(subtopic)
             video_progress_entries = VideoProgress.objects.filter(student=student, subtopic=subtopic)
-            # print("Video - test results - ", video_progress_entries)
-
             video_data = []
             video_url = None
             progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
-            # print("Progress - ", progress)
 
             if not video_progress_entries.exists() and progress:
                 progress.video_watched = True
@@ -574,7 +548,6 @@ def test_results(request, topic_id, subtopic_id):
                 if not entry.watched:
                     video_module = entry.video
                     video_url = video_module.url if video_module and progress and not progress.score_after else None
-                    # print("Video URL - ", video_url)
 
                     if video_url:
                         if "drive.google.com/file/d/" in video_url:
@@ -603,7 +576,7 @@ def test_results(request, topic_id, subtopic_id):
             return render(request, "my_app/test_results.html", context)
 
         except Exception as e:
-            print("Error in test_results:", e)
+            logger.error("Error in test_results:", e)
             return JsonResponse({"error": str(e)}, status=400)
 
     messages.error(request, "You are not authorized to access the normal test section.")
@@ -615,21 +588,16 @@ def learning_video(request, topic_id, subtopic_id):
     student = get_object_or_404(Student, user=request.user)
     if not student.can_take_experimental_test:
         try:
-            # print(f"Received topic_id: {topic_id}, subtopic_id: {subtopic_id}")
-
             student = get_object_or_404(Student, user=request.user)
             topic = get_object_or_404(Topic, topic_id=topic_id)
             subtopic = get_object_or_404(Subtopic, subtopic_id=subtopic_id, topic=topic)
 
             # Fetch videos linked to the subtopic
             video_progress_entries = VideoProgress.objects.filter(student=student, subtopic=subtopic)
-            # print("video_progress_entries - ", video_progress_entries)
             video_data = []
             for entry in video_progress_entries:
                 video = entry.video
                 video_url = video.url
-
-                # print("Inside For Loop")
 
                 if "drive.google.com/file/d/" in video_url:
                     file_id = video_url.split('/d/')[1].split('/')[0]
@@ -640,8 +608,6 @@ def learning_video(request, topic_id, subtopic_id):
                     'title': video.title,
                     'url': video_url
                 })
-
-            # print("video_data - ", video_data)
 
             context = {
                 "topic": topic,
@@ -654,7 +620,7 @@ def learning_video(request, topic_id, subtopic_id):
             return render(request, "my_app/learning_video.html", context)
 
         except Exception as e:
-            print("Error in learning_video:", e)
+            logger.error("Error in learning_video:", e)
             return JsonResponse({"error": str(e)}, status=400)
 
     messages.error(request, "You are not authorized to access the normal test section.")
@@ -793,7 +759,7 @@ def update_video_progress(request):
 def complete_video(request):
     student = get_object_or_404(Student, user=request.user)
     if not student.can_take_experimental_test:
-        print("Inside the complete_video")
+        logger.info("Inside the complete_video")
         if request.method == 'POST':
             try:
                 # Parse the JSON request data
@@ -816,7 +782,7 @@ def complete_video(request):
                 except VideoProgress.DoesNotExist:
                     raise Exception(f"VideoProgress entry not found for student {student.student_id}, video {video.video_module_id}, subtopic {subtopic.subtopic_id}")
 
-                print(f"DEBUG: VideoProgress entry found for student {student.student_id}, video {video.video_module_id}, subtopic {subtopic.subtopic_id}")
+                logger.info(f"DEBUG: VideoProgress entry found for student {student.student_id}, video {video.video_module_id}, subtopic {subtopic.subtopic_id}")
                 # print(video_progress)
 
                 # If the video hasn't been watched already, mark it as watched
@@ -839,16 +805,16 @@ def complete_video(request):
                         if progress:
                             progress.video_watched = True
                             progress.save()
-                            print(f"DEBUG: All videos watched for subtopic {subtopic_id}. Progress updated.")
+                            logger.info(f"DEBUG: All videos watched for subtopic {subtopic_id}. Progress updated.")
                         else:
-                            print(f"DEBUG: No progress record found for subtopic {subtopic_id} for student {student}.")
+                            logger.info(f"DEBUG: No progress record found for subtopic {subtopic_id} for student {student}.")
 
                     return JsonResponse({"success": True, "message": "Video marked as watched"})
                 else:
                     return JsonResponse({"success": False, "message": "Video already watched"})
 
             except Exception as e:
-                print(f"Error in complete_video: {e}")
+                logger.error(f"Error in complete_video: {e}")
                 return JsonResponse({"success": False, "message": str(e)}, status=500)
         else:
             return JsonResponse({"success": False, "message": "Invalid request method"}, status=400)
@@ -1020,7 +986,7 @@ def all_learning_videos(request):
         return render(request, "my_app/all_learning_videos.html", context)
 
     except Exception as e:
-        print("Error in all_learning_videos:", e)
+        logger.error("Error in all_learning_videos:", e)
         return JsonResponse({"error": str(e)}, status=400)
 
 
@@ -1044,8 +1010,8 @@ def phi3_chat(request):
         return JsonResponse({"error": "Invalid request method."}, status=405)
 
     try:
-        print("RAW BODY:", request.body)
-        print("CONTENT TYPE:", request.META.get("CONTENT_TYPE"))
+        logger.info("RAW BODY:", request.body)
+        logger.info("CONTENT TYPE:", request.META.get("CONTENT_TYPE"))
         data = json.loads(request.body.decode('utf-8'))
         user_input = data.get('message', '').strip()
         selected_video_title = data.get('video_title', '').strip()
@@ -1079,12 +1045,12 @@ Answer in approximately 300 to 400 words:"""
         }
 
         response = requests.post(API_URL, headers=headers, json=payload)
-        print("HF API status:", response.status_code)
-        print("HF API content:", response.content)
+        logger.info("HF API status:", response.status_code)
+        logger.info("HF API content:", response.content)
         try:
             result = response.json()
         except Exception as e:
-            print("HF API JSONDecodeError:", str(e))
+            logger.error("HF API JSONDecodeError:", str(e))
             return JsonResponse({"response": "HF API did not return valid JSON. Status: {} Content: {}".format(response.status_code, response.content.decode(errors='replace'))}, status=500)
 
         # Error handling for API
@@ -1105,10 +1071,10 @@ Answer in approximately 300 to 400 words:"""
         return JsonResponse({"response": reply})
 
     except json.JSONDecodeError as e:
-        print("JSONDecodeError:", str(e))
+        logger.error("JSONDecodeError:", str(e))
         return JsonResponse({"response": "Invalid JSON format."}, status=400)
     except Exception as e:
-        print("General Exception:", str(e))
+        logger.error("General Exception:", str(e))
         return JsonResponse({"response": f"Server error: {str(e)}"}, status=500)
 
 
