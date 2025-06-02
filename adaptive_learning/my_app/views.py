@@ -29,6 +29,7 @@ BASE_DIR = settings.BASE_DIR
 logger = logging.getLogger(__name__)
 
 
+
 def index(request):
     return render(request, 'my_app/index.html')
 
@@ -285,7 +286,9 @@ def submit_test(request, topic_id, subtopic_id):
                 num_questions = answers_df.shape[0]
                 device = "cpu"
 
+                logger.warning("=== ML MODEL CALL: START ===")
                 model = load_model(model_path, knowledge_n, num_questions, 1, device)
+                logger.warning("=== ML MODEL CALL: END ===")
 
                 misconception_matrix = tce_misunderstanding
                 print(question_ids_list)
@@ -307,6 +310,7 @@ def submit_test(request, topic_id, subtopic_id):
                         # Extract the knowledge vector from the row (skipping question_id column)
                         knowledge_vector = question_row.iloc[0, 1:].to_numpy(dtype=float).reshape(1, -1)
 
+                        print(f"Calling predict for student {student.student_id}, question {que}")
                         # Predict using the model
                         prediction, proficiency_vector  = predict(model, student.student_id, int(que), knowledge_vector, device)
 
