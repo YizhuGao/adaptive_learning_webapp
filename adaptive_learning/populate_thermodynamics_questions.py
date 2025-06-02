@@ -13,7 +13,7 @@ Question.objects.all().delete()
 
 questions_data = [
     {
-        "question_text": "What is the most likely temperature of ice-cubes stored in a refrigerator’s freezer compartment?", #question 1
+        "question_text": "What is the most likely temperature of ice-cubes stored in a refrigerator's freezer compartment?", #question 1
         "topic": "Thermodynamics",
         "topic_order": 1,
         "subtopic": "Fusion/melting point and freezing point",
@@ -406,7 +406,7 @@ questions_data = [
 
 
     {
-        "question_text": "What is the most likely temperature of ice-cubes stored in a refrigerator’s freezer compartment?", #question 1
+        "question_text": "What is the most likely temperature of ice-cubes stored in a refrigerator's freezer compartment?", #question 1
         "topic": "Thermodynamics",
         "topic_order": 1,
         "subtopic": "Fusion/melting point and freezing point",
@@ -826,10 +826,10 @@ for question_data in questions_data:
         assigned_at=question_data["assigned_at"],
         difficulty_level=question_data["difficulty_level"],
     )
+    print(f"Inserted Question ID: {question.question_id}, Text: {question.question_text}")
     for option_text, is_correct in question_data["options"]:
         Option.objects.create(
             question=question,
             option_text=option_text,
             is_correct=is_correct
         )
-print("Dummy data for thermodynamics questions and options inserted successfully!")

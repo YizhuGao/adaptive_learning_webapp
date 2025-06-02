@@ -236,7 +236,7 @@ def submit_test(request, topic_id, subtopic_id):
                             question=question,
                             selected_option=selected_option
                         )
-                        question_ids_list.append(question.question_id)
+                        question_ids_list.append(question.question_id - 91)
                         # Check correctness
                         if selected_option.is_correct:
                             correct_count += 1
