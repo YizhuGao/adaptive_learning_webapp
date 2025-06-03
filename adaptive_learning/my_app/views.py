@@ -224,6 +224,13 @@ def submit_test(request, topic_id, subtopic_id):
                 tce_misunderstanding = pd.read_excel(TCE_Misunderstanding_path)
                 knowledge_n = tce_misunderstanding.shape[1] - 1
 
+                first_question = Question.objects.order_by('question_id').first()
+                if first_question:
+                    first_question_id = first_question.question_id
+                    logger.info(f"First question ID: {first_question_id}")
+                else:
+                    # Handle the case where there are no questions
+                    first_question_id = None
 
                 for key, value in request.POST.items():
                     if key.startswith("question_"):
@@ -237,7 +244,7 @@ def submit_test(request, topic_id, subtopic_id):
                             question=question,
                             selected_option=selected_option
                         )
-                        question_ids_list.append(question.question_id) #-91
+                        question_ids_list.append(question.question_id - (first_question_id - 1)) #-91
                         # Check correctness
                         if selected_option.is_correct:
                             correct_count += 1
