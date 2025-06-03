@@ -22,6 +22,7 @@ from huggingface_hub import InferenceClient
 from my_app.chatbot_utils import get_chatbot_resources
 from dotenv import load_dotenv
 import requests
+import time
 load_dotenv()
 
 
@@ -236,7 +237,7 @@ def submit_test(request, topic_id, subtopic_id):
                             question=question,
                             selected_option=selected_option
                         )
-                        question_ids_list.append(question.question_id - 91)
+                        question_ids_list.append(question.question_id) #-91
                         # Check correctness
                         if selected_option.is_correct:
                             correct_count += 1
@@ -1018,7 +1019,7 @@ def phi3_chat(request):
 
         if not user_input or not selected_video_title:
             return JsonResponse({"response": "Message and video title are required."}, status=400)
-
+ 
         # Load resources
         model, faiss_index, video_data = get_chatbot_resources()
 
@@ -1044,13 +1045,16 @@ Answer in approximately 300 to 400 words:"""
             "inputs": prompt
         }
 
+        start = time.time()
         response = requests.post(API_URL, headers=headers, json=payload)
-        logger.info("HF API status:", response.status_code)
-        logger.info("HF API content:", response.content)
+        end = time.time()
+        print(f'HF API call took {end - start:.2f} seconds')
+        print("HF API status: %s", response.status_code)
+        print("HF API content: %s", response.content)
         try:
             result = response.json()
         except Exception as e:
-            logger.error("HF API JSONDecodeError:", str(e))
+            logger.error(f"HF API JSONDecodeError: {str(e)}")
             return JsonResponse({"response": "HF API did not return valid JSON. Status: {} Content: {}".format(response.status_code, response.content.decode(errors='replace'))}, status=500)
 
         # Error handling for API
