@@ -1,7 +1,7 @@
 from collections import defaultdict
 import os
 from datetime import timezone
-from .ML.ncdm_inference import load_model, predict
+from .ML.ncdm_inference import load_model, predict, MODEL
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import logout, authenticate, login, get_user_model
@@ -272,7 +272,7 @@ def submit_test(request, topic_id, subtopic_id):
                 device = "cpu"
 
                 logger.warning("=== ML MODEL CALL: START ===")
-                model = load_model(model_path, knowledge_n, num_questions, 1, device)
+                model = MODEL
                 logger.warning("=== ML MODEL CALL: END ===")
 
                 misconception_matrix = tce_misunderstanding
@@ -296,7 +296,7 @@ def submit_test(request, topic_id, subtopic_id):
 
                         logger.warning(f"Calling predict for student {student.student_id}, question {que}")
                         # Predict using the model
-                        prediction, proficiency_vector  = predict(model, student.student_id, int(que), knowledge_vector, device)
+                        prediction, proficiency_vector = predict(MODEL, student.student_id, int(que), knowledge_vector, device)
 
                         logger.warning(f"\nQuestion ID: Q{que}")
                         logger.warning(f"Prediction: {prediction:.4f}")
@@ -339,6 +339,7 @@ def submit_test(request, topic_id, subtopic_id):
                 weak_knowledge_indices = sorted([int(idx) + 1 for idx in weak_knowledge_indices])
 
                 logger.info("Final Weak Knowledge Indices:", weak_knowledge_indices)
+                print("Final Weak Knowledge Indices:", weak_knowledge_indices)
 
                 try:
                     misconception_videos = VideoModule.objects.filter(subtopic=subtopic)
@@ -361,6 +362,9 @@ def submit_test(request, topic_id, subtopic_id):
                                 if matched_misconceptions:
                                     logger.info(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
                                     logger.info(f"  → Related to misconceptions: {matched_misconceptions}")
+                                    print(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
+                                    print(f"  → Related to misconceptions: {matched_misconceptions}")
+
 
                                     # Create a VideoProgress record only once for this video
                                     obj, created = VideoProgress.objects.get_or_create(

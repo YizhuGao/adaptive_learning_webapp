@@ -1,16 +1,27 @@
 import torch
 import logging
 from .ncdm_model import Net
+import os
+from django.conf import settings
 
 question_id_to_index = {f"Q{i + 1}": i for i in range(26)}
 
+MODEL_PATH = os.path.join(settings.BASE_DIR, 'my_app', 'ML', 'ncdm_model.pth')
+KNOWLEDGE_N = 23  # or dynamically load as needed
+EXER_N = 26
+STUDENT_N = 619
+DEVICE = "cpu"
 
-def load_model(model_path, knowledge_n, exer_n, student_n, device="cpu"):
+
+
+def load_model(model_path, KNOWLEDGE_N, EXER_N, STUDENT_N, device="cpu"):
     model = Net(knowledge_n=23, exer_n=26, student_n=619)
     model.load_state_dict(torch.load(model_path, map_location=device))
     model.eval()
     return model
 
+# Load the model once
+MODEL = load_model(MODEL_PATH, KNOWLEDGE_N, EXER_N, STUDENT_N, DEVICE)
 
 def predict(model, user_id, question_id, knowledge_embedding, device="cpu"):
     print(f"predict function called for user: {user_id}, question: {question_id}")
