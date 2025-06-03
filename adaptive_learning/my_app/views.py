@@ -1059,9 +1059,9 @@ Answer in approximately 300 to 400 words:"""
         start = time.time()
         response = requests.post(API_URL, headers=headers, json=payload)
         end = time.time()
-        print(f'HF API call took {end - start:.2f} seconds')
-        print("HF API status: %s", response.status_code)
-        print("HF API content: %s", response.content)
+        logger.warning(f'HF API call took {end - start:.2f} seconds')
+        logger.warning("HF API status: %s", response.status_code)
+        logger.warning("HF API content: %s", response.content)
         try:
             result = response.json()
         except Exception as e:
