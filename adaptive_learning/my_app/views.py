@@ -23,12 +23,15 @@ from my_app.chatbot_utils import get_chatbot_resources
 from dotenv import load_dotenv
 import requests
 import time
+from sentence_transformers import SentenceTransformer
 load_dotenv()
 
 
 BASE_DIR = settings.BASE_DIR
 logger = logging.getLogger(__name__)
 
+# Load the model once (ideally at module level, not per request)
+EMBED_MODEL = SentenceTransformer('all-MiniLM-L6-v2')
 
 
 def index(request):
@@ -700,7 +703,6 @@ def profile_update_view(request):
 
 
 def student_assignments_view(request):
-
     student = get_object_or_404(Student, user=request.user)
     if not student.can_take_experimental_test:
         progress_data = Progress.objects.filter(student=student).select_related(
@@ -708,25 +710,34 @@ def student_assignments_view(request):
         ).order_by('-last_accessed')
 
         grouped_data = defaultdict(lambda: {'subtopics': [], 'before': [], 'after': []})
-        sorted_progress_data = sorted(progress_data, key=lambda p: p.progress_id)  # or p.progress_id if that's the actual attribute name
+        sorted_progress_data = sorted(progress_data, key=lambda p: p.progress_id)
 
         for p in sorted_progress_data:
             if p.current_subtopic:
                 topic = p.current_subtopic.topic.topic_name
                 grouped_data[topic]['subtopics'].append(p.current_subtopic.subtopic_name)
-                grouped_data[topic]['before'].append(float(p.score_before) if p.score_before is not None else 'null')
-                grouped_data[topic]['after'].append(float(p.score_after) if p.score_after is not None else 'null')
+                grouped_data[topic]['before'].append(float(p.score_before) if p.score_before is not None else None)
+                grouped_data[topic]['after'].append(float(p.score_after) if p.score_after is not None else None)
+
+        # Convert the data to JSON-safe format
+        chart_data = {}
+        for topic, data in grouped_data.items():
+            chart_data[topic] = {
+                'subtopics': json.dumps(data['subtopics']),
+                'before': json.dumps(data['before']),
+                'after': json.dumps(data['after'])
+            }
 
         context = {
             'progress_data': sorted_progress_data,
             'username': student.first_name,
-            'grouped_chart_data': dict(grouped_data),
+            'grouped_chart_data': chart_data,
         }
 
         return render(request, 'my_app/student_assignments.html', context)
 
     messages.error(request, "You are not authorized to access the normal test section.")
-    return redirect('experiment_home')  # Replace with appropriate view name
+    return redirect('experiment_home')
 
 @csrf_exempt
 @login_required
@@ -1022,34 +1033,48 @@ def phi3_chat(request):
         return JsonResponse({"error": "Invalid request method."}, status=405)
 
     try:
-        logger.info("RAW BODY:", request.body)
-        logger.info("CONTENT TYPE:", request.META.get("CONTENT_TYPE"))
         data = json.loads(request.body.decode('utf-8'))
         user_input = data.get('message', '').strip()
         selected_video_title = data.get('video_title', '').strip()
 
         if not user_input or not selected_video_title:
             return JsonResponse({"response": "Message and video title are required."}, status=400)
- 
-        # Load resources
-        model, faiss_index, video_data = get_chatbot_resources()
 
-        # Find the selected video by title
-        matched_video = next((v for v in video_data if v.get('title') == selected_video_title), None)
-        if not matched_video:
+        # Get the selected video from DB
+        video = VideoModule.objects.filter(title=selected_video_title).first()
+        if not video:
             return JsonResponse({"response": "Selected video not found."}, status=404)
 
-        title = matched_video.get('title', 'Untitled')
-        description = matched_video.get('description', 'No description available.')
+        # Get video embedding from DB
+        if not video.embedding:
+            return JsonResponse({"response": "No embedding found for this video."}, status=404)
+        video_emb = np.frombuffer(video.embedding, dtype=np.float32)
 
-        # Create prompt
+        # Get user input embedding
+        user_emb = EMBED_MODEL.encode([user_input])[0]
+
+        # Compute cosine similarity
+        def cosine_similarity(a, b):
+            return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+        similarity = cosine_similarity(user_emb, video_emb)
+
+        # Prepare the best chunk (context)
+        # If similarity is high, include description, else just title
+        description = video.description or ""
+        short_description = description[:200]  # Truncate to 200 chars
+
+        if similarity > 0.5:
+            context = f"Title: {video.title}\nDescription: {short_description}"
+        else:
+            context = f"Title: {video.title}"
+
+        # Build prompt
         prompt = f"""Student is watching this video:
 
-Title: {title}
-Description: {description}
+{context}
 
 Student asks: {user_input}
-Answer in approximately 300 to 400 words:"""
+Answer concisely in 70 to 100 words:"""
 
         # Prepare conversational payload
         payload = {
@@ -1066,16 +1091,18 @@ Answer in approximately 300 to 400 words:"""
             result = response.json()
         except Exception as e:
             logger.error(f"HF API JSONDecodeError: {str(e)}")
+            if response.status_code == 504:
+                return JsonResponse({"response": "The AI service is currently overloaded or unavailable (504 Gateway Timeout). Please try again later."}, status=503)
+            if response.status_code == 500:
+                return JsonResponse({"response": "The AI service encountered an internal error (500). Please try again later."}, status=500)
             return JsonResponse({"response": "HF API did not return valid JSON. Status: {} Content: {}".format(response.status_code, response.content.decode(errors='replace'))}, status=500)
 
-        # Error handling for API
         if isinstance(result, dict) and "error" in result:
             return JsonResponse({"response": f"HF API error: {result['error']}"}, status=500)
 
         # Handle the list response with generated_text
         if isinstance(result, list) and len(result) > 0 and "generated_text" in result[0]:
             full_response = result[0]["generated_text"]
-            # Remove the prompt from the start to get only the answer
             if full_response.startswith(prompt):
                 reply = full_response[len(prompt):].lstrip("\n")
             else:
