@@ -5,162 +5,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Assignments</title>
-    <link rel="stylesheet" href="{% static 'css/student_assignments.css' %}?v=7">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Test History - AdaptivePhysics</title>
+    <meta name="description" content="Track your learning progress and view test history with detailed analytics.">
+    <link rel="stylesheet" href="{% static 'css/student_assignments.css' %}?v=8">
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-
-<!-- Navbar -->
-<nav class="navbar">
-    <div class="left">
-        <span class="welcome-text">Welcome, {{ username }}</span>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
     </div>
-    <div class="right">
-        <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
-        <a href="{% url 'modules' %}" class="nav-link"><i class="fas fa-book"></i> Modules</a>
-        <a href="{% url 'profile_update' %}" class="nav-link"><i class="fas fa-user"></i> Profile</a>
-        <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="left">
+            <a href="{% url 'home' %}" class="logo">
+                <i class="fas fa-atom spin"></i>
+                <span class="logo-text">AdaptivePhysics</span>
+            </a>
+            <span class="welcome-text">Welcome, {{ username }}</span>
+        </div>
+        <div class="right">
+            <a href="{% url 'home' %}" class="nav-link">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="{% url 'modules' %}" class="nav-link">
+                <i class="fas fa-book"></i> Modules
+            </a>
+            <a href="{% url 'profile_update' %}" class="nav-link">
+                <i class="fas fa-user"></i> Profile
+            </a>
+            <a href="{% url 'logout' %}" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <div class="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <a href="{% url 'home' %}" class="mobile-link">
+            <i class="fas fa-home"></i> Home
+        </a>
+        <a href="{% url 'modules' %}" class="mobile-link">
+            <i class="fas fa-book"></i> Modules
+        </a>
+        <a href="{% url 'profile_update' %}" class="mobile-link">
+            <i class="fas fa-user"></i> Profile
+        </a>
+        <a href="{% url 'logout' %}" class="mobile-link">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
     </div>
-</nav>
 
-<!-- Assignments Container -->
-<div class="assignments-container">
-    <h2>Test History</h2>
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Test History Section -->
+        <section class="history-section" data-aos="fade-up">
+            <div class="section-header">
+                <h1 class="gradient-text">Test History</h1>
+                <p class="subtitle">Track your learning progress and performance</p>
+            </div>
 
-    <table>
-        <tr>
-            <th>Topic</th>
-            <th>Subtopic</th>
-            <th>Score Before</th>
-            <th>Score After</th>
-            <th>Date Taken</th>
-        </tr>
-        {% comment %} {% for assignment in assignments %}
-<tr>
-    <td>{{ assignment.topic }}</td>
-    <td>{{ assignment.subtopic }}</td>
-    <td>{{ assignment.score }}%</td>
-    <td>{{ assignment.date_taken }}</td>
-</tr>
-{% empty %}
-<tr>
-    <td colspan="4">No assignments taken yet.</td>
-</tr>
-{% endfor %} {% endcomment %}
+            <div class="history-table" data-aos="fade-up" data-aos-delay="200">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Topic</th>
+                            <th>Subtopic</th>
+                            <th>Score Before</th>
+                            <th>Score After</th>
+                            <th>Date Taken</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for progress in progress_data %}
+                        <tr>
+                            <td>{{ progress.current_subtopic.topic.topic_name }}</td>
+                            <td>{{ progress.current_subtopic.subtopic_name }}</td>
+                            <td>{{ progress.score_before }}</td>
+                            <td>{{ progress.score_after }}</td>
+                            <td>{{ progress.last_accessed|timezone:"America/New_York"|date:"Y-m-d H:i" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">No progress data available yet. Start learning to see your progress!</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-        {% for progress in progress_data %}
-<tr>
-    <td>{{ progress.current_subtopic.topic.topic_name }}</td>
-    <td>{{ progress.current_subtopic.subtopic_name }}</td>
-    <td>{{ progress.score_before }}</td>
-    <td>{{ progress.score_after }}</td>
-    <td>{{ progress.last_accessed|timezone:"America/New_York"|date:"Y-m-d H:i" }}</td>
-</tr>
-{% empty %}
-<tr>
-    <td colspan="4">No progress data available yet.</td>
-</tr>
-{% endfor %}
-    </table>
+        <!-- Charts Section -->
+        <section class="charts-section">
+            {% for topic, data in grouped_chart_data.items %}
+            <div class="chart-container" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'400' }}">
+                <h3>{{ topic }}</h3>
+                <canvas id="chart_{{ forloop.counter }}"></canvas>
+                <script>
+                    (function() {
+                        // Get chart data from Django context
+                        const chartData = {
+                            subtopics: JSON.parse('{{ data.subtopics|escapejs }}'),
+                            before: JSON.parse('{{ data.before|escapejs }}'),
+                            after: JSON.parse('{{ data.after|escapejs }}')
+                        };
 
-    {% comment %} <div class="chart-container" style="width: 50%; margin: auto;">
-        <h3 style="text-align:center; margin-bottom:10px;">Topic: {{ progress.current_subtopic.topic.topic_name}}</h3>
-        <canvas id="scoreChart"></canvas>
-    </div> {% endcomment %}
+                        const chartElement = document.getElementById('chart_{{ forloop.counter }}');
+                        const ctx = chartElement.getContext('2d');
+                        
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: chartData.subtopics,
+                                datasets: [
+                                    {
+                                        label: 'Score Before',
+                                        data: chartData.before,
+                                        borderColor: '#e53e3e',
+                                        backgroundColor: 'rgba(229, 62, 62, 0.1)',
+                                        fill: true,
+                                        tension: 0.4,
+                                        borderWidth: 2,
+                                        pointRadius: 4,
+                                        pointHoverRadius: 6,
+                                        pointBackgroundColor: '#e53e3e',
+                                        pointBorderColor: '#fff'
+                                    },
+                                    {
+                                        label: 'Score After',
+                                        data: chartData.after,
+                                        borderColor: '#3182ce',
+                                        backgroundColor: 'rgba(49, 130, 206, 0.1)',
+                                        fill: true,
+                                        tension: 0.4,
+                                        borderWidth: 2,
+                                        pointRadius: 4,
+                                        pointHoverRadius: 6,
+                                        pointBackgroundColor: '#3182ce',
+                                        pointBorderColor: '#fff'
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                        labels: {
+                                            font: {
+                                                family: 'Inter',
+                                                weight: '600'
+                                            },
+                                            padding: 20
+                                        }
+                                    },
+                                    tooltip: {
+                                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                                        titleColor: '#333',
+                                        bodyColor: '#666',
+                                        bodyFont: {
+                                            family: 'Inter'
+                                        },
+                                        borderColor: '#e1e1e1',
+                                        borderWidth: 1,
+                                        padding: 10,
+                                        displayColors: true,
+                                        callbacks: {
+                                            label: function(context) {
+                                                return context.dataset.label + ': ' + context.parsed.y + '%';
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        grid: {
+                                            display: false
+                                        },
+                                        ticks: {
+                                            font: {
+                                                family: 'Inter',
+                                                weight: '500'
+                                            },
+                                            padding: 10,
+                                            maxRotation: 0,
+                                            minRotation: 0,
+                                            callback: function(value) {
+                                                const label = this.getLabelForValue(value);
+                                                const words = label.split(' ');
+                                                const lines = [];
+                                                let currentLine = words[0];
+                                                
+                                                for(let i = 1; i < words.length; i++) {
+                                                    if (currentLine.length + words[i].length < 15) {
+                                                        currentLine += " " + words[i];
+                                                    } else {
+                                                        lines.push(currentLine);
+                                                        currentLine = words[i];
+                                                    }
+                                                }
+                                                lines.push(currentLine);
+                                                return lines;
+                                            }
+                                        },
+                                        offset: true,
+                                        afterFit: function(scaleInstance) {
+                                            scaleInstance.paddingLeft = 30;
+                                        }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        max: 120,
+                                        grid: {
+                                            color: 'rgba(0, 0, 0, 0.05)'
+                                        },
+                                        ticks: {
+                                            font: {
+                                                family: 'Inter',
+                                                weight: '500'
+                                            },
+                                            padding: 10,
+                                            callback: function(value) {
+                                                return value + '%';
+                                            }
+                                        }
+                                    }
+                                },
+                                layout: {
+                                    padding: {
+                                        top: 20,
+                                        right: 30,
+                                        bottom: 20,
+                                        left: 30
+                                    }
+                                }
+                            }
+                        });
+                    })();
+                </script>
+            </div>
+            {% endfor %}
+        </section>
+    </div>
 
-    {% comment %} <a href="{% url 'profile_update' %}" class="back-link">Back to Profile</a> {% endcomment %}
-
-    {% comment %} <a href="{% url 'profile_update' %}" class="back-link">Back to Profile</a>
-</div> {% endcomment %}
-{% comment %} <script>
-    const chartLabels = {{ chart_subtopics|safe }};
-    const chartScoreBefore = {{ chart_score_before|safe }};
-    const chartScoreAfter = {{ chart_score_after|safe }};
-</script> {% endcomment %}
-
-<!-- Charts Section -->
-{% for topic, data in grouped_chart_data.items %}
-<div class="chart-container" style="width: 50%; margin: auto; margin-bottom: 40px;">
-    <h3 style="text-align:center;">Topic: {{ topic }}</h3>
-    <canvas id="chart_{{ forloop.counter }}"></canvas>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        const ctx{{ forloop.counter }} = document.getElementById('chart_{{ forloop.counter }}').getContext('2d');
-        new Chart(ctx{{ forloop.counter }}, {
-            type: 'line',
-            data: {
-                labels: {{ data.subtopics|safe }},
-                datasets: [
-                    {
-                        label: 'Score Before',
-                        data: {{ data.before|safe }},
-                        borderColor: 'blue',
-                        backgroundColor: 'rgba(0, 0, 255, 0.1)',
-                        fill: false,
-                        tension: 0.2
-                    },
-                    {
-                        label: 'Score After',
-                        data: {{ data.after|safe }},
-                        borderColor: 'red',
-                        backgroundColor: 'rgba(255, 0, 0, 0.1)',
-                        fill: false,
-                        tension: 0.2
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'top'
-                    },
-                    title: {
-                        display: true
-                        {% comment %} text: 'Progress for {{ topic }}' {% endcomment %}
-                    }
-                },
-                layout: {
-                    padding: {
-                        left: 50 // Approx 1 cm
-                    }
-                },
-                scales: {
-                    x: {
-                        offset: true,
-                        grid: {
-                            display: false
-                        }, // Shifts the first tick away from the Y axis
-                        ticks: {
-                            font: {
-                                weight: 'bold' // <-- Bold subtopic names
-                            },
-                            color: '#8B0000' 
-                            
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        max: 120,
-                        ticks: {
-                            font: {
-                                weight: 'bold'
-                            },
-                            color: '#4169E1'  // 🔸 Change this to your desired color (e.g., red-orange)
-                        },
-                        grid: {
-                            display: false
-                        } 
-                    }
-                }
-            }
+        AOS.init({
+            once: true,
+            duration: 1000,
+            offset: 100
         });
     </script>
-</div>
-{% endfor %}
-
-<script src="{% static 'js/student_assignments.js' %}?v=8"></script>
-
+    <script src="{% static 'js/student_assignments.js' %}?v=9"></script>
 </body>
 </html>

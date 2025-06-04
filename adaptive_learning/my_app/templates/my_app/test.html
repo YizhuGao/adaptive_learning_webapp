@@ -2,71 +2,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ topic.topic_name }} - {{ subtopic.subtopic_name }} Test</title>
-    <link rel="stylesheet" href="{% static 'css/test.css' %}?v=2">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    {% comment %} <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> {% endcomment %}
+    <link rel="stylesheet" href="{% static 'css/test.css' %}?v=11">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Test Container -->
+    <div class="test-container">
+        <h1 class="gradient-text">{{ topic.topic_name }} - {{ subtopic.subtopic_name }}</h1>
+        <p class="welcome-message">Welcome, {{ username }}! Let's test your knowledge 🎯</p>
+        <p class="test-instructions">Answer all questions carefully to get the most accurate recommendations</p>
 
-<!-- Navbar -->
-<nav class="navbar">
-    <div class="left">
-        <span class="welcome-text">All the Best 👍🏼, {{ username }}</span>
-    </div>
-    <div class="right">
-        <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
-        <a href="{% url 'modules' %}" class="nav-link"><i class="fas fa-book"></i> Modules</a>
-        <a href="{% url 'profile_update' %}" class="nav-link"><i class="fas fa-user"></i> Profile</a>
-        <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </div>
-</nav>
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
 
-<!-- Test Container -->
-<div class="test-container">
-    <h1>{{ topic.topic_name }} - {{ subtopic.subtopic_name }} Test</h1>
-    <p>Answer the following questions carefully:</p>
+        <form method="POST" action="{% url 'submit_test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}">
+            {% csrf_token %}
+            <div class="questions-container">
+                {% for question in questions %}
+                <div class="question-card">
+                    <p class="question-text"><strong>Question {{ forloop.counter }}:</strong> {{ question.question_text }}</p>
+                    <div class="options">
+                        {% for option in question.options.all %}
+                        <label class="option">
+                            <input type="radio" name="question_{{ question.pk }}" value="{{ option.pk }}" required>
+                            <span class="option-text">{{ option.option_text }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
 
-    <!-- Progress Bar -->
-    <div class="progress-bar">
-        <div class="progress" id="progress"></div>
-    </div>
-
-    <form method="POST" action="{% url 'submit_test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}">
-        {% csrf_token %}
-        <div class="questions-container">
-            {% for question in questions %}
-            <div class="question-card">
-                {% comment %} <center><p class="question-text"><strong>{{ question.question_text }}</strong></p></center> {% endcomment %}
-                <center><p class="question-text"><strong>Q{{ forloop.counter }} : {{ question.question_text }}</strong></p></center>
-                <div class="options">
-                    {% for option in question.options.all %}
-                    <label class="option">
-                        <input type="radio" name="question_{{ question.pk }}" value="{{ option.pk }}">
-                        {{ option.option_text }}
-                    </label>
-                    {% endfor %}
+            <!-- Combined Button Container -->
+            <div class="button-container">
+                <div class="nav-buttons">
+                    <button type="button" id="prev-btn" class="nav-btn">
+                        <i class="fas fa-chevron-left"></i> Previous
+                    </button>
+                    <button type="button" id="next-btn" class="nav-btn">
+                        Next <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="submit-container">
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i> Submit Test
+                    </button>
                 </div>
             </div>
-            {% endfor %}
-        </div>
+        </form>
+    </div>
 
-        <!-- Navigation Buttons -->
-        <div class="nav-buttons">
-            <button type="button" id="prev-btn" class="nav-btn">Previous</button>
-            <button type="button" id="next-btn" class="nav-btn">Next</button>
-        </div>
-
-       <center> <button type="submit" class="submit-btn">Submit Test</button></center>
-    </form>
-</div>
-
-<!-- Feedback Section -->
-<div id="feedback"></div>
-
-<script src="{% static 'js/test.js' %}?v=2"></script>
-
+    <script src="{% static 'js/test.js' %}?v=4"></script>
 </body>
 </html>

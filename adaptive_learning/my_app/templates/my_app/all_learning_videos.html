@@ -4,69 +4,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Learning Videos</title>
-    <link rel="stylesheet" href="{% static 'css/expLearningVideos.css' %}?v=8">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>AdaptivePhysics - Learning Videos</title>
+    <meta name="description" content="Watch personalized physics video lessons with AI-powered learning support.">
+    <link rel="stylesheet" href="{% static 'css/expLearningVideos.css' %}?v=9">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
-<!-- Navbar -->
-<nav class="navbar">
-    <div class="left">
-        <span class="welcome-text">📚 All Learning Videos</span>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
     </div>
-    <div class="right">
-        <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
-        <a href="{% url 'experimental' %}" class="nav-link"><i class="fas fa-vial"></i> Experiment Test</a>
-        <a href="{% url 'profile_update' %}" class="nav-link"><i class="fas fa-user"></i> Profile</a>
-        <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </div>
-</nav>
 
-<!-- Videos -->
-<section class="video-section">
-    {% comment %} <center><h2 class="section-title">🎬 Learning Videos</h2></center> {% endcomment %}
-
-    {% if video_data_grouped %}
-        {% for video in video_data_grouped %}
-        <div class="video-wrapper video-tile">
-            <div class="video-title">
-                <i class="fas fa-video"></i> {{ video.video_title }}
-            </div>
-             <div class="video-details">
-                <p><strong>Topic:</strong> {{ video.topic_name }}</p>
-                <p><strong>Subtopic:</strong> {{ video.subtopic_name }}</p>
-            </div>
-            <div class="video-container">
-                <div class="video-overlay">
-                    <i class="play-icon"></i>
-                </div>
-                <iframe class="video-frame"
-                        src="{{ video.video_url }}"
-                        frameborder="0"
-                        allow="autoplay; fullscreen"
-                        allowfullscreen
-                        data-video-id="{{ video.video_id }}"
-                        data-subtopic-id="{{ video.subtopic_id }}"
-                        id="video-{{ video.video_id }}">
-                </iframe>
-            </div>
+    <!-- Navigation -->
+    <nav>
+        <a href="{% url 'home' %}" class="logo">
+            <i class="fas fa-atom spin"></i>
+            <span class="logo-text">AdaptivePhysics</span>
+        </a>
+        <div class="nav-links">
+            <a href="{% url 'home' %}" class="nav-link">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="{% url 'experimental' %}" class="nav-link">
+                <i class="fas fa-vial"></i> Experiment
+            </a>
+            <a href="{% url 'profile_update' %}" class="nav-link">
+                <i class="fas fa-user"></i> Profile
+            </a>
+            <a href="{% url 'logout' %}" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
         </div>
-        {% endfor %}
-    {% else %}
-        <p class="no-videos-message">🚫 No video modules available for this subtopic.</p>
-    {% endif %}
-</section>
 
-<div id="videoModal" class="modal">
-    <div class="modal-content">
-        <span class="close-button">&times;</span>
-        <iframe id="modalVideoFrame" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-        {% comment %} <iframe id="modalVideoFrame" src="" frameborder="0"></iframe> {% endcomment %}
+        <!-- Mobile Menu Button -->
+        <div class="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <a href="{% url 'home' %}" class="mobile-link">
+            <i class="fas fa-home"></i> Home
+        </a>
+        <a href="{% url 'experimental' %}" class="mobile-link">
+            <i class="fas fa-vial"></i> Experiment
+        </a>
+        <a href="{% url 'profile_update' %}" class="mobile-link">
+            <i class="fas fa-user"></i> Profile
+        </a>
+        <a href="{% url 'logout' %}" class="mobile-link">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
     </div>
-</div>
 
-<script src="{% static 'js/expVideo.js' %}?v=5"></script>
+    <!-- Videos Section -->
+    <section class="video-section">
+        <div class="section-header" data-aos="fade-down">
+            <h1 class="gradient-text">Learning Videos</h1>
+            <p class="section-description">Explore our curated collection of physics video lessons</p>
+        </div>
+
+        <div class="videos-grid">
+            {% if video_data_grouped %}
+                {% for video in video_data_grouped %}
+                <div class="video-wrapper video-tile" data-aos="fade-up" data-aos-delay="{{ forloop.counter|multiply:200 }}">
+                    <div class="video-content">
+                        <div class="video-title">
+                            <i class="fas fa-video"></i> {{ video.video_title }}
+                        </div>
+                        <div class="video-details">
+                            <p><i class="fas fa-book"></i> <strong>Topic:</strong> {{ video.topic_name }}</p>
+                            <p><i class="fas fa-bookmark"></i> <strong>Subtopic:</strong> {{ video.subtopic_name }}</p>
+                        </div>
+                        <div class="video-container">
+                            <div class="video-overlay">
+                                <i class="play-icon fas fa-play-circle"></i>
+                            </div>
+                            <iframe class="video-frame"
+                                    src="{{ video.video_url }}"
+                                    frameborder="0"
+                                    allow="autoplay; fullscreen"
+                                    allowfullscreen
+                                    data-video-id="{{ video.video_id }}"
+                                    data-subtopic-id="{{ video.subtopic_id }}"
+                                    id="video-{{ video.video_id }}">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-videos-message" data-aos="fade-up">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>No video modules available for this subtopic.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <iframe id="modalVideoFrame" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-social" data-aos="fade-up">
+                <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter" class="social-hover">
+                    <img src="{% static 'images/Twitter.png' %}" alt="Twitter" class="social-icon">
+                </a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn" class="social-hover">
+                    <img src="{% static 'images/Linkedin.png' %}" alt="LinkedIn" class="social-icon">
+                </a>
+                <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook" class="social-hover">
+                    <img src="{% static 'images/Meta.png' %}" alt="Facebook" class="social-icon">
+                </a>
+                <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram" class="social-hover">
+                    <img src="{% static 'images/Insta.png' %}" alt="Instagram" class="social-icon">
+                </a>
+            </div>
+            <p class="footer-text">© 2025 Adaptive Physics Learning | All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: true,
+            duration: 1000,
+            offset: 100
+        });
+    </script>
+    <script src="{% static 'js/expVideo.js' %}?v=5"></script>
 </body>
 </html>

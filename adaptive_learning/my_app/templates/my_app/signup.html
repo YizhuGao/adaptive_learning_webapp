@@ -4,77 +4,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - Adaptive Physics Learning</title>
-    <link rel="stylesheet" href="{% static 'css/signup.css' %}?v=7">
+    <title>Sign Up - AdaptivePhysics</title>
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}?v=8">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="left">
-            <a href="{% url 'index' %}">
-                <img src="{% static 'Images/BG.png' %}" alt="Logo" class="logo">
+            <a href="{% url 'index' %}" class="logo">
+                <i class="fas fa-atom spin"></i>
+                <span class="logo-text">AdaptivePhysics</span>
             </a>
-            <span><a href="{% url 'index' %}" class="welcome-text"></a></span>
         </div>
         <div class="right">
-            <a href="{% url 'index' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
+            <a href="{% url 'index' %}" class="nav-link">
+                <i class="fas fa-home"></i> Home
+            </a>
         </div>
     </nav>
 
-    <section class="login-section">
-        <div class="login-container">
-            <h2>Create Your Account</h2>
+    <section class="signup-section">
+        <div class="signup-container" data-aos="fade-up" data-aos-duration="1000">
+            <h2 class="gradient-text">Create Your Account</h2>
             <form action="{% url 'signup' %}" method="POST">
                 {% csrf_token %}
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
+                
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope"></i> Email
+                    </label>
+                    <input type="email" id="email" name="email" required 
+                           placeholder="Enter your email">
                 </div>
 
-                {% comment %} <div class="form-row">
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="confirm_password">Confirm Password</label>
-                        <input type="password" id="confirm_password" name="confirm_password" required>
-                    </div>
-                </div> {% endcomment %}
+                <!-- Password Fields -->
                 <div class="form-row">
                     <div class="form-group password-wrapper">
-                        <label for="password">Password</label>
-                        <input type="password" name="password" placeholder="Enter password">
+                        <label for="password">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        <input type="password" id="password" name="password" 
+                               placeholder="Enter password" required>
                     </div>
                     <div class="form-group password-wrapper">
-                        <label for="confirm_password">Confirm Password</label>
-                        <input type="password" name="confirm_password" placeholder="Confirm password">
+                        <label for="confirm_password">
+                            <i class="fas fa-lock"></i> Confirm Password
+                        </label>
+                        <input type="password" id="confirm_password" name="confirm_password" 
+                               placeholder="Confirm password" required>
                     </div>
                 </div>
 
+                <!-- Name Fields -->
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="first_name">First Name</label>
-                        <input type="text" id="first_name" name="first_name" required>
+                        <label for="first_name">
+                            <i class="fas fa-user"></i> First Name
+                        </label>
+                        <input type="text" id="first_name" name="first_name" 
+                               placeholder="Enter first name" required>
                     </div>
                     <div class="form-group">
-                        <label for="last_name">Last Name</label>
-                        <input type="text" id="last_name" name="last_name" required>
+                        <label for="last_name">
+                            <i class="fas fa-user"></i> Last Name
+                        </label>
+                        <input type="text" id="last_name" name="last_name" 
+                               placeholder="Enter last name" required>
                     </div>
                 </div>
 
+                <!-- ID and Class Level -->
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="uga_id">UGA ID (Optional)</label>
-                        <input type="text" id="uga_id" name="uga_id">
+                        <label for="uga_id">
+                            <i class="fas fa-id-card"></i> UGA ID (Optional)
+                        </label>
+                        <input type="text" id="uga_id" name="uga_id" 
+                               placeholder="Enter UGA ID if applicable">
                     </div>
                     <div class="form-group">
-                        <label for="class_level">Class Level</label>
-                        <select id="class_level" name="class_level">
+                        <label for="class_level">
+                            <i class="fas fa-graduation-cap"></i> Class Level
+                        </label>
+                        <select id="class_level" name="class_level" required>
+                            <option value="" disabled selected>Select your class level</option>
                             <option value="5th Grade">5th Grade</option>
                             <option value="6th Grade">6th Grade</option>
                             <option value="7th Grade">7th Grade</option>
@@ -89,10 +117,14 @@
                     </div>
                 </div>
 
+                <!-- Gender and Language -->
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="gender">Gender</label>
-                        <select id="gender" name="gender">
+                        <label for="gender">
+                            <i class="fas fa-venus-mars"></i> Gender
+                        </label>
+                        <select id="gender" name="gender" required>
+                            <option value="" disabled selected>Select your gender</option>
                             <option value="female">Female</option>
                             <option value="male">Male</option>
                             <option value="non_binary">Non Binary</option>
@@ -100,29 +132,61 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="is_english_first_language">Is English Your First Language?</label>
-                        <select id="is_english_first_language" name="is_english_first_language">
+                        <label for="is_english_first_language">
+                            <i class="fas fa-language"></i> Is English Your First Language?
+                        </label>
+                        <select id="is_english_first_language" name="is_english_first_language" required>
+                            <option value="" disabled selected>Select your answer</option>
                             <option value="yes">Yes</option>
                             <option value="no">No</option>
                         </select>
                     </div>
                 </div>
 
+                <!-- Science Experience -->
                 <div class="form-group">
-                    <label for="science_experience">Science Experience</label>
-                    <select id="science_experience" name="science_experience">
+                    <label for="science_experience">
+                        <i class="fas fa-flask"></i> Science Experience
+                    </label>
+                    <select id="science_experience" name="science_experience" required>
+                        <option value="" disabled selected>Select your experience level</option>
                         <option value="A_grades">Science is one of my best subjects and I usually make A's.</option>
                         <option value="ok_grades">Science is OK, my grades are alright, but it is not my favorite subject.</option>
                         <option value="find_difficult">I find science very difficult and would like to earn better grades.</option>
                     </select>
                 </div>
 
-                <button type="submit" class="submit-btn">Sign Up</button>
+                <button type="submit" class="submit-btn">
+                    <span>Create Account</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
             </form>
-            <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+
+            {% if form.errors %}
+                <div class="error-messages">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <div class="error-message">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ error }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <p>Already have an account? <a href="{% url 'login' %}" class="login-link">Login here</a></p>
         </div>
     </section>
 
-    <script src="{% static 'js/signup.js' %}?v=7"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: true,
+            duration: 1000,
+            offset: 100
+        });
+    </script>
+    <script src="{% static 'js/signup.js' %}?v=8"></script>
 </body>
 </html>

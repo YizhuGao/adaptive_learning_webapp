@@ -4,158 +4,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adaptive Learning</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=7">
+    <title>AdaptivePhysics - Your AI-Powered Learning Journey</title>
+    <meta name="description" content="Master physics concepts with personalized AI-powered learning paths, interactive lessons, and real-time support.">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=10">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Navigation -->
-    <!-- Navigation -->
-<nav>
-    <a href="#" class="logo">Adaptive Learning</a>
-    <div class="nav-links">
-        <a href="#home" class="nav-link">
-            <i class="fas fa-home"></i> Home
-        </a>
-        <a href="#about" class="nav-link">
-            <i class="fas fa-info-circle"></i> About
-        </a>
-        <a href="#modules" class="nav-link">
-            <i class="fas fa-book-open"></i> Modules
-        </a>
-        <a href="{% url 'login' %}" class="login-btn">
-            <i class="fas fa-sign-in-alt"></i> Login
-        </a>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
     </div>
 
-    <!-- Mobile Menu Button -->
-    <div class="mobile-menu-btn">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="logo">
+            <i class="fas fa-atom spin"></i>
+            <span class="logo-text">AdaptivePhysics</span>
+        </a>
+        <div class="nav-links">
+            <a href="#home" class="nav-link">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="{% url 'login' %}" class="login-btn pulse">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <div class="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
 
     <!-- Mobile Menu -->
     <div class="mobile-menu">
         <a href="#home" class="mobile-link">
             <i class="fas fa-home"></i> Home
         </a>
-        <a href="#about" class="mobile-link">
-            <i class="fas fa-info-circle"></i> About
-        </a>
-        <a href="#modules" class="mobile-link">
-            <i class="fas fa-book-open"></i> Modules
-        </a>
         <a href="{% url 'login' %}" class="mobile-link">
             <i class="fas fa-sign-in-alt"></i> Login
         </a>
     </div>
-</nav>
 
     <!-- Hero Section -->
     <section class="hero" id="home">
-        <h1>AdaptivePhysics</h1>
-        <p>Master Physics with Adaptive Learning</p>
-        <a href="#modules"><button class="cta-button" id="modulesBtn">MODULES</button></a>
-    </section>
-
-    <!-- Interactive Learning Section -->
-    <section class="interactive-section" id="about">
-        <div class="content-wrapper">
-            <div class="text-content">
-                <h3 class="section-tag">EXPLORE PHYSICS CONCEPTS</h3>
-                <h2>Interactive learning for students</h2>
-                <p>
-                    AdaptivePhysics offers students in Athens a dynamic platform to delve into essential physics concepts. 
-                    Engage with structured modules covering the Nature of Temperature, Heat Transfer, and Fusion Processes. 
-                    Our interactive question segments, informative video lessons, and easy navigation ensure a comprehensive 
-                    learning experience. Embrace the world of physics with AdaptivePhysics and enhance your understanding today!
-                </p>
-                <a href="{% url 'login' %}" class="login-link">Login</a>
-            </div>
-            <div class="image-content">
-                <img src="{% static 'images/pt.jpg' %}" alt="Physics Teacher" class="section-image">
+        <div class="hero-main" data-aos="fade-down" data-aos-duration="1000">
+            <h1 class="gradient-text">AdaptivePhysics</h1>
+            <p class="typewriter">Your personalized journey to master physics concepts</p>
+            <div class="cta-container" data-aos="fade-up" data-aos-delay="500">
+                <a href="{% url 'login' %}" class="cta-button">
+                    <span class="button-text">START LEARNING</span>
+                    <i class="fas fa-arrow-right"></i>
+                    <div class="button-glow"></div>
+                </a>
             </div>
         </div>
+
+        <div class="features-grid">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>AI-Powered Learning</h3>
+                <p>Our advanced AI analyzes your responses to create a personalized learning path, identifying and addressing your specific misconceptions.</p>
+                <div class="feature-hover">
+                    <i class="fas fa-lightbulb glow"></i>
+                    <span>Discover Your Path</span>
+                </div>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h3>Smart Video Lessons</h3>
+                <p>Access perfectly curated video content based on your performance. Revisit and reinforce concepts anytime.</p>
+                <div class="feature-hover">
+                    <i class="fas fa-play-circle glow"></i>
+                    <span>Start Learning</span>
+                </div>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Progress Tracking</h3>
+                <p>Monitor your improvement with detailed analytics, test history, and comprehensive progress tracking.</p>
+                <div class="feature-hover">
+                    <i class="fas fa-trophy glow"></i>
+                    <span>Track Success</span>
+                </div>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="800">
+                <div class="feature-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>24/7 AI Assistant</h3>
+                <p>Get instant help from our Phi-3 powered chatbot. Clear your doubts anytime during your learning journey.</p>
+                <div class="feature-hover">
+                    <i class="fas fa-comments glow"></i>
+                    <span>Ask Anything</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="learning-flow" data-aos="fade-up">
+            <h3 class="gradient-text">Your Learning Journey</h3>
+            <div class="flow-steps">
+                <div class="flow-step" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Take Topic Tests</h4>
+                        <p>Start with sequential concept evaluations</p>
+                    </div>
+                </div>
+                <div class="flow-arrow">
+                    <i class="fas fa-chevron-right bounce"></i>
+                </div>
+                <div class="flow-step" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>AI Analysis</h4>
+                        <p>Get personalized video recommendations</p>
+                    </div>
+                </div>
+                <div class="flow-arrow">
+                    <i class="fas fa-chevron-right bounce"></i>
+                </div>
+                <div class="flow-step" data-aos="zoom-in" data-aos-delay="600">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Learn & Practice</h4>
+                        <p>Watch videos with AI support</p>
+                    </div>
+                </div>
+                <div class="flow-arrow">
+                    <i class="fas fa-chevron-right bounce"></i>
+                </div>
+                <div class="flow-step" data-aos="zoom-in" data-aos-delay="800">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Master Physics</h4>
+                        <p>See your progress and excel</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <!-- Add this after the previous interactive-section -->
-<section class="modules-section" id="modules" aria-labelledby="modules-heading">
-    <div class="modules-container">
-        <div class="section-header">
-            <span class="section-tag">INTERACTIVE LEARNING</span>
-            <h2 id="modules-heading">Engage with dynamic physics concepts</h2>
-        </div>
-        
-        <div class="modules-grid">
-            <!-- Temperature Module Card -->
-            <article class="module-card">
-                <div class="card-image">
-                    <img src="{% static 'images/Thermal-physics.webp' %}" alt="Temperature concept visualization" loading="lazy">
-                </div>
-                <div class="card-content">
-                    <h3>Nature of temperature <span class="arrow">→</span></h3>
-                    <p>Delve into the fascinating world of temperature concepts.</p>
-                    <a href="#temperature" class="card-link" aria-label="Learn about nature of temperature">
-                        Learn more
-                    </a>
-                </div>
-            </article>
-
-            <!-- Heat Transfer Module Card -->
-            <article class="module-card">
-                <div class="card-image">
-                    <img src="{% static 'images/heat transfer.jpg' %}" alt="Heat transfer demonstration with fire" loading="lazy">
-                </div>
-                <div class="card-content">
-                    <h3>Heat transfer and temperature change <span class="arrow">→</span></h3>
-                    <p>Master the principles of heat transfer and its effects.</p>
-                    <a href="#heat-transfer" class="card-link" aria-label="Learn about heat transfer">
-                        Learn more
-                    </a>
-                </div>
-            </article>
-
-            <!-- Fusion Module Card -->
-            <article class="module-card">
-                <div class="card-image">
-                    <img src="{% static 'images/stte changes.webp' %}" alt="State changes in matter visualization" loading="lazy">
-                </div>
-                <div class="card-content">
-                    <h3>Fusion, melting, freezing, boiling points <span class="arrow">→</span></h3>
-                    <p>Investigate the changes of state in physical matter.</p>
-                    <a href="#fusion" class="card-link" aria-label="Learn about state changes">
-                        Learn more
-                    </a>
-                </div>
-            </article>
-        </div>
-    </div>
-</section>
     <!-- Footer Section -->
     <footer>
         <div class="footer-container">
-            <div class="footer-links">
-                <a href="#about">About Us</a>
-                <a href="#contact">Contact</a>
-                <a href="#privacy">Privacy Policy</a>
-            </div>
-            <div class="footer-social">                
-                <a href="https://twitter.com" target="_blank" aria-label="Twitter"><img src="{% static 'images/Twitter.png' %}" alt="Twitter" class="social-icon"></a>
-                <a href="https://linkedin.com" target="_blank" aria-label="LinkedIn"><img src="{% static 'images/Linkedin.png' %}" alt="LinkedIn" class="social-icon"></a>
-                <a href="https://facebook.com" target="_blank" aria-label="Facebook"><img src="{% static 'images/Meta.png' %}" alt="Facebook" class="social-icon"></a>
-                <a href="https://instagram.com" target="_blank" aria-label="Instagram"><img src="{% static 'images/Insta.png' %}" alt="Instagram" class="social-icon"></a>
+            <div class="footer-social" data-aos="fade-up">
+                <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter" class="social-hover">
+                    <img src="{% static 'images/Twitter.png' %}" alt="Twitter" class="social-icon">
+                </a>
+                <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn" class="social-hover">
+                    <img src="{% static 'images/Linkedin.png' %}" alt="LinkedIn" class="social-icon">
+                </a>
+                <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook" class="social-hover">
+                    <img src="{% static 'images/Meta.png' %}" alt="Facebook" class="social-icon">
+                </a>
+                <a href="https://instagram.com" target="_blank" rel="noopener" aria-label="Instagram" class="social-hover">
+                    <img src="{% static 'images/Insta.png' %}" alt="Instagram" class="social-icon">
+                </a>
             </div>
             <p class="footer-text">© 2025 Adaptive Physics Learning | All Rights Reserved</p>
         </div>
     </footer>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-    <script src="{% static 'js/script.js' %}?v=7"></script>
-{% comment %} <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> {% endcomment %}
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: true,
+            duration: 1000,
+            offset: 100
+        });
+    </script>
+    <script src="{% static 'js/script.js' %}?v=8"></script>
 </body>
 </html>
-
 
 
 

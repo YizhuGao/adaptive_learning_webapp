@@ -5,108 +5,253 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>Learning Video</title>
+    <title>Learning Videos - AdaptivePhysics</title>
+    <meta name="description" content="Watch personalized physics video lessons with AI-powered learning support.">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}?v=7">
     <link rel="stylesheet" href="{% static 'css/chatbot.css' %}?v=9">
-    <link rel="stylesheet" href="{% static 'css/learningVideo.css' %}?v=8">
-   
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/learningVideo.css' %}?v=11">
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
-<!-- Navbar -->
-<nav class="navbar">
-    <div class="left">
-        <span class="welcome-text">Learning Module: {{ topic.topic_name }} - {{ subtopic.subtopic_name }}</span>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
     </div>
-    <div class="right">
-        <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
-        <a href="{% url 'modules' %}" class="nav-link"><i class="fas fa-book"></i> Modules</a>
-        <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="left">
+            <a href="{% url 'home' %}" class="logo">
+                <i class="fas fa-atom spin"></i>
+                <span class="logo-text">AdaptivePhysics</span>
+            </a>
+            <span class="welcome-text">Welcome, {{ request.user.student.first_name }}</span>
+        </div>
+        <div class="right">
+            {% if request.user.student.can_take_experimental_test %}
+                <a href="{% url 'experiment_home' %}" class="nav-link">
+                    <i class="fas fa-flask"></i> Experiment Home
+                </a>
+            {% else %}
+                <a href="{% url 'home' %}" class="nav-link">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="{% url 'modules' %}" class="nav-link">
+                    <i class="fas fa-book"></i> Modules
+                </a>
+                <a href="{% url 'profile_update' %}" class="nav-link">
+                    <i class="fas fa-user"></i> Profile
+                </a>
+            {% endif %}
+            <a href="{% url 'logout' %}" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <div class="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        {% if request.user.student.can_take_experimental_test %}
+            <a href="{% url 'experiment_home' %}" class="mobile-link">
+                <i class="fas fa-flask"></i> Experiment Home
+            </a>
+        {% else %}
+            <a href="{% url 'home' %}" class="mobile-link">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="{% url 'modules' %}" class="mobile-link">
+                <i class="fas fa-book"></i> Modules
+            </a>
+            <a href="{% url 'profile_update' %}" class="mobile-link">
+                <i class="fas fa-user"></i> Profile
+            </a>
+        {% endif %}
+        <a href="{% url 'logout' %}" class="mobile-link">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
     </div>
-</nav>
 
-<!-- Video Section -->
-<section class="video-section">
-    <h2 class="section-title">🎬 Learning Videos</h2>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content" data-aos="fade-up">
+            <h1 class="gradient-text">{{ topic.topic_name }}</h1>
+            <p class="subtitle">{{ subtopic.subtopic_name }}</p>
 
-    {% if video_data %}
-        {% for video in video_data %}
-        <div class="video-wrapper">
-            <div class="video-title">
-                <i class="fas fa-video"></i> {{ video.title }}
+            <div class="features-grid">
+                {% if video_data %}
+                    {% for video in video_data %}
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="{% widthratio forloop.counter 1 200 %}">
+                        <div class="feature-link">
+                            <div class="feature-icon">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <h3>{{ video.title }}</h3>
+                            <div class="video-container" onclick="openVideoModal('{{ video.url }}', '{{ video.title }}', '{{ video.id }}', '{{ subtopic_id }}')" style="cursor: pointer;">
+                                <div class="video-thumbnail">
+                                    <div class="video-overlay">
+                                        <i class="play-icon fas fa-play-circle glow"></i>
+                                    </div>
+                                    <iframe class="video-frame"
+                                            src="{{ video.url }}"
+                                            frameborder="0"
+                                            data-video-id="{{ video.id }}"
+                                            data-subtopic-id="{{ subtopic_id }}"
+                                            data-video-title="{{ video.title }}"
+                                            id="video-{{ video.id }}">
+                                    </iframe>
+                                </div>
+                            </div>
+                            <button class="mark-watched-btn cta-button" data-video-id="{{ video.id }}" data-subtopic-id="{{ subtopic_id }}">
+                                <span class="button-content">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span class="button-text">Mark as Watched</span>
+                                </span>
+                                <div class="button-glow"></div>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="no-videos-message feature-card" data-aos="fade-up">
+                        <div class="feature-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3>No Videos Available</h3>
+                        <p>No video modules are currently available for this subtopic.</p>
+                    </div>
+                {% endif %}
             </div>
-            <div class="video-container">
-                <div class="video-overlay">
-                    {% comment %} <i class="fas fa-play-circle play-icon"></i> {% endcomment %}
-                </div>
-                <iframe class="video-frame"
-                        src="{{ video.url }}"
-                        frameborder="0"
-                        allow="autoplay; fullscreen"
-                        allowfullscreen
-                        data-video-id="{{ video.id }}"
-                        data-subtopic-id="{{ subtopic_id }}"
-                        data-video-title="{{ video.title }}"
-                        id="video-{{ video.id }}">
+
+            <div class="cta-container" data-aos="fade-up" data-aos-delay="800">
+                <p class="subtitle" style="margin-bottom: 20px;">Ready to test your knowledge?</p>
+                <a href="{% url 'test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="cta-button">
+                    <span class="button-text">Continue to Test</span>
+                    <i class="fas fa-arrow-right"></i>
+                    <div class="button-glow"></div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="video-modal">
+        <div class="video-modal-content">
+            <div class="video-modal-header">
+                <h3 id="modalVideoTitle" class="gradient-text"></h3>
+                <button class="close-modal" onclick="closeVideoModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="video-modal-body">
+                <iframe id="modalVideoFrame" 
+                        frameborder="0" 
+                        allow="autoplay; fullscreen" 
+                        allowfullscreen>
                 </iframe>
             </div>
-            <button class="mark-watched-btn" data-video-id="{{ video.id }}" data-subtopic-id="{{ subtopic_id }}">
-                Mark as Watched
+            <div class="video-modal-footer">
+                <button id="modalMarkWatchedBtn" class="mark-watched-btn cta-button">
+                    <span class="button-content">
+                        <i class="fas fa-check-circle"></i>
+                        <span class="button-text">Mark as Watched</span>
+                    </span>
+                    <div class="button-glow"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot Button -->
+    <div id="chatbot-btn" onclick="toggleChatbot()" class="chatbot-btn">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <!-- Chatbot Popup -->
+    <div id="chatbot-popup" class="chat-popup">
+        <div class="chat-header">
+            <div class="chat-header-content">
+                <i class="fas fa-robot"></i>
+                <span>AI Assistant</span>
+                <select id="video-select" class="video-select">
+                    <option value="">Select a video...</option>
+                </select>
+            </div>
+            <span id="selected-video-title" class="selected-video"></span>
+        </div>
+        <div id="chat-messages" class="chat-messages"></div>
+        <div class="chat-input">
+            <input type="text" id="chat-input-box" placeholder="Type your question..." disabled />
+            <button id="chat-send-btn" onclick="sendMessage()" disabled>
+                <i class="fas fa-paper-plane"></i>
             </button>
         </div>
-        {% endfor %}
-    {% else %}
-        <p class="no-videos-message">🚫 No video modules available for this subtopic.</p>
-    {% endif %}
-</section>
-
-<div class="test-navigation">
-    <p class="test-prompt">Finished watching videos?<br>Now test what you learned!</p>
-    <a href="{% url 'test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="start-btn">
-        Continue Test
-    </a>
-</div>
-
-
-
-
-<!-- Chatbot Button -->
-{% comment %} <div id="chatbot-btn" onclick="toggleChatbot()">💬</div> {% endcomment %}
-
-<!-- Chatbot Popup -->
-{% comment %} <div id="chatbot-popup" class="chat-popup">
-    <div class="chat-header">Ask the Assistant <span onclick="toggleChatbot()" style="float:right;cursor:pointer;">&times;</span></div>
-    <div class="chat-messages" id="chat-messages"></div>
-    <div class="chat-input">
-        <input type="text" id="chat-input-box" placeholder="Type your question..." />
-        <button onclick="sendMessage()">Send</button>
     </div>
-</div> {% endcomment %}
 
-<div id="chatbot-btn" onclick="toggleChatbot()">💬</div>
+    <script>
+        const phi3ChatURL = "{% url 'phi3_chat' %}";
 
-<div id="chatbot-popup" class="chat-popup">
-    <div class="chat-header">
-        Ask Assistant
-        <select id="video-select">
-            <option value="">Select a video...</option>
-        </select>
-        <span id="selected-video-title" style="margin-left:10px; font-weight:bold;"></span>
-    </div>
-    <div id="chat-messages" class="chat-messages"></div>
-    <div class="chat-input">
-        <input type="text" id="chat-input-box" placeholder="Type your message..." disabled />
-        <button id="chat-send-btn" onclick="sendMessage()" disabled>Send</button>
-    </div>
-</div>
+        function openVideoModal(videoUrl, videoTitle, videoId, subtopicId) {
+            const modal = document.getElementById('videoModal');
+            const modalFrame = document.getElementById('modalVideoFrame');
+            const modalTitle = document.getElementById('modalVideoTitle');
+            const modalMarkWatchedBtn = document.getElementById('modalMarkWatchedBtn');
+            
+            modalFrame.src = videoUrl;
+            modalTitle.textContent = videoTitle;
+            modalMarkWatchedBtn.setAttribute('data-video-id', videoId);
+            modalMarkWatchedBtn.setAttribute('data-subtopic-id', subtopicId);
+            
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+        }
 
+        function closeVideoModal() {
+            const modal = document.getElementById('videoModal');
+            const modalFrame = document.getElementById('modalVideoFrame');
+            
+            modalFrame.src = ''; // Stop video playback
+            modal.style.display = 'none';
+            document.body.style.overflow = ''; // Restore scrolling
+        }
 
-<script>
-    const phi3ChatURL = "{% url 'phi3_chat' %}";
-</script>
-<script src="{% static 'js/video.js' %}?v=6"></script>
-<script src="{% static 'js/chatbot.js' %}?v=9"></script>
+        // Close modal when clicking outside
+        document.getElementById('videoModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeVideoModal();
+            }
+        });
 
-
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeVideoModal();
+            }
+        });
+    </script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: true,
+            duration: 1000,
+            offset: 100
+        });
+    </script>
+    <script src="{% static 'js/video.js' %}?v=6"></script>
+    <script src="{% static 'js/chatbot.js' %}?v=9"></script>
 </body>
 </html>

@@ -4,29 +4,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/profile_update.css' %}?v=8">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <title>Update Profile</title>
+    <title>Update Profile - AdaptivePhysics</title>
+    <meta name="description" content="Update your profile information on AdaptivePhysics">
+    <link rel="stylesheet" href="{% static 'css/profile_update.css' %}?v=11">
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
 
-    <!-- Navbar -->
+    <!-- Navigation -->
     <nav class="navbar">
         <div class="left">
+            <a href="{% url 'home' %}" class="logo">
+                <i class="fas fa-atom spin"></i>
+                <span class="logo-text">AdaptivePhysics</span>
+            </a>
             <span class="welcome-text">Welcome, {{ student.first_name }}</span>
         </div>
         <div class="right">
-            <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
-            <a href="{% url 'student_assignments' %}" class="nav-link"><i class="fas fa-tasks"></i> Assignments</a>
-            <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            {% if request.user.student.can_take_experimental_test %}
+                <a href="{% url 'experiment_home' %}" class="nav-link">
+                    <i class="fas fa-flask"></i> Experiment Home
+                </a>
+            {% else %}
+                <a href="{% url 'modules' %}" class="nav-link">
+                    <i class="fas fa-book"></i> Modules
+                </a>
+                <a href="{% url 'student_assignments' %}" class="nav-link">
+                    <i class="fas fa-tasks"></i> Assignments
+                </a>
+            {% endif %}
+            <a href="{% url 'logout' %}" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <div class="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </nav>
-    
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        {% if request.user.student.can_take_experimental_test %}
+            <a href="{% url 'experiment_home' %}" class="mobile-link">
+                <i class="fas fa-flask"></i> Experiment Home
+            </a>
+        {% else %}
+            <a href="{% url 'modules' %}" class="mobile-link">
+                <i class="fas fa-book"></i> Modules
+            </a>
+            <a href="{% url 'student_assignments' %}" class="mobile-link">
+                <i class="fas fa-tasks"></i> Assignments
+            </a>
+        {% endif %}
+        <a href="{% url 'logout' %}" class="mobile-link">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
 
     <!-- Profile Update Section -->
     <div class="profile-section">
-        <div class="profile-container">
-            <h1>Update Your Profile</h1>
+        <div class="profile-container" data-aos="fade-up">
+            <h1 class="gradient-text">Update Your Profile</h1>
 
             <form action="{% url 'profile_update' %}" method="POST">
                 {% csrf_token %}
@@ -72,29 +126,34 @@
 
                 <!-- Password and Confirm Password with Show Password Feature -->
                 <div class="form-group">
-                    <label for="password">Password:</label>
+                    <label for="password">New Password:</label>
                     <div class="password-container">
-                        <input type="password" id="password" name="password">
-                        <span id="togglePassword" class="eye-icon">&#128065;</span> <!-- Eye icon for show/hide -->
+                        <input type="password" id="password" name="password" placeholder="Leave blank to keep current password">
+                        <span id="togglePassword" class="eye-icon"><i class="fas fa-eye"></i></span>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="confirm_password">Confirm Password:</label>
+                    <label for="confirm_password">Confirm New Password:</label>
                     <div class="password-container">
-                        <input type="password" id="confirm_password" name="confirm_password">
-                        <span id="toggleConfirmPassword" class="eye-icon">&#128065;</span> <!-- Eye icon for show/hide -->
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Leave blank to keep current password">
+                        <span id="toggleConfirmPassword" class="eye-icon"><i class="fas fa-eye"></i></span>
                     </div>
                 </div>
 
                 <button type="submit" class="submit-btn">Update Profile</button>
             </form>
-
-            <p><a href="{% url 'home' %}">Go back to Home</a></p>
         </div>
     </div>
 
-    <script src="{% static 'js/profile_update.js' %}?v=7"></script>
-
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: true,
+            duration: 1000,
+            offset: 100
+        });
+    </script>
+    <script src="{% static 'js/profile_update.js' %}?v=8"></script>
 </body>
 </html>
