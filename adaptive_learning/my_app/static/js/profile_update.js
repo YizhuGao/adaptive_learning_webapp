@@ -1,74 +1,103 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Select all disabled input fields
-    const disabledFields = document.querySelectorAll('input:disabled, select:disabled');
+    // Mobile Menu Functionality
+    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    const body = document.body;
 
-    // Add an event listener to each disabled field
-    disabledFields.forEach(field => {
-        field.addEventListener("focus", function(event) {
-            // Display a generic message for non-editable fields
-            showMessage("Sorry, you cannot edit this field.");
+    if (mobileMenuBtn && mobileMenu) {
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('active');
+            body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : '';
         });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!mobileMenuBtn.contains(event.target) && !mobileMenu.contains(event.target)) {
+                mobileMenu.classList.remove('active');
+                body.style.overflow = '';
+            }
+        });
+    }
+
+    // Password Toggle Functionality
+    const passwordToggles = [
+        { input: document.getElementById('password'), icon: document.getElementById('togglePassword') },
+        { input: document.getElementById('confirm_password'), icon: document.getElementById('toggleConfirmPassword') }
+    ];
+
+    passwordToggles.forEach(({ input, icon }) => {
+        if (input && icon) {
+            icon.addEventListener('click', () => {
+                const type = input.type === 'password' ? 'text' : 'password';
+                input.type = type;
+                icon.querySelector('i').className = `fas fa-eye${type === 'password' ? '' : '-slash'}`;
+            });
+        }
     });
 
-    // Function to display the message
-    function showMessage(message) {
-        const messageContainer = document.createElement("div");
-        messageContainer.classList.add("message");
-        messageContainer.textContent = message;
+    // Form Validation
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirm_password');
 
-        // Add the message container to the body or any specific location on the page
-        document.body.appendChild(messageContainer);
+            if (password.value || confirmPassword.value) {
+                if (password.value !== confirmPassword.value) {
+                    event.preventDefault();
+                    showMessage('Passwords do not match!');
+                    return;
+                }
 
-        // Automatically remove the message after 3 seconds
+                if (password.value.length < 8) {
+                    event.preventDefault();
+                    showMessage('Password must be at least 8 characters long!');
+                    return;
+                }
+            }
+        });
+    }
+
+    // Message Display
+    function showMessage(text, type = 'error') {
+        const existingMessage = document.querySelector('.message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+
+        const message = document.createElement('div');
+        message.className = 'message';
+        message.textContent = text;
+        
+        if (type === 'success') {
+            message.style.backgroundColor = '#38a169';
+        }
+
+        document.body.appendChild(message);
+
         setTimeout(() => {
-            messageContainer.remove();
+            message.style.opacity = '0';
+            setTimeout(() => message.remove(), 300);
         }, 3000);
     }
 
-    // Show/Hide Password functionality
-    const passwordInput = document.getElementById("password");
-    const confirmPasswordInput = document.getElementById("confirm_password");
+    // Input Animations
+    const inputs = document.querySelectorAll('input:not([disabled]), select');
+    inputs.forEach(input => {
+        input.addEventListener('focus', () => {
+            input.parentElement.classList.add('focused');
+        });
 
-    // Create eye icons for password fields
-    const passwordEyeIcon = document.createElement("span");
-    passwordEyeIcon.classList.add("eye-icon");
-    passwordEyeIcon.innerHTML = "👁️";  // You can replace it with any icon or use an icon font
-
-    const confirmPasswordEyeIcon = document.createElement("span");
-    confirmPasswordEyeIcon.classList.add("eye-icon");
-    confirmPasswordEyeIcon.innerHTML = "👁️"; // Replace with icon or use font icons
-
-    // Append the eye icons to the password fields
-    const passwordContainer = document.createElement("div");
-    passwordContainer.classList.add("password-container");
-    passwordInput.parentNode.appendChild(passwordContainer);
-    passwordContainer.appendChild(passwordInput);
-    passwordContainer.appendChild(passwordEyeIcon);
-
-    const confirmPasswordContainer = document.createElement("div");
-    confirmPasswordContainer.classList.add("password-container");
-    confirmPasswordInput.parentNode.appendChild(confirmPasswordContainer);
-    confirmPasswordContainer.appendChild(confirmPasswordInput);
-    confirmPasswordContainer.appendChild(confirmPasswordEyeIcon);
-
-    // Add event listeners to toggle password visibility
-    passwordEyeIcon.addEventListener("click", function() {
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            passwordEyeIcon.style.color = "#9e1b32"; // Change color on visibility toggle
-        } else {
-            passwordInput.type = "password";
-            passwordEyeIcon.style.color = "#555"; // Reset color
-        }
+        input.addEventListener('blur', () => {
+            input.parentElement.classList.remove('focused');
+        });
     });
 
-    confirmPasswordEyeIcon.addEventListener("click", function() {
-        if (confirmPasswordInput.type === "password") {
-            confirmPasswordInput.type = "text";
-            confirmPasswordEyeIcon.style.color = "#9e1b32"; // Change color on visibility toggle
-        } else {
-            confirmPasswordInput.type = "password";
-            confirmPasswordEyeIcon.style.color = "#555"; // Reset color
-        }
+    // Prevent form submission on disabled fields
+    const disabledFields = document.querySelectorAll('input:disabled, select:disabled');
+    disabledFields.forEach(field => {
+        field.addEventListener('click', () => {
+            showMessage('This field cannot be edited');
+        });
     });
 });

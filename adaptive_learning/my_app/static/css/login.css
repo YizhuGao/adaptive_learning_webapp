@@ -1,267 +1,333 @@
-/* General Styles */
+/* Reset and Base Styles */
+:root {
+    --primary-gradient: linear-gradient(45deg, #9e1b32, #ff4d6d);
+    --hover-gradient: linear-gradient(45deg, #ff4d6d, #9e1b32);
+    --primary-color: #9e1b32;
+    --secondary-color: #ff4d6d;
+    --text-dark: #333;
+    --text-light: #666;
+    --background-light: #fff;
+    --transition-fast: 0.3s ease;
+    --transition-medium: 0.5s ease;
+    --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --box-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.15);
+    --input-bg: rgba(245, 245, 245, 0.9);
+    --border-color: #e1e1e1;
+    --error-color: #e74c3c;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: "Arial", sans-serif;
-    scroll-behavior: smooth;
+    font-family: 'Inter', sans-serif;
 }
 
-/* Navbar */
+body {
+    background: var(--background-light);
+    color: var(--text-dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* Animated Background */
+.animated-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+}
+
+.particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: rgba(158, 27, 50, 0.1);
+    border-radius: 50%;
+}
+
+@keyframes float-slow {
+    0%, 100% {
+        transform: translate(0, 0);
+    }
+    25% {
+        transform: translate(100px, 100px);
+    }
+    50% {
+        transform: translate(200px, 0);
+    }
+    75% {
+        transform: translate(100px, -100px);
+    }
+}
+
+/* Navigation Bar */
 .navbar {
     position: fixed;
     top: 0;
+    left: 0;
     width: 100%;
-    background-color: #111;
-    color: #fff;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 1.2rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     z-index: 1000;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+    transition: all var(--transition-fast);
+}
+
+.navbar.scrolled {
+    padding: 1rem 2rem;
+    background-color: rgba(255, 255, 255, 0.98);
+}
+
+.navbar.nav-hidden {
+    transform: translateY(-100%);
 }
 
 .navbar .left {
     display: flex;
     align-items: center;
+    gap: 0.8rem;
 }
 
-.navbar .left .logo {
-    height: 40px;
-    margin-right: 10px;
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    text-decoration: none;
+    font-size: 1.6rem;
+    font-weight: 700;
 }
 
-.navbar .left .welcome-text {
-    font-size: 1rem;
+.logo-text {
+    background: var(--primary-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.navbar .nav-link {
+    color: var(--text-dark);
+    text-decoration: none;
     font-weight: 500;
-    color: #fff;
-    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.navbar .right a {
-    color: #fff;
-    text-decoration: none;
-    margin-left: 1.2rem;
-    font-weight: bold;
-    transition: 0.3s;
+.navbar .nav-link i {
+    color: var(--primary-color);
+    transition: transform var(--transition-fast);
 }
 
-.navbar .right a:hover {
-    color: #9e1b32;
+.navbar .nav-link:hover {
+    background: var(--input-bg);
+    transform: translateY(-2px);
 }
 
+.navbar .nav-link:hover i {
+    transform: translateY(-2px);
+}
 
 /* Login Section */
 .login-section {
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    background: white; /* Clean white background */
     padding: 2rem;
-    animation: backgroundAnimation 3s ease-in-out infinite; /* Subtle background animation */
+    padding-top: 80px;
 }
 
-/* Subtle background animation */
-@keyframes backgroundAnimation {
-    0% {
-        background: white;
-    }
-    50% {
-        background: #f5f5f5;
-    }
-    100% {
-        background: white;
-    }
-}
-
-/* Login Container (Zoomed out form) */
 .login-container {
-    background: white;
-    padding: 3rem;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Soft shadow */
-    text-align: center;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 2.5rem;
+    border-radius: 20px;
     width: 100%;
-    max-width: 450px;
-    transform: scale(0.95); /* Zoomed out effect */
-    animation: fadeIn 1.2s ease-out;
-    transition: transform 0.3s ease-in-out;
+    max-width: 400px;
+    backdrop-filter: blur(10px);
+    box-shadow: var(--box-shadow);
+    transform: translateY(20px);
+    opacity: 0;
+    animation: slideUp 0.6s ease forwards;
+    border: 1px solid var(--border-color);
+    transition: all var(--transition-medium);
 }
 
-/* Hover effect on login container */
 .login-container:hover {
-    transform: scale(0.95) translateY(-5px);
+    transform: translateY(-5px);
+    box-shadow: var(--box-shadow-hover);
 }
 
-/* Login Heading */
+@keyframes slideUp {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 .login-container h2 {
-    font-size: 2.2rem;
-    color: #333; /* Dark text */
-    margin-bottom: 1.5rem;
-    font-weight: 600;
-    letter-spacing: 1px;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    background: var(--primary-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
-/* Form Styling */
 .form-group {
-    margin-bottom: 1.8rem;
-    text-align: left;
+    margin-bottom: 1.5rem;
 }
 
 .form-group label {
-    font-weight: bold;
-    color: #555;
     display: block;
     margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    font-weight: 500;
 }
 
 .form-group input {
     width: 100%;
-    padding: 12px;
+    padding: 0.8rem 1rem;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 1.1rem;
-    transition: border 0.3s ease, box-shadow 0.3s ease;
+    background: var(--input-bg);
+    color: var(--text-dark);
+    font-size: 1rem;
+    transition: all var(--transition-fast);
 }
 
 .form-group input:focus {
-    border-color: #9e1b32; /* UGA Red border */
     outline: none;
-    box-shadow: 0 0 8px rgba(158, 27, 50, 0.3); /* UGA Red glow */
+    border-color: var(--primary-color);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(158, 27, 50, 0.1);
 }
 
-/* Submit Button */
 .submit-btn {
     width: 100%;
-    padding: 12px;
-    background: #9e1b32; /* UGA Red */
-    color: white;
-    font-size: 1.2rem;
+    padding: 1.2rem;
     border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    border-radius: 50px;
+    background: var(--primary-gradient);
+    color: white;
+    font-size: 1.1rem;
     font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(158, 27, 50, 0.2);
+}
+
+.submit-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: 0.5s;
 }
 
 .submit-btn:hover {
-    background: #7a141d; /* Darker UGA Red */
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(158, 27, 50, 0.3);
 }
 
-/* Link Styles */
+.submit-btn:hover::after {
+    left: 100%;
+}
+
 .login-container p {
-    margin-top: 1rem;
-    color: #555; /* Dark text */
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--text-light);
 }
 
-.login-container p a {
-    color: #9e1b32; /* UGA Red */
+.login-container a {
+    color: var(--primary-color);
     text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s ease;
+    font-weight: 500;
+    transition: color var(--transition-fast);
 }
 
-.login-container p a:hover {
-    color: #7a141d; /* Darker UGA Red */
+.login-container a:hover {
+    color: var(--secondary-color);
 }
 
-/* Fade-in Animation with zoomed out effect */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95) translateY(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(0.95) translateY(0);
-    }
+/* Error Messages */
+.error-message {
+    background: rgba(231, 76, 60, 0.1);
+    border-radius: 8px;
+    border-left: 4px solid var(--error-color);
+    padding: 0.8rem 1rem;
+    margin: 0.5rem 0;
+    color: var(--error-color);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.error-message i {
+    font-size: 1rem;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .nav-links {
-        display: none;
+    .navbar {
+        padding: 1rem;
     }
-
+    
     .login-container {
         padding: 2rem;
-        width: 90%;
     }
-
-    .login-nav {
-        padding: 1rem 1.5rem;
+    
+    .login-container h2 {
+        font-size: 1.5rem;
     }
 }
 
-/* Password Container */
-.password-container {
-    position: relative;
-    width: 100%;
+/* Loading State */
+.submit-btn.loading {
+    background: #ccc;
+    cursor: not-allowed;
 }
 
-/* Button Styling (Password Block Button) */
-.password-container .submit-btn {
-    width: 100%;
-    padding: 12px;
-    background: #9e1b32; /* UGA Red */
-    color: white;
-    font-size: 1.2rem;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+.submit-btn.loading::after {
+    display: none;
 }
 
-.password-container .submit-btn:hover {
-    background: #7a141d; /* Darker UGA Red */
-    transform: scale(1.05);
+/* Atom Icon Animation */
+.fa-atom.spin {
+    display: inline-block;
+    animation: spin 4s linear infinite;
+    color: var(--primary-color);
 }
 
-/* Eye Icon Styling (for password field) */
-.eye-icon {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    font-size: 1.5rem;
-    color: #555;
-}
-
-.eye-icon:hover {
-    color: #9e1b32; /* UGA Red */
-}
-
-/* Styling for message box (if needed) */
-.message {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #ff4d4d;
-    color: white;
-    padding: 10px 20px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    text-align: center;
-    max-width: 80%;
-    animation: fadeInMessage 0.5s ease-in-out;
-}
-
-/* Fade-in animation for the message */
-@keyframes fadeInMessage {
+@keyframes spin {
     from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-20px);
+        transform: rotate(0deg);
     }
     to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        transform: rotate(360deg);
     }
 }
+

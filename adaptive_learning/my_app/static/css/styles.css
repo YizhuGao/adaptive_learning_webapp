@@ -3,116 +3,507 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Georgia', serif; /* UGA font style */
 }
 
-/* Navigation Styles ----------------------------------------------------------------------------------------------------------------------------------NAVBAR*/
+:root {
+    --primary-gradient: linear-gradient(45deg, #9e1b32, #ff4d6d);
+    --hover-gradient: linear-gradient(45deg, #ff4d6d, #9e1b32);
+    --primary-color: #9e1b32;
+    --secondary-color: #ff4d6d;
+    --text-dark: #333;
+    --text-light: #666;
+    --background-light: #fff;
+    --transition-fast: 0.3s ease;
+    --transition-medium: 0.5s ease;
+    --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --box-shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--background-light);
+    color: var(--text-dark);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.gradient-text {
+    background: var(--primary-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+}
+
+/* Navigation */
 nav {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    background-color: #9B1B30; /* UGA Red */
-    padding: 1rem 2rem;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 1.2rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     z-index: 1000;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+    transition: all var(--transition-fast);
 }
 
-/* Logo */
+nav.scrolled {
+    padding: 1rem 2rem;
+    background-color: rgba(255, 255, 255, 0.98);
+}
+
+nav.nav-hidden {
+    transform: translateY(-100%);
+}
+
 .logo {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
     text-decoration: none;
-    font-family: 'Georgia', serif;
-    text-transform: uppercase;
+    font-size: 1.6rem;
+    font-weight: 700;
 }
 
-/* Navbar Links */
+.logo-text {
+    background: var(--primary-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
 .nav-links {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 2.5rem;
 }
 
 .nav-link {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 1rem;
-    color: #FFFFFF;
+    color: var(--text-dark);
     text-decoration: none;
     font-weight: 500;
-    transition: color 0.3s ease, transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all var(--transition-fast);
 }
 
 .nav-link i {
-    font-size: 1.2rem;
-    color: #FFD700; /* UGA Gold */
-    transition: color 0.3s ease;
+    color: var(--primary-color);
+    transition: transform var(--transition-fast);
 }
 
-.nav-link:hover {
-    color: #FFD700;
-    transform: translateY(-2px);
+.nav-link:hover i {
+    transform: translateY(-3px);
 }
 
-/* Login Button */
 .login-btn {
-    padding: 0.5rem 1.5rem;
-    border: 2px solid #FFFFFF;
-    color: #FFFFFF;
-    background-color: transparent;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: bold;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    background: var(--primary-gradient);
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 500;
     display: flex;
     align-items: center;
-    gap: 8px;
-}
-
-.login-btn i {
-    font-size: 1.2rem;
+    gap: 0.8rem;
+    transition: all var(--transition-fast);
+    box-shadow: 0 4px 15px rgba(158, 27, 50, 0.2);
 }
 
 .login-btn:hover {
-    background-color: #FFFFFF;
-    color: #9B1B30;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(158, 27, 50, 0.3);
 }
 
-/* Mobile Menu Button */
-.mobile-menu-btn {
-    display: none;
+/* Hero Section */
+.hero {
+    min-height: 100vh;
+    display: flex;
     flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding: 8rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+    gap: 4rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
 }
 
-.mobile-menu-btn span {
-    width: 28px;
-    height: 3px;
-    background-color: #FFFFFF;
-    transition: transform 0.3s ease;
+.hero-main {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    z-index: 2;
+}
+
+.hero h1 {
+    font-size: 4.5rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+}
+
+.hero p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: var(--text-dark);
+}
+
+/* CTA Button */
+.cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.2rem 3rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+    background: var(--primary-gradient);
+    border: none;
+    border-radius: 50px;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-fast);
+    box-shadow: 0 10px 30px rgba(158, 27, 50, 0.3);
+}
+
+.cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(158, 27, 50, 0.4);
+}
+
+.button-glow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.cta-button:hover .button-glow {
+    left: 100%;
+}
+
+.cta-button i {
+    transition: transform var(--transition-fast);
+}
+
+.cta-button:hover i {
+    transform: translateX(5px);
+}
+
+/* Features Grid */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+    z-index: 2;
+}
+
+.feature-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    box-shadow: var(--box-shadow);
+    transition: all var(--transition-medium);
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--box-shadow-hover);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    transition: all var(--transition-fast);
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.feature-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.feature-card p {
+    color: var(--text-light);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.feature-hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--primary-gradient);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity var(--transition-medium);
+    color: white;
+    padding: 2rem;
+}
+
+.feature-hover i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.feature-hover span {
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+.feature-card:hover .feature-hover {
+    opacity: 0.95;
+}
+
+/* Learning Flow */
+.learning-flow {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 3rem;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 30px;
+    box-shadow: var(--box-shadow);
+    z-index: 2;
+}
+
+.learning-flow h3 {
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.flow-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.flow-step {
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+}
+
+.step-number {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-gradient);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-weight: 600;
+    font-size: 1.4rem;
+    box-shadow: 0 5px 15px rgba(158, 27, 50, 0.3);
+}
+
+.step-content h4 {
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.step-content p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.flow-arrow {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+/* Animations */
+@keyframes float-slow {
+    0%, 100% {
+        transform: translate(0, 0);
+    }
+    50% {
+        transform: translate(20px, -20px);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spin {
+    animation: spin 20s linear infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(10px);
+    }
+}
+
+.bounce {
+    animation: bounce 2s infinite;
+}
+
+/* Animated Background */
+.animated-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--primary-gradient);
+    opacity: 0.1;
+}
+
+.particle:nth-child(1) { width: 300px; height: 300px; top: -150px; left: -150px; }
+.particle:nth-child(2) { width: 200px; height: 200px; top: 50%; right: -100px; }
+.particle:nth-child(3) { width: 150px; height: 150px; bottom: -75px; left: 30%; }
+.particle:nth-child(4) { width: 180px; height: 180px; top: 20%; left: 70%; }
+.particle:nth-child(5) { width: 250px; height: 250px; bottom: 10%; right: 20%; }
+.particle:nth-child(6) { width: 220px; height: 220px; top: 40%; left: 40%; }
+
+/* Footer */
+footer {
+    background: var(--background-light);
+    padding: 3rem 2rem;
+    margin-top: 4rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.footer-social {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.social-icon {
+    width: 35px;
+    height: 35px;
+    transition: transform var(--transition-fast);
+    opacity: 0.7;
+}
+
+.social-hover:hover .social-icon {
+    transform: translateY(-5px);
+    opacity: 1;
+}
+
+.footer-text {
+    color: var(--text-light);
+    font-size: 0.9rem;
 }
 
 /* Mobile Menu */
+.mobile-menu-btn {
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+.mobile-menu-btn span {
+    width: 25px;
+    height: 2px;
+    background: var(--text-dark);
+    transition: var(--transition-fast);
+}
+
+.mobile-menu-btn.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.mobile-menu-btn.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-btn.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(7px, -7px);
+}
+
 .mobile-menu {
     position: fixed;
     top: 0;
     right: -100%;
-    width: 70%;
+    width: 300px;
     height: 100vh;
-    background-color: #F4F4F4;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    transition: right 0.3s ease;
-    z-index: 999;
+    background: white;
+    padding: 6rem 2rem 2rem;
+    transition: right var(--transition-medium);
+    z-index: 1000;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
 }
 
 .mobile-menu.active {
@@ -120,456 +511,96 @@ nav {
 }
 
 .mobile-link {
-    color: #9B1B30;
-    font-size: 1.2rem;
-    font-weight: bold;
+    display: block;
+    color: var(--text-dark);
     text-decoration: none;
-    transition: color 0.3s ease;
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    transition: var(--transition-fast);
 }
 
 .mobile-link:hover {
-    color: #FFD700;
+    color: var(--primary-color);
+    padding-left: 1.5rem;
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-    .nav-links {
-        display: none;
-    }
-
-    .mobile-menu-btn {
-        display: flex;
-    }
-
-    .nav-link i {
-        font-size: 1rem;
-    }
-}
-/* Hero Section Styles */
-/* Hero Section Styles */
-.hero {
-    height: 100vh;
-    background: linear-gradient(to bottom right, rgba(255, 235, 215, 0.6), rgba(255, 235, 215, 0.7)), #F4F4F4; /* Light and soft background */
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    color: #333333; /* Dark gray for better readability */
-    padding: 0 1rem;
-    overflow: hidden;
-    background-attachment: fixed; /* Parallax-like effect */
-}
-
-/* Hero heading styles */
-.hero h1 {
-    font-size: 3.5rem;
-    margin-bottom: 1rem;
-    animation: fadeIn 1s ease-out;
-    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    font-family: 'Georgia', serif;
-    letter-spacing: 1.5px;
-    font-weight: bold;
-    color: #9B1B30; /* UGA Red for emphasis */
-}
-
-/* Hero paragraph styles */
-.hero p {
-    font-size: 1.4rem;
-    margin-bottom: 2rem;
-    animation: fadeIn 1s ease-out 0.5s forwards;
-    opacity: 0;
-    color: #555555; /* Lighter gray for the text */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-/* Call to action button styles */
-.cta-button {
-    padding: 1rem 2.5rem;
-    font-size: 1.2rem;
-    background: #FFD700; /* UGA Gold */
-    color: #9B1B30;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    animation: fadeIn 1s ease-out 1s forwards;
-    opacity: 0;
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-}
-
-.cta-button:hover {
-    transform: translateY(-2px);
-    background: #9B1B30;
-    color: white;
-    box-shadow: 0 6px 20px rgba(155, 27, 48, 0.4);
-}
-
-/* Mobile Menu Styles */
-.mobile-menu-btn {
-    display: none;
-    flex-direction: column;
-    gap: 6px;
-    cursor: pointer;
-}
-
-.mobile-menu-btn span {
-    width: 30px;
-    height: 3px;
-    background: #9B1B30; /* UGA Red */
-    transition: all 0.3s ease;
-}
-
-.mobile-menu {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 70%;
-    height: 100vh;
-    background: #F4F4F4; /* Light background for mobile menu */
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    transition: right 0.3s ease;
-    z-index: 99;
-}
-
-.mobile-menu.active {
-    right: 0;
-}
-
-/* Animations */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Media Queries for responsive design */
-@media (max-width: 768px) {
-    .nav-links {
-        display: none;
-    }
-
-    .mobile-menu-btn {
-        display: flex;
+@media (max-width: 1200px) {
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
     }
 
     .hero h1 {
-        font-size: 2.5rem;
+        font-size: 4rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-links {
+        display: none;
+    }
+
+    .mobile-menu-btn {
+        display: flex;
+    }
+
+    .hero {
+        padding-top: 6rem;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
     }
 
     .hero p {
         font-size: 1.2rem;
     }
 
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .flow-steps {
+        flex-direction: column;
+    }
+
+    .flow-arrow {
+        transform: rotate(90deg);
+    }
+
+    .learning-flow {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
     .cta-button {
-        font-size: 1rem;
-        padding: 0.8rem 2rem;
-    }
-}
-
-/* Additional subtle chalk-like effects for the hero */
-.hero::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-        radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 10%),
-        radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 10%);
-    pointer-events: none;
-}
-
-
-/* Updated Interactive Section Styles */
-.interactive-section {
-    min-height: 100vh;
-    padding: 6rem 2rem;
-    background-color: #FFFFFF;
-    display: flex;
-    align-items: center;
-}
-
-.content-wrapper {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s ease-out;
-}
-
-.content-wrapper.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.text-content {
-    padding: 2rem 0;
-}
-
-.section-tag {
-    color: #FFD700; /* UGA Gold */
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 1.5rem;
-    font-weight: 600;
-}
-
-.text-content h2 {
-    font-size: 2.5rem;
-    color: #9B1B30; /* UGA Red */
-    margin-bottom: 1.5rem;
-    line-height: 1.2;
-}
-
-.text-content p {
-    font-size: 1.1rem;
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 2rem;
-}
-
-.login-link {
-    display: inline-block;
-    text-decoration: none;
-    color: #9B1B30; /* UGA Red */
-    font-weight: 500;
-    padding-bottom: 0.25rem;
-    border-bottom: 2px solid #FFD700; /* UGA Gold */
-    transition: all 0.3s ease;
-}
-
-.login-link:hover {
-    color: #FFD700;
-    padding-bottom: 0.5rem;
-}
-
-.image-content {
-    position: relative;
-    overflow: hidden;
-    border-radius: 8px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-}
-
-.image-content img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.image-content:hover img {
-    transform: scale(1.05);
-}
-
-/* Modules Section Styles */
-.modules-section {
-    padding: 6rem 2rem;
-    background-color: #F1F1F1; /* Light Gray */
-}
-
-.modules-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s ease-out;
-}
-
-.modules-container.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.section-header {
-    text-align: center;
-    margin-bottom: 4rem;
-}
-
-.section-header h2 {
-    font-size: 2.5rem;
-    color: #9B1B30; /* UGA Red */
-    margin-top: 1rem;
-}
-
-.modules-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    padding: 1rem;
-}
-
-.module-card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.module-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-}
-
-.card-image {
-    height: 200px;
-    overflow: hidden;
-}
-
-.card-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.module-card:hover .card-image img {
-    transform: scale(1.05);
-}
-
-.card-content {
-    padding: 1.5rem;
-}
-
-.card-content h3 {
-    font-size: 1.25rem;
-    color: #9B1B30; /* UGA Red */
-    margin-bottom: 0.75rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.arrow {
-    color: #FFD700; /* UGA Gold */
-    transition: transform 0.3s ease;
-}
-
-.module-card:hover .arrow {
-    transform: translateX(5px);
-}
-
-.card-content p {
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-}
-
-.card-link {
-    color: #FFD700; /* UGA Gold */
-    text-decoration: none;
-    font-weight: 500;
-    display: inline-block;
-    position: relative;
-}
-
-.card-link::after {
-    content: '→';
-    position: absolute;
-    right: -1.5rem;
-    top: 0;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.card-link:hover::after {
-    opacity: 1;
-}
-
-/* ------------------------ Footer Section --------------------------------------------------------------------- */
-
-
-/* Footer Styles */
-footer {
-    background-color: #9B1B30; /* UGA Red */
-    color: #FFFFFF;
-    padding: 2rem 0;
-    text-align: center;
-}
-
-.footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.footer-links {
-    margin-bottom: 1.5rem;
-}
-
-.footer-links a {
-    text-decoration: none;
-    color: #FFFFFF;
-    font-weight: 500;
-    margin: 0 1rem;
-    transition: color 0.3s ease;
-}
-
-.footer-links a:hover {
-    color: #FFD700; /* UGA Gold */
-}
-
-.footer-social {
-    margin-bottom: 1.5rem;
-}
-
-.social-icon {
-    width: 32px;
-    height: 32px;
-    margin: 0 1rem;
-    transition: transform 0.3s ease;
-}
-
-.social-icon:hover {
-    transform: scale(1.1);
-}
-
-.footer-text {
-    font-size: 1rem;
-    color: #FFFFFF;
-    margin-top: 1rem;
-    font-weight: 300;
-}
-
-/* Responsive styles */
-@media (max-width: 768px) {
-    .footer-links {
-        margin-bottom: 1rem;
-    }
-
-    .footer-links a {
-        margin: 0 0.5rem;
+        padding: 1rem 2rem;
         font-size: 1rem;
     }
 
-    .footer-social {
-        margin-bottom: 1rem;
+    .feature-card {
+        padding: 2rem 1.5rem;
     }
+}
 
-    .social-icon {
-        width: 28px;
-        height: 28px;
-    }
+/* Utility Classes */
+.menu-open {
+    overflow: hidden;
+}
 
-    .footer-text {
-        font-size: 0.9rem;
-    }
+.visible {
+    opacity: 1;
+    transform: translateY(0);
 }

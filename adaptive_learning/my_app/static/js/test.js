@@ -1,73 +1,104 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const questions = document.querySelectorAll(".question-card");
-    const nextBtn = document.getElementById("next-btn");
-    const prevBtn = document.getElementById("prev-btn");
-    const submitBtn = document.querySelector(".submit-btn");
-    const form = document.querySelector("form");
-    const progress = document.getElementById("progress");
+document.addEventListener('DOMContentLoaded', function() {
+    const questions = document.querySelectorAll('.question-card');
+    const progressBar = document.querySelector('.progress');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const buttonContainer = document.querySelector('.button-container');
+    
+    let currentQuestionIndex = 0;
+    const totalQuestions = questions.length;
 
-    let currentQuestion = 0;
-    let answeredQuestions = new Set();
+    // Initialize progress and show first question immediately
+    updateProgress();
+    showQuestion(0);
 
-    // Show the current question only
-    function showQuestion(index) {
-        questions.forEach((q, i) => {
-            q.style.display = (i === index) ? "block" : "none";
-        });
+    // Previous button click handler
+    prevBtn.addEventListener('click', () => {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            showQuestion(currentQuestionIndex);
+            updateProgress();
+        }
+    });
 
-        prevBtn.disabled = index === 0;
-        nextBtn.disabled = index === questions.length - 1;
-    }
+    // Next button click handler
+    nextBtn.addEventListener('click', () => {
+        if (currentQuestionIndex < totalQuestions - 1) {
+            currentQuestionIndex++;
+            showQuestion(currentQuestionIndex);
+            updateProgress();
+        }
+    });
 
-    // Update progress bar and submit button state
-    function updateProgressAndSubmit() {
-        const percentage = (answeredQuestions.size / questions.length) * 100;
-        progress.style.width = percentage + "%";
-        // progress.innerText = Math.round(percentage) + "%";
-
-        // Enable Submit only if all questions are answered
-        submitBtn.disabled = answeredQuestions.size !== questions.length;
-    }
-
-    // When a radio option is selected
-    const allOptions = document.querySelectorAll('input[type="radio"]');
-    allOptions.forEach(option => {
-        option.addEventListener('change', function() {
-            const questionCard = this.closest(".question-card");
-            const questionIndex = Array.from(questions).indexOf(questionCard);
-
-            if (questionIndex !== -1) {
-                answeredQuestions.add(questionIndex);
-                updateProgressAndSubmit();
+    // Add change event listeners to all radio inputs
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            updateProgress();
+            checkAllQuestionsAnswered();
+            
+            // Auto-advance to next question after selection
+            if (currentQuestionIndex < totalQuestions - 1) {
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    showQuestion(currentQuestionIndex);
+                    checkAllQuestionsAnswered(); // Check again after advancing
+                }, 500); // Short delay before advancing
+            } else {
+                checkAllQuestionsAnswered(); // Check when on last question
             }
         });
     });
 
-    // Navigation buttons
-    nextBtn.addEventListener("click", function() {
-        if (currentQuestion < questions.length - 1) {
-            currentQuestion++;
-            showQuestion(currentQuestion);
-        }
-    });
+    function showQuestion(index) {
+        // Hide all questions first
+        questions.forEach(question => {
+            question.style.display = 'none';
+            question.classList.remove('active');
+        });
 
-    prevBtn.addEventListener("click", function() {
-        if (currentQuestion > 0) {
-            currentQuestion--;
-            showQuestion(currentQuestion);
+        // Show the current question
+        if (questions[index]) {
+            questions[index].style.display = 'block';
+            questions[index].classList.add('active');
+            
+            // Ensure the question is visible
+            questions[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-    });
 
-    // Prevent form submission if not all answered
-    form.addEventListener('submit', function(e) {
-        if (answeredQuestions.size !== questions.length) {
-            e.preventDefault();
-            alert("Please answer all questions before submitting the test.");
+        // Update button states
+        prevBtn.disabled = index === 0;
+        nextBtn.disabled = index === totalQuestions - 1;
+
+        // Update current question index
+        currentQuestionIndex = index;
+    }
+
+    function updateProgress() {
+        const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
+        const progress = (answeredQuestions / totalQuestions) * 100;
+        progressBar.style.width = `${progress}%`;
+    }
+
+    function checkAllQuestionsAnswered() {
+        const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
+        if (answeredQuestions === totalQuestions) {
+            buttonContainer.classList.add('show');
+        } else {
+            buttonContainer.classList.remove('show');
+        }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' && !prevBtn.disabled) {
+            prevBtn.click();
+        } else if (e.key === 'ArrowRight' && !nextBtn.disabled) {
+            nextBtn.click();
         }
     });
 
     // Initial setup
-    submitBtn.disabled = true;  // 🚀 Force disabling Submit initially
-    showQuestion(currentQuestion);
-    updateProgressAndSubmit();
+    showQuestion(0); // Show first question immediately
+    updateProgress(); // Initialize progress bar
+    checkAllQuestionsAnswered(); // Check if any questions are already answered
 });
