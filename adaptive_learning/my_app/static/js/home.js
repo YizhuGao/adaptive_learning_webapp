@@ -1,154 +1,138 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const welcomeText = document.querySelector(".welcome-text");
+// Cache DOM elements and optimize event listeners
+const DOM = {
+    welcomeText: document.querySelector(".welcome-text"),
+    navbar: document.querySelector('.navbar'),
+    menuBtn: document.querySelector('.mobile-menu-btn'),
+    mobileMenu: document.querySelector('.mobile-menu'),
+    menuBars: document.querySelectorAll('.mobile-menu-btn span'),
+    featureCards: document.querySelectorAll('.feature-card'),
+    activityCards: document.querySelectorAll('.activity-card'),
+    stats: document.querySelectorAll('.stat-number')
+};
 
+// Debounce function to limit function calls
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Throttle function to limit function calls
+function throttle(func, limit) {
+    let inThrottle;
+    return function executedFunction(...args) {
+        if (!inThrottle) {
+            func(...args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Initialize all components
+    initGreeting();
+    initParticles();
+    initNavbar();
+    initMobileMenu();
+    initStatsAnimation();
+    initAOS();
+    initSmoothScroll();
+    initFeatureCards();
+});
+
+function initGreeting() {
     function updateGreeting() {
         const hour = new Date().getHours();
-        let greeting = "Hello";
-        if (hour < 12) greeting = "Good Morning";
-        else if (hour < 18) greeting = "Good Afternoon";
-        else greeting = "Good Evening";
-
-        const name = welcomeText.textContent.split(",")[1]?.trim() || "";
-        welcomeText.textContent = `${greeting}, ${name}`;
+        const name = DOM.welcomeText.textContent.split(",")[1]?.trim() || "";
+        const greeting = hour < 12 ? "Good Morning" : 
+                        hour < 18 ? "Good Afternoon" : 
+                        "Good Evening";
+        DOM.welcomeText.textContent = `${greeting}, ${name}`;
     }
 
     updateGreeting();
-    setInterval(updateGreeting, 60000); // Update every minute
-
-    // Initialize particles
-    initParticles();
-
-    // Initialize navbar scroll behavior
-    initNavbar();
-
-    // Initialize mobile menu
-    initMobileMenu();
-
-    // Initialize stats animation
-    initStatsAnimation();
-
-    // Initialize AOS with optimized settings
-    if (typeof AOS !== 'undefined') {
-        AOS.init({
-            once: true,
-            duration: 800,
-            offset: 50,
-            disable: 'mobile'
-        });
-    }
-
-    // Add smooth scroll behavior
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
-
-    // Optimize feature card hover effects
-    const featureCards = document.querySelectorAll('.feature-card');
-    featureCards.forEach(card => {
-        card.addEventListener('mouseenter', () => {
-            requestAnimationFrame(() => {
-                card.style.transform = 'translateY(-5px)';
-            });
-        });
-        
-        card.addEventListener('mouseleave', () => {
-            requestAnimationFrame(() => {
-                card.style.transform = 'translateY(0)';
-            });
-        });
-    });
-});
-
-// Particle animation
-function initParticles() {
-    const particles = document.querySelectorAll('.particle');
-    particles.forEach((particle, index) => {
-        // Random initial position
-        const x = Math.random() * window.innerWidth;
-        const y = Math.random() * window.innerHeight;
-        particle.style.left = `${x}px`;
-        particle.style.top = `${y}px`;
-
-        // Random animation delay
-        particle.style.animation = `float-slow 8s infinite ${index * 0.5}s`;
-    });
+    // Use setInterval with a longer duration
+    setInterval(updateGreeting, 300000); // Update every 5 minutes
 }
 
-// Navbar scroll behavior
+function initParticles() {
+    const particles = document.querySelectorAll('.particle');
+    const fragment = document.createDocumentFragment();
+    
+    particles.forEach((particle, index) => {
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        particle.style.cssText = `
+            left: ${x}px;
+            top: ${y}px;
+            animation: float-slow 8s infinite ${index * 0.5}s;
+        `;
+        fragment.appendChild(particle);
+    });
+    
+    document.body.appendChild(fragment);
+}
+
 function initNavbar() {
-    const navbar = document.querySelector('.navbar');
     let lastScroll = 0;
-
-    window.addEventListener('scroll', () => {
+    
+    const handleScroll = throttle(() => {
         const currentScroll = window.pageYOffset;
-
-        // Add/remove scrolled class
+        
         if (currentScroll > 50) {
-            navbar.classList.add('scrolled');
+            DOM.navbar.classList.add('scrolled');
         } else {
-            navbar.classList.remove('scrolled');
+            DOM.navbar.classList.remove('scrolled');
         }
 
-        // Hide/show navbar based on scroll direction
         if (currentScroll > lastScroll && currentScroll > 500) {
-            navbar.classList.add('nav-hidden');
+            DOM.navbar.classList.add('nav-hidden');
         } else {
-            navbar.classList.remove('nav-hidden');
+            DOM.navbar.classList.remove('nav-hidden');
         }
 
         lastScroll = currentScroll;
-    });
+    }, 100);
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
 }
 
-// Mobile menu functionality
 function initMobileMenu() {
-    const menuBtn = document.querySelector('.mobile-menu-btn');
-    const mobileMenu = document.querySelector('.mobile-menu');
-    const menuBars = document.querySelectorAll('.mobile-menu-btn span');
     let isMenuOpen = false;
 
-    menuBtn.addEventListener('click', () => {
+    const toggleMenu = () => {
         isMenuOpen = !isMenuOpen;
+        DOM.mobileMenu.classList.toggle('active');
         
-        // Toggle menu visibility
-        mobileMenu.classList.toggle('active');
-
-        // Animate menu bars
         if (isMenuOpen) {
-            menuBars[0].style.transform = 'rotate(45deg) translate(6px, 6px)';
-            menuBars[1].style.opacity = '0';
-            menuBars[2].style.transform = 'rotate(-45deg) translate(6px, -6px)';
+            DOM.menuBars[0].style.transform = 'rotate(45deg) translate(6px, 6px)';
+            DOM.menuBars[1].style.opacity = '0';
+            DOM.menuBars[2].style.transform = 'rotate(-45deg) translate(6px, -6px)';
         } else {
-            menuBars[0].style.transform = 'none';
-            menuBars[1].style.opacity = '1';
-            menuBars[2].style.transform = 'none';
+            DOM.menuBars[0].style.transform = '';
+            DOM.menuBars[1].style.opacity = '1';
+            DOM.menuBars[2].style.transform = '';
         }
-    });
+    };
 
-    // Close menu when clicking outside
+    DOM.menuBtn.addEventListener('click', toggleMenu);
+
+    // Use event delegation for document click
     document.addEventListener('click', (e) => {
         if (isMenuOpen && !e.target.closest('.mobile-menu') && !e.target.closest('.mobile-menu-btn')) {
-            isMenuOpen = false;
-            mobileMenu.classList.remove('active');
-            menuBars.forEach(bar => bar.style = '');
+            toggleMenu();
         }
     });
 }
 
-// Stats animation
 function initStatsAnimation() {
-    const stats = document.querySelectorAll('.stat-number');
-    
-    // Animate stats when they come into view
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -158,18 +142,19 @@ function initStatsAnimation() {
             }
         });
     }, {
-        threshold: 0.5
+        threshold: 0.5,
+        rootMargin: '50px'
     });
 
-    stats.forEach(stat => observer.observe(stat));
+    DOM.stats.forEach(stat => observer.observe(stat));
 }
 
-// Number animation helper
 function animateNumber(element, target) {
+    const duration = 1500;
+    const steps = 50;
+    const increment = target / steps;
+    const stepTime = duration / steps;
     let current = 0;
-    const increment = target / 50; // Divide animation into 50 steps
-    const duration = 1500; // Animation duration in milliseconds
-    const stepTime = duration / 50;
 
     const timer = setInterval(() => {
         current += increment;
@@ -182,33 +167,68 @@ function animateNumber(element, target) {
     }, stepTime);
 }
 
-// Activity card hover effects
-document.querySelectorAll('.activity-card').forEach(card => {
-    card.addEventListener('mouseenter', () => {
-        const icon = card.querySelector('.activity-icon');
-        icon.style.transform = 'scale(1.1)';
-    });
+function initAOS() {
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            once: true,
+            duration: 800,
+            offset: 50,
+            disable: 'mobile',
+            useClassNames: true,
+            disableMutationObserver: false
+        });
+    }
+}
 
-    card.addEventListener('mouseleave', () => {
-        const icon = card.querySelector('.activity-icon');
-        icon.style.transform = 'scale(1)';
-    });
-});
-
-// Optimize animations by using requestAnimationFrame
-function animateOnScroll() {
-    const elements = document.querySelectorAll('[data-aos]');
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('aos-animate');
-                observer.unobserve(entry.target);
+function initSmoothScroll() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
             }
         });
-    }, {
-        threshold: 0.1
     });
-
-    elements.forEach(element => observer.observe(element));
 }
+
+function initFeatureCards() {
+    DOM.featureCards.forEach(card => {
+        const handleHover = (isEnter) => {
+            requestAnimationFrame(() => {
+                card.style.transform = isEnter ? 'translateY(-5px)' : 'translateY(0)';
+            });
+        };
+
+        card.addEventListener('mouseenter', () => handleHover(true));
+        card.addEventListener('mouseleave', () => handleHover(false));
+    });
+}
+
+// Activity card hover effects with event delegation
+document.addEventListener('mouseover', (e) => {
+    const card = e.target.closest('.activity-card');
+    if (card) {
+        const icon = card.querySelector('.activity-icon');
+        if (icon) {
+            requestAnimationFrame(() => {
+                icon.style.transform = 'scale(1.1)';
+            });
+        }
+    }
+});
+
+document.addEventListener('mouseout', (e) => {
+    const card = e.target.closest('.activity-card');
+    if (card) {
+        const icon = card.querySelector('.activity-icon');
+        if (icon) {
+            requestAnimationFrame(() => {
+                icon.style.transform = 'scale(1)';
+            });
+        }
+    }
+});
