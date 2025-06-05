@@ -4,64 +4,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Results</title>
-    <link rel="stylesheet" href="{% static 'css/testResults.css' %}?v=7">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Test Results - AdaptivePhysics</title>
+    <meta name="description" content="View your test results and personalized learning recommendations">
+    <link rel="stylesheet" href="{% static 'css/testResults.css' %}?v=9">
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar">
         <div class="left">
-            <span class="welcome-text">Results of {{ student_name }}</span>
+            <span class="welcome-text">Results for {{ student_name }}</span>
         </div>
         <div class="right">
-            <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
-            <a href="{% url 'all_learning_videos' %}">🎬 All Learning Videos</a>
-            <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="{% url 'home' %}" class="nav-link">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="{% url 'all_learning_videos' %}" class="nav-link">
+                <i class="fas fa-video"></i> Learning Videos
+            </a>
+            <a href="{% url 'profile_update' %}" class="nav-link">
+                <i class="fas fa-user"></i> Profile
+            </a>
+            <a href="{% url 'logout' %}" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+        <!-- Mobile Menu Button -->
+        <div class="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </nav>
 
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <a href="{% url 'home' %}" class="mobile-link"><i class="fas fa-home"></i> Home</a>
+        <a href="{% url 'all_learning_videos' %}" class="mobile-link"><i class="fas fa-video"></i> Learning Videos</a>
+        <a href="{% url 'profile_update' %}" class="mobile-link"><i class="fas fa-user"></i> Profile</a>
+        <a href="{% url 'logout' %}" class="mobile-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
     <!-- Results Container -->
     <div class="results-container">
-        <h1>Test Results</h1>
-        <p><strong>Topic:</strong> {{ topic.topic_name }}</p>
-        <p><strong>Subtopic:</strong> {{ subtopic.subtopic_name }}</p>
-        <p><strong>Score:</strong> <span class="score">{{ score }}%</span></p>
+        <div class="results-header">
+            <h1>Test Results</h1>
+            
+            <div class="score-card">
+                <div class="score-display">
+                    <div class="circular-progress">
+                        <div class="progress-ring">
+                            <svg class="progress-ring__circle" width="160" height="160">
+                                <circle class="progress-ring__circle-bg" cx="80" cy="80" r="70"/>
+                                <circle class="progress-ring__circle-fg" cx="80" cy="80" r="70" data-score="{{ score }}"/>
+                            </svg>
+                            <div class="score-value">
+                                <span class="score">{{ score }}%</span>
+                                <span class="score-label">Score</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="performance-info">
+                        <span class="performance-text">
+                            {% if score >= 90 %}
+                                <i class="fas fa-trophy"></i> Excellent!
+                            {% elif score >= 75 %}
+                                <i class="fas fa-star"></i> Good Job!
+                            {% elif score >= 60 %}
+                                <i class="fas fa-arrow-up"></i> Keep Going!
+                            {% else %}
+                                <i class="fas fa-book"></i> Need Practice
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Dynamic Feedback Message -->
-        <div id="feedback-message"></div>
+            <!-- Dynamic Feedback Message -->
+            <div id="feedback-message"></div>
+        </div>
 
-        <h2>Questions and Answers</h2>
+        <h2><i class="fas fa-clipboard-check"></i> Questions Review</h2>
         <table class="results-table">
             <thead>
                 <tr>
                     <th>Question</th>
-                    <th>Selected Answer</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-    {% for response in responses %}
-    <tr>
-        <td>{{ response.question_text }}</td>
-        <td class="{% if response.is_correct %}correct-answer{% else %}incorrect-answer{% endif %}">
-            {{ response.selected_option }}
-        </td>
-        <td>
-            {% if response.is_correct %}
-                ✅ Correct
-            {% else %}
-                ❌ Incorrect
-            {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-</tbody>
+                {% for response in responses %}
+                <tr>
+                    <td>{{ response.question_text }}</td>
+                    <td>
+                        {% if response.is_correct %}
+                            <span class="correct-answer"><i class="fas fa-check-circle"></i> Correct</span>
+                        {% else %}
+                            <span class="incorrect-answer"><i class="fas fa-times-circle"></i> Incorrect</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
-
+        
+        <!-- Video Learning Section -->
+        <div class="learning-section">
+            <h3><i class="fas fa-graduation-cap"></i> Ready to improve? Watch our learning videos!</h3>
+            <a href="{% url 'all_learning_videos' %}" class="watch-video-button">
+                <i class="fas fa-play-circle"></i> Watch Learning Videos
+            </a>
+        </div>
     </div>
 
     <script src="{% static 'js/testResults.js' %}?v=3"></script>
+
+    <!-- Mobile Menu Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const navbar = document.querySelector('.navbar');
+            let lastScrollTop = 0;
+
+            // Mobile menu toggle
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('active');
+                this.classList.toggle('active');
+            });
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    mobileMenu.classList.remove('active');
+                    mobileMenuBtn.classList.remove('active');
+                }
+            });
+
+            // Navbar scroll behavior
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > lastScrollTop) {
+                    // Scrolling down
+                    navbar.classList.add('nav-hidden');
+                } else {
+                    // Scrolling up
+                    navbar.classList.remove('nav-hidden');
+                }
+                
+                if (scrollTop > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+        });
+    </script>
 </body>
 </html>

@@ -5,46 +5,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Experimental Learning</title>
-    <link rel="stylesheet" href="{% static 'css/home.css' %}?v=4">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="Hands-on experimentation to strengthen your conceptual understanding of physics.">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}?v=9">
+    <link rel="stylesheet" href="{% static 'css/experimental_home.css' %}?v=1">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="left">
             <span class="welcome-text">Welcome, {{ username }}</span>
         </div>
         <div class="right">
-            <a href="{% url 'experimental' %}" class="nav-link"><i class="fas fa-vial"></i> Experiment Test</a>
-            <a href="{% url 'all_learning_videos' %}" class="nav-link"><i class="fas fa-video"></i> Learning Videos</a>
-            <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a href="{% url 'experimental' %}" class="nav-link">
+                <i class="fas fa-vial"></i> Experiment Test
+            </a>
+            <a href="{% url 'all_learning_videos' %}" class="nav-link">
+                <i class="fas fa-video"></i> Learning Videos
+            </a>
+            <a href="{% url 'logout' %}" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <div class="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
     </nav>
 
-    <!-- Landing Section -->
-    <section class="landing">
-        <div class="landing-content">
-            <h1>Welcome to Experimental Physics Module</h1>
-            <p>Hands-on experimentation to strengthen your conceptual understanding.</p>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <a href="{% url 'experimental' %}" class="mobile-link">
+            <i class="fas fa-vial"></i> Experiment Test
+        </a>
+        <a href="{% url 'all_learning_videos' %}" class="mobile-link">
+            <i class="fas fa-video"></i> Learning Videos
+        </a>
+        <a href="{% url 'logout' %}" class="mobile-link">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
 
-            <div class="features">
-                <a href="{% url 'experimental' %}" class="feature" style="text-decoration: none; color: inherit;">
-                    <i class="fas fa-flask"></i>
-                    <h3>Run Experiments</h3>
-                    <p>Engage in simulations and virtual labs for real-time exploration.</p>
-                </a>
-                <a href="{% url 'all_learning_videos' %}" class="feature" style="text-decoration: none; color: inherit;">
-                    <i class="fas fa-play-circle"></i>
-                    <h3>Watch Tutorials</h3>
-                    <p>Understand theory and application through guided video lessons.</p>
-                </a>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content" data-aos="fade-up">
+            <h1 class="gradient-text">Welcome to Experimental Physics</h1>
+            <p class="subtitle">Hands-on experimentation to strengthen your conceptual understanding.</p>
+
+            <div class="features-grid">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <a href="{% url 'experimental' %}" class="feature-link">
+                        <div class="feature-icon">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <h3>Run Experiments</h3>
+                        <p>Engage in simulations and virtual labs for real-time exploration.</p>
+                        <div class="feature-hover">
+                            <i class="fas fa-flask glow"></i>
+                            <span>Start Experimenting</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                    <a href="{% url 'all_learning_videos' %}" class="feature-link">
+                        <div class="feature-icon">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <h3>Watch Tutorials</h3>
+                        <p>Understand theory and application through guided video lessons.</p>
+                        <div class="feature-hover">
+                            <i class="fas fa-video glow"></i>
+                            <span>View Videos</span>
+                        </div>
+                    </a>
+                </div>
             </div>
 
-            <a href="{% url 'experimental' %}" class="btn-cta">Start Experimenting</a>
+            <div class="cta-container" data-aos="fade-up" data-aos-delay="600">
+                <a href="{% url 'experimental' %}" class="cta-button">
+                    <span class="button-text">START EXPERIMENTING</span>
+                    <i class="fas fa-arrow-right"></i>
+                    <div class="button-glow"></div>
+                </a>
+            </div>
         </div>
     </section>
 
-    <script src="{% static 'js/home.js' %}"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            once: true,
+            duration: 1000,
+            offset: 100
+        });
+    </script>
+    <script src="{% static 'js/home.js' %}?v=5"></script>
+    <script src="{% static 'js/experimental_home.js' %}?v=1"></script>
 </body>
 </html>
