@@ -66,10 +66,7 @@ body::before {
 .left .welcome-text {
     font-size: 1.2rem;
     font-weight: 600;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--text-dark);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -121,7 +118,7 @@ body::before {
 /* Results Container */
 .results-container {
     max-width: 1200px;
-    margin: 2rem auto;
+    margin: 4rem auto 2rem;
     padding: 2rem;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
@@ -133,8 +130,8 @@ body::before {
 }
 
 .results-container h1 {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
+    font-size: 2rem;
+    margin: 1.5rem 0;
     background: var(--primary-gradient);
     -webkit-background-clip: text;
     background-clip: text;
