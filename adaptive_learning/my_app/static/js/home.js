@@ -26,6 +26,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initialize stats animation
     initStatsAnimation();
+
+    // Initialize AOS with optimized settings
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            once: true,
+            duration: 800,
+            offset: 50,
+            disable: 'mobile'
+        });
+    }
+
+    // Add smooth scroll behavior
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Optimize feature card hover effects
+    const featureCards = document.querySelectorAll('.feature-card');
+    featureCards.forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            requestAnimationFrame(() => {
+                card.style.transform = 'translateY(-5px)';
+            });
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            requestAnimationFrame(() => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    });
 });
 
 // Particle animation
@@ -142,19 +182,6 @@ function animateNumber(element, target) {
     }, stepTime);
 }
 
-// Feature card hover effects
-document.querySelectorAll('.feature-card').forEach(card => {
-    card.addEventListener('mouseenter', () => {
-        const icon = card.querySelector('.feature-icon i');
-        icon.style.transform = 'scale(1.2) rotate(10deg)';
-    });
-
-    card.addEventListener('mouseleave', () => {
-        const icon = card.querySelector('.feature-icon i');
-        icon.style.transform = 'scale(1) rotate(0)';
-    });
-});
-
 // Activity card hover effects
 document.querySelectorAll('.activity-card').forEach(card => {
     card.addEventListener('mouseenter', () => {
@@ -167,3 +194,21 @@ document.querySelectorAll('.activity-card').forEach(card => {
         icon.style.transform = 'scale(1)';
     });
 });
+
+// Optimize animations by using requestAnimationFrame
+function animateOnScroll() {
+    const elements = document.querySelectorAll('[data-aos]');
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('aos-animate');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+
+    elements.forEach(element => observer.observe(element));
+}

@@ -1,150 +1,93 @@
+{% extends 'my_app/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - AdaptivePhysics</title>
-    <meta name="description" content="Your personalized journey to mastering physics concepts with AI-powered learning.">
-    <link rel="stylesheet" href="{% static 'css/home.css' %}?v=7">
-    <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <!-- Animated Background -->
-    <div class="animated-background">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
+
+{% block title %}Home - AdaptivePhysics{% endblock %}
+{% block meta_description %}Your personalized journey to mastering physics concepts with AI-powered learning.{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=8">
+{% endblock %}
+
+{% block content %}
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <div class="left">
+        <span class="welcome-text">Welcome, {{ username }}</span>
     </div>
-
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="left">
-            <a href="{% url 'home' %}" class="logo">
-                <i class="fas fa-atom spin"></i>
-                <span class="logo-text">AdaptivePhysics</span>
-            </a>
-            <span class="welcome-text">Welcome, {{ username }}</span>
-        </div>
-        <div class="right">
-            {% if request.user.student.can_take_experimental_test %}
-                <a href="{% url 'experiment_home' %}" class="nav-link">
-                    <i class="fas fa-flask"></i> Experiment Home
-                </a>
-            {% else %}
-                <a href="{% url 'modules' %}" class="nav-link">
-                    <i class="fas fa-book"></i> Modules
-                </a>
-                <a href="{% url 'profile_update' %}" class="nav-link">
-                    <i class="fas fa-user"></i> Profile
-                </a>
-            {% endif %}
-            <a href="{% url 'logout' %}" class="nav-link">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
-        </div>
-
-        <!-- Mobile Menu Button -->
-        <div class="mobile-menu-btn">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </nav>
-
-    <!-- Mobile Menu -->
-    <div class="mobile-menu">
-        {% if request.user.student.can_take_experimental_test %}
-            <a href="{% url 'experiment_home' %}" class="mobile-link">
-                <i class="fas fa-flask"></i> Experiment Home
-            </a>
-        {% else %}
-            <a href="{% url 'modules' %}" class="mobile-link">
-                <i class="fas fa-book"></i> Modules
-            </a>
-            <a href="{% url 'profile_update' %}" class="mobile-link">
-                <i class="fas fa-user"></i> Profile
-            </a>
-        {% endif %}
-        <a href="{% url 'logout' %}" class="mobile-link">
+    <div class="right">
+        <a href="{% url 'modules' %}" class="nav-link">
+            <i class="fas fa-book"></i> Modules
+        </a>
+        <a href="{% url 'student_assignments' %}" class="nav-link">
+            <i class="fas fa-chart-line"></i> Progress
+        </a>
+        <a href="{% url 'logout' %}" class="nav-link">
             <i class="fas fa-sign-out-alt"></i> Logout
         </a>
     </div>
+</nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content" data-aos="fade-up">
-            <h1 class="gradient-text">Welcome to Your Learning Journey</h1>
-            <p class="subtitle">Your personalized path to mastering physics concepts starts here.</p>
-
-            <div class="features-grid">
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
-                    <a href="{% url 'modules' %}" class="feature-link">
-                        <div class="feature-icon">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <h3>AI-Powered Learning</h3>
-                        <p>Experience personalized learning paths tailored to your understanding and progress.</p>
-                        <div class="feature-hover">
-                            <i class="fas fa-lightbulb glow"></i>
-                            <span>Discover Your Path</span>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
-                    <a href="{% url 'modules' %}" class="feature-link">
-                        <div class="feature-icon">
-                            <i class="fas fa-video"></i>
-                        </div>
-                        <h3>Smart Video Lessons</h3>
-                        <p>Access curated video content based on your performance and learning style.</p>
-                        <div class="feature-hover">
-                            <i class="fas fa-play-circle glow"></i>
-                            <span>Start Learning</span>
-                        </div>
-                    </a>
-                </div>
-
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
-                    <a href="{% url 'student_assignments' %}" class="feature-link">
-                        <div class="feature-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <h3>Progress Tracking</h3>
-                        <p>Monitor your improvement with detailed analytics and comprehensive progress tracking.</p>
-                        <div class="feature-hover">
-                            <i class="fas fa-trophy glow"></i>
-                            <span>Track Success</span>
-                        </div>
-                    </a>
-                </div>
+<!-- Main Content -->
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="gradient-text">Welcome to AdaptivePhysics</h1>
+        <p class="subtitle">Your personalized learning journey starts here</p>
+        
+        <div class="features-grid">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <a href="{% url 'modules' %}" class="feature-link">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI-Powered Learning</h3>
+                    <p>Personalized learning paths based on your performance and learning style.</p>
+                    <div class="feature-hover">
+                        <i class="fas fa-lightbulb glow"></i>
+                        <span>Start Learning</span>
+                    </div>
+                </a>
             </div>
 
-            <div class="cta-container" data-aos="fade-up" data-aos-delay="800">
-                <a href="{% url 'modules' %}" class="cta-button">
-                    <span class="button-text">START LEARNING</span>
-                    <i class="fas fa-arrow-right"></i>
-                    <div class="button-glow"></div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                <a href="{% url 'modules' %}" class="feature-link">
+                    <div class="feature-icon">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3>Smart Video Lessons</h3>
+                    <p>Access curated video content based on your performance and learning style.</p>
+                    <div class="feature-hover">
+                        <i class="fas fa-play-circle glow"></i>
+                        <span>Start Learning</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
+                <a href="{% url 'student_assignments' %}" class="feature-link">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Progress Tracking</h3>
+                    <p>Monitor your improvement with detailed analytics and comprehensive progress tracking.</p>
+                    <div class="feature-hover">
+                        <i class="fas fa-trophy glow"></i>
+                        <span>Track Success</span>
+                    </div>
                 </a>
             </div>
         </div>
-    </section>
 
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>
-        AOS.init({
-            once: true,
-            duration: 1000,
-            offset: 100
-        });
-    </script>
-    <script src="{% static 'js/home.js' %}?v=5"></script>
-</body>
-</html>
+        <div class="cta-container" data-aos="fade-up" data-aos-delay="800">
+            <a href="{% url 'modules' %}" class="cta-button">
+                <span class="button-text">START LEARNING</span>
+                <i class="fas fa-arrow-right"></i>
+                <div class="button-glow"></div>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/home.js' %}?v=5"></script>
+{% endblock %}
