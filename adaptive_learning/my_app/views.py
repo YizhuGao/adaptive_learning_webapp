@@ -1051,22 +1051,22 @@ def phi3_chat(request):
         video_emb = np.frombuffer(video.embedding, dtype=np.float32)
 
         # Get user input embedding
-        user_emb = EMBED_MODEL.encode([user_input])[0]
+        # user_emb = EMBED_MODEL.encode([user_input])[0]
 
-        # Compute cosine similarity
-        def cosine_similarity(a, b):
-            return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
-        similarity = cosine_similarity(user_emb, video_emb)
+        # # Compute cosine similarity
+        # def cosine_similarity(a, b):
+        #     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+        # similarity = cosine_similarity(user_emb, video_emb)
 
         # Prepare the best chunk (context)
         # If similarity is high, include description, else just title
         description = video.description or ""
         short_description = description[:200]  # Truncate to 200 chars
 
-        if similarity > 0.5:
-            context = f"Title: {video.title}\nDescription: {short_description}"
-        else:
-            context = f"Title: {video.title}"
+        # if similarity > 0.5:
+        context = f"Title: {video.title}\nDescription: {short_description}"
+        # else:
+        #     context = f"Title: {video.title}"
 
         # Build prompt
         prompt = f"""Student is watching this video:
