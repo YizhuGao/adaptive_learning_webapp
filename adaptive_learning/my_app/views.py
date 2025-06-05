@@ -1046,9 +1046,9 @@ def phi3_chat(request):
             return JsonResponse({"response": "Selected video not found."}, status=404)
 
         # Get video embedding from DB
-        if not video.embedding:
-            return JsonResponse({"response": "No embedding found for this video."}, status=404)
-        video_emb = np.frombuffer(video.embedding, dtype=np.float32)
+        # if not video.embedding:
+        #     return JsonResponse({"response": "No embedding found for this video."}, status=404)
+        # video_emb = np.frombuffer(video.embedding, dtype=np.float32)
 
         # Get user input embedding
         # user_emb = EMBED_MODEL.encode([user_input])[0]
