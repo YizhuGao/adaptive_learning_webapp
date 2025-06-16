@@ -1040,83 +1040,71 @@ def phi3_chat(request):
         if not user_input or not selected_video_title:
             return JsonResponse({"response": "Message and video title are required."}, status=400)
 
-        # Get the selected video from DB
         video = VideoModule.objects.filter(title=selected_video_title).first()
         if not video:
             return JsonResponse({"response": "Selected video not found."}, status=404)
 
-        # Get video embedding from DB
-        # if not video.embedding:
-        #     return JsonResponse({"response": "No embedding found for this video."}, status=404)
-        # video_emb = np.frombuffer(video.embedding, dtype=np.float32)
+        short_description = (video.description or "")[:200]
 
-        # Get user input embedding
-        # user_emb = EMBED_MODEL.encode([user_input])[0]
+        prompt = (
+            "You are an educational assistant. Answer ONLY the user's question about the video below. "
+            "Keep your response under 75 words and do not add any follow-up questions or elaborations.\n\n"
+            f"Video Title: {video.title}\n"
+            f"Video Description: {short_description}\n"
+            f"User's Question: {user_input}\n\n"
+            "Your Answer (max 75 words):"
+        )
 
-        # # Compute cosine similarity
-        # def cosine_similarity(a, b):
-        #     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
-        # similarity = cosine_similarity(user_emb, video_emb)
-
-        # Prepare the best chunk (context)
-        # If similarity is high, include description, else just title
-        description = video.description or ""
-        short_description = description[:200]  # Truncate to 200 chars
-
-        # if similarity > 0.5:
-        context = f"Title: {video.title}\nDescription: {short_description}"
-        # else:
-        #     context = f"Title: {video.title}"
-
-        # Build prompt
-        prompt = f"""Student is watching this video:
-
-{context}
-
-Student asks: {user_input}
-Answer concisely in 70 to 100 words:"""
-
-        # Prepare conversational payload
-        payload = {
-            "inputs": prompt
-        }
-
+        payload = {"inputs": prompt}
         start = time.time()
         response = requests.post(API_URL, headers=headers, json=payload)
         end = time.time()
+
         logger.warning(f'HF API call took {end - start:.2f} seconds')
         logger.warning("HF API status: %s", response.status_code)
         logger.warning("HF API content: %s", response.content)
+
         try:
             result = response.json()
         except Exception as e:
             logger.error(f"HF API JSONDecodeError: {str(e)}")
             if response.status_code == 504:
-                return JsonResponse({"response": "The AI service is currently overloaded or unavailable (504 Gateway Timeout). Please try again later."}, status=503)
+                return JsonResponse({"response": "The AI service is currently overloaded (504). Please try again later."}, status=503)
             if response.status_code == 500:
                 return JsonResponse({"response": "The AI service encountered an internal error (500). Please try again later."}, status=500)
-            return JsonResponse({"response": "HF API did not return valid JSON. Status: {} Content: {}".format(response.status_code, response.content.decode(errors='replace'))}, status=500)
+            return JsonResponse({"response": f"HF API returned invalid JSON. Status: {response.status_code}"}, status=500)
 
-        if isinstance(result, dict) and "error" in result:
-            return JsonResponse({"response": f"HF API error: {result['error']}"}, status=500)
-
-        # Handle the list response with generated_text
         if isinstance(result, list) and len(result) > 0 and "generated_text" in result[0]:
             full_response = result[0]["generated_text"]
-            if full_response.startswith(prompt):
-                reply = full_response[len(prompt):].lstrip("\n")
-            else:
-                reply = full_response
-        else:
-            reply = "No response generated."
 
-        return JsonResponse({"response": reply})
+            # Extract answer part only - split by double newline after the answer prompt
+            # Remove the prompt part first, if present
+            if full_response.startswith(prompt):
+                after_prompt = full_response[len(prompt):]
+            else:
+                after_prompt = full_response
+
+            # Take only text before the first double newline
+            answer_part = after_prompt.split('\n\n')[0].strip()
+
+            # Clean whitespace and limit to ~75 words
+            cleaned_answer = ' '.join(answer_part.replace('\n', ' ').split())
+            words = cleaned_answer.split()
+            reply = ' '.join(words[:75])
+            if len(words) > 75:
+                reply += '...'
+
+            return JsonResponse({"response": reply})
+
+        else:
+            return JsonResponse({"response": "No valid response generated from the AI."}, status=500)
 
     except json.JSONDecodeError as e:
-        logger.error("JSONDecodeError:", str(e))
+        logger.error(f"JSONDecodeError: {str(e)}")
         return JsonResponse({"response": "Invalid JSON format."}, status=400)
+
     except Exception as e:
-        logger.error("General Exception:", str(e))
+        logger.error(f"General Exception: {str(e)}")
         return JsonResponse({"response": f"Server error: {str(e)}"}, status=500)
 
 
