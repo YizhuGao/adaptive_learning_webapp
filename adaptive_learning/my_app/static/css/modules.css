@@ -221,10 +221,9 @@ body {
 /* Module Grid */
 .module-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 520px));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
     padding: 1rem;
-    justify-content: center;
 }
 
 .module-card {
@@ -246,7 +245,7 @@ body {
     box-shadow: var(--box-shadow);
 }
 
-.module-card:hover .module-card-inner {
+.module-card.flipped .module-card-inner {
     transform: rotateY(180deg);
 }
 
@@ -283,7 +282,7 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
-.module-card:hover .module-icon {
+.module-card.flipped .module-icon {
     transform: scale(1.1) rotate(5deg);
 }
 
@@ -305,6 +304,11 @@ body {
 
 .current-subtopic i {
     color: var(--primary-color);
+}
+
+.current-subtopic .gradient-text {
+    font-weight: 600;
+    font-size: 1rem;
 }
 
 .card-footer {
@@ -476,4 +480,158 @@ body {
         padding: 0.5rem;
         grid-template-columns: minmax(400px, 520px);
     }
+}
+
+.upcoming-subtopics {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.upcoming-subtopics h4 {
+    color: var(--text-dark);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.upcoming-subtopics ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.upcoming-subtopics li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 0.3rem;
+}
+
+.upcoming-subtopics li i {
+    color: var(--primary-color);
+    font-size: 0.8rem;
+}
+
+.upcoming-subtopics li:last-child {
+    margin-bottom: 0;
+}
+
+.upcoming-card {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: var(--box-shadow);
+    transition: all var(--transition-fast);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.upcoming-card h3 {
+    color: var(--text-dark);
+    font-size: 1.3rem;
+    margin-bottom: 1.2rem;
+    text-align: center;
+}
+
+.upcoming-card .completed-topics {
+    margin-bottom: 1.5rem;
+}
+
+.upcoming-card .completed-topics h4 {
+    color: var(--text-dark);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.upcoming-card .completed-topics h4 i {
+    color: var(--primary-color);
+}
+
+.upcoming-card .completed-topics ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.upcoming-card .completed-topics li {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.7rem;
+    margin-bottom: 0.5rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    transition: all var(--transition-fast);
+}
+
+.upcoming-card .completed-topics li:hover {
+    background: rgba(158, 27, 50, 0.05);
+}
+
+.upcoming-card .completed-topics li:last-child {
+    margin-bottom: 0;
+}
+
+.upcoming-card .completed-topics li i {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+}
+
+.upcoming-card .completed-topics li span {
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+.upcoming-card .cta-button {
+    margin-top: auto;
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(158, 27, 50, 0.15);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.upcoming-card .cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(158, 27, 50, 0.2);
+    background: var(--hover-gradient);
+}
+
+.upcoming-card .cta-button .button-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.upcoming-card .cta-button:hover .button-glow {
+    transform: translateX(100%);
 }
