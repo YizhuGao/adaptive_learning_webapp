@@ -203,3 +203,12 @@ class ExperimentAssessmentScore(models.Model):
 
     def __str__(self):
         return f"{self.student.user.username} - Score: {self.score} - Taken at: {self.taken_at}"
+    
+
+class Misconception(models.Model):
+    misconception_id = models.PositiveIntegerField(unique=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)  # Optional
+
+    def __str__(self):
+        return f"{self.misconception_id} - {self.name}"

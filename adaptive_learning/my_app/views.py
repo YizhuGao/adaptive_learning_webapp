@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import Assessment, Question, Student, AssessmentResponse, Option, VideoModule, Subtopic, Progress, Topic, \
-    VideoProgress, ExperimentAssessmentScore
+    VideoProgress, ExperimentAssessmentScore, Misconception
 import logging
 import numpy as np
 from django.conf import settings
@@ -347,9 +347,11 @@ def submit_test(request, topic_id, subtopic_id):
                         logger.error(f"Prediction error for Q{que}: {e}")
 
                 weak_knowledge_indices = sorted([int(idx) + 1 for idx in weak_knowledge_indices])
+                misconceptions = Misconception.objects.filter(misconception_id__in=weak_knowledge_indices)
 
                 logger.info("Final Weak Knowledge Indices:", weak_knowledge_indices)
                 print("Final Weak Knowledge Indices:", weak_knowledge_indices)
+                print("Final Weak Knowledge Indices:", misconceptions)
 
                 try:
                     misconception_videos = VideoModule.objects.filter(subtopic=subtopic)
@@ -410,6 +412,7 @@ def submit_test(request, topic_id, subtopic_id):
                     progress.save()
 
                 # Redirect to the test results page
+                request.session['misconceptions'] = [m.id for m in misconceptions]
                 return redirect('test_results', topic_id=topic_id, subtopic_id=subtopic_id)
 
             except Exception as e:
@@ -658,6 +661,8 @@ def modules_view(request):
 @login_required
 def test_results(request, topic_id, subtopic_id):
     student = get_object_or_404(Student, user=request.user)
+    misconception_ids = request.session.pop('misconceptions', [])
+    misconceptions = Misconception.objects.filter(id__in=misconception_ids)
     if not student.can_take_experimental_test:
         try:
             topic = get_object_or_404(Topic, topic_id=topic_id)
@@ -708,6 +713,7 @@ def test_results(request, topic_id, subtopic_id):
                 "video_url": video_url,
                 "student_id": student.student_id,
                 "score_after": progress.score_after if progress else None,
+                'misconceptions': misconceptions,
             }
 
             return render(request, "my_app/test_results.html", context)

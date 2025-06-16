@@ -30,6 +30,15 @@
         </div>
     </nav>
 
+    <div class="misconceptions-container">
+        <h2>Misconceptions</h2>
+        <ul>
+            {% for m in misconceptions %}
+            <li><strong>{{ m.name }}</strong></li>
+            {% endfor %}
+        </ul>
+    </div>
+
     <!-- Results Container -->
     <div class="results-container">
         <div class="results-header">

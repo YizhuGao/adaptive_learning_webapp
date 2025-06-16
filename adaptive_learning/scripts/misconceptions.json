@@ -1,0 +1,26 @@
+[
+    {"misconception_id": 1, "name": "Heat is a substance. (Heat is not energy.)"},
+    {"misconception_id": 2, "name": "Cold is an opposite type of heat (energy)."},
+    {"misconception_id": 3, "name": "Heat is proportional to temperature. (Heat and temperature are the same thing; Temperature is the “intensity” of heat.)"},
+    {"misconception_id": 4, "name": "Perceptions of hot and cold are unrelated to energy transfer. (Skin or touch can determine temperature.)"},
+    {"misconception_id": 5, "name": "Boiling point is the maximum temperature a substance can reach. (When temperature at boiling remains constant, something is “wrong.”)"},
+    {"misconception_id": 6, "name": "A cold body contains no heat."},
+    {"misconception_id": 7, "name": "The temperature of an object depends on its size."},
+    {"misconception_id": 8, "name": "Intensive property can be added up or subtracted. (There is no limit on the lowest temperature.)"},
+    {"misconception_id": 9, "name": "Heating always results in an increase in temperature."},
+    {"misconception_id": 10, "name": "Heat rises."},
+    {"misconception_id": 11, "name": "Heat and cold flow like liquids."},
+    {"misconception_id": 12, "name": "Temperature can be transferred."},
+    {"misconception_id": 13, "name": "Objects of different temperature that are in contact with each other, or in contact with air at different temperature, do not necessarily move toward the same temperature. (Thermal equilibrium is not a concept.)"},
+    {"misconception_id": 14, "name": "Hot objects naturally cool down, cold objects naturally warm up."},
+    {"misconception_id": 15, "name": "Heat flows more slowly through conductors making them feel hot."},
+    {"misconception_id": 16, "name": "Temperature is a property of a particular material or object."},
+    {"misconception_id": 17, "name": "Material has the ability to attract, hold, intensify or absorb heat and cold."},
+    {"misconception_id": 18, "name": "Different materials hold the same amount of heat."},
+    {"misconception_id": 19, "name": "The boiling point of water is 100°C (only)."},
+    {"misconception_id": 20, "name": "Ice is at 0°C and/or cannot change temperature."},
+    {"misconception_id": 21, "name": "Water cannot be at 0°C."},
+    {"misconception_id": 22, "name": "Steam is more than 100°C."},
+    {"misconception_id": 23, "name": "Water vapour is liquid particles."}
+  ]
+  
