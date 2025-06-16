@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ topic.topic_name }} - {{ subtopic.subtopic_name }} Test</title>
-    <link rel="stylesheet" href="{% static 'css/test.css' %}?v=11">
+    <link rel="stylesheet" href="{% static 'css/test.css' %}?v=9">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -17,8 +17,13 @@
         <p class="test-instructions">Answer all questions carefully to get the most accurate recommendations</p>
 
         <!-- Progress Bar -->
-        <div class="progress-bar">
-            <div class="progress" id="progress"></div>
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="progress-text">
+                <span id="questions-answered">0</span>/<span id="total-questions">{{ questions|length }}</span> Questions Answered
+            </div>
         </div>
 
         <form method="POST" action="{% url 'submit_test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}">
@@ -26,7 +31,7 @@
             <div class="questions-container">
                 {% for question in questions %}
                 <div class="question-card">
-                    <p class="question-text"><strong>Question {{ forloop.counter }}:</strong> {{ question.question_text }}</p>
+                    <p class="question-text"><strong>Question <span style="color: #94182f; font-weight: 700;">{{ forloop.counter }}</span> :</strong> {{ question.question_text }}</p>
                     <div class="options">
                         {% for option in question.options.all %}
                         <label class="option">
@@ -58,6 +63,6 @@
         </form>
     </div>
 
-    <script src="{% static 'js/test.js' %}?v=4"></script>
+    <script src="{% static 'js/test.js' %}?v=7"></script>
 </body>
 </html>

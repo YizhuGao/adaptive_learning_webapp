@@ -186,4 +186,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Start typewriter effect after a short delay
         setTimeout(typeWriter, 500);
     }
+
+    // Flip card functionality
+    featureCards.forEach(card => {
+        card.addEventListener('click', function() {
+            this.classList.toggle('flipped');
+        });
+    });
 });

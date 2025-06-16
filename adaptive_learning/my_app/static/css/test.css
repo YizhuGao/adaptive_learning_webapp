@@ -93,6 +93,22 @@ h1, h2, h3, h4, h5, h6 {
     transition: width var(--transition-fast);
 }
 
+.progress-container {
+    margin: 0.7rem 0;
+}
+
+.progress-text {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-light);
+    margin-top: 0.5rem;
+}
+
+.progress-text span {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
 /* Questions Container */
 .questions-container {
     position: relative;
@@ -176,14 +192,6 @@ h1, h2, h3, h4, h5, h6 {
     z-index: 10;
     margin-top: 1.2rem;
     padding: 0 1rem;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.button-container.show {
-    opacity: 1;
-    visibility: visible;
 }
 
 .nav-buttons {
@@ -197,6 +205,14 @@ h1, h2, h3, h4, h5, h6 {
 .submit-container {
     position: relative;
     z-index: 2;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.submit-container.show {
+    opacity: 1;
+    visibility: visible;
 }
 
 .nav-btn, .submit-btn {
@@ -298,4 +314,12 @@ form {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.question-number {
+    background: var(--primary-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
 }

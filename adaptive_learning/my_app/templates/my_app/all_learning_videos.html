@@ -4,13 +4,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AdaptivePhysics - Learning Videos</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Learning Videos - AdaptivePhysics</title>
     <meta name="description" content="Watch personalized physics video lessons with AI-powered learning support.">
-    <link rel="stylesheet" href="{% static 'css/expLearningVideos.css' %}?v=9">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}?v=5">
+    <link rel="stylesheet" href="{% static 'css/expLearningVideos.css' %}?v=7">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feature-link {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #9e1b32;
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            margin: 0.5rem 0;
+            color: #333;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            margin: 0.25rem 0;
+            color: #666;
+        }
+
+        .video-container {
+            margin-top: 0.5rem;
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .video-thumbnail {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover .video-overlay {
+            opacity: 1;
+        }
+
+        .play-icon {
+            font-size: 2.5rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-description {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+            z-index: 1001;
+            transition: color 0.3s ease;
+        }
+
+        .close-button:hover {
+            color: #9e1b32;
+        }
+
+        #modalVideoFrame {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border: none;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .features-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1rem;
+                padding: 0.5rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Animated Background -->
@@ -24,12 +205,11 @@
     </div>
 
     <!-- Navigation -->
-    <nav>
-        <a href="{% url 'home' %}" class="logo">
-            <i class="fas fa-atom spin"></i>
-            <span class="logo-text">AdaptivePhysics</span>
-        </a>
-        <div class="nav-links">
+    <nav class="navbar">
+        <div class="left">
+            <span class="welcome-text">Welcome, {{ username }}</span>
+        </div>
+        <div class="right">
             <a href="{% url 'home' %}" class="nav-link">
                 <i class="fas fa-home"></i> Home
             </a>
@@ -43,73 +223,55 @@
                 <i class="fas fa-sign-out-alt"></i> Logout
             </a>
         </div>
-
-        <!-- Mobile Menu Button -->
-        <div class="mobile-menu-btn">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
     </nav>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu">
-        <a href="{% url 'home' %}" class="mobile-link">
-            <i class="fas fa-home"></i> Home
-        </a>
-        <a href="{% url 'experimental' %}" class="mobile-link">
-            <i class="fas fa-vial"></i> Experiment
-        </a>
-        <a href="{% url 'profile_update' %}" class="mobile-link">
-            <i class="fas fa-user"></i> Profile
-        </a>
-        <a href="{% url 'logout' %}" class="mobile-link">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
-    </div>
-
     <!-- Videos Section -->
-    <section class="video-section">
-        <div class="section-header" data-aos="fade-down">
-            <h1 class="gradient-text">Learning Videos</h1>
-            <p class="section-description">Explore our curated collection of physics video lessons</p>
-        </div>
+    <section class="features-section">
+        <div class="container">
+            <div class="section-header" data-aos="fade-down">
+                <h1 class="gradient-text">Learning Videos</h1>
+                <p class="section-description">Explore our curated collection of physics video lessons</p>
+            </div>
 
-        <div class="videos-grid">
-            {% if video_data_grouped %}
-                {% for video in video_data_grouped %}
-                <div class="video-wrapper video-tile" data-aos="fade-up" data-aos-delay="{{ forloop.counter|multiply:200 }}">
-                    <div class="video-content">
-                        <div class="video-title">
-                            <i class="fas fa-video"></i> {{ video.video_title }}
-                        </div>
-                        <div class="video-details">
+            <div class="features-grid">
+                {% if video_data_grouped %}
+                    {% for video in video_data_grouped %}
+                    <div class="feature-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:0|add:0|add:200 }}">
+                        <div class="feature-link">
+                            <div class="feature-icon">
+                                <!-- <i class="fas fa-video"></i> -->
+                            </div>
+                            <h3>{{ video.video_title }}</h3>
                             <p><i class="fas fa-book"></i> <strong>Topic:</strong> {{ video.topic_name }}</p>
                             <p><i class="fas fa-bookmark"></i> <strong>Subtopic:</strong> {{ video.subtopic_name }}</p>
-                        </div>
-                        <div class="video-container">
-                            <div class="video-overlay">
-                                <i class="play-icon fas fa-play-circle"></i>
+                            <div class="video-container clickable" onclick="openVideoModal('{{ video.video_url }}', '{{ video.video_title }}', '{{ video.video_id }}', '{{ video.subtopic_id }}')">
+                                <div class="video-thumbnail">
+                                    <div class="video-overlay">
+                                        <div class="video-title-overlay">{{ video.video_title }}</div>
+                                    </div>
+                                    <iframe class="video-frame"
+                                            src="{{ video.video_url }}"
+                                            frameborder="0"
+                                            data-video-id="{{ video.video_id }}"
+                                            data-subtopic-id="{{ video.subtopic_id }}"
+                                            data-video-title="{{ video.video_title }}"
+                                            id="video-{{ video.video_id }}">
+                                    </iframe>
+                                </div>
                             </div>
-                            <iframe class="video-frame"
-                                    src="{{ video.video_url }}"
-                                    frameborder="0"
-                                    allow="autoplay; fullscreen"
-                                    allowfullscreen
-                                    data-video-id="{{ video.video_id }}"
-                                    data-subtopic-id="{{ video.subtopic_id }}"
-                                    id="video-{{ video.video_id }}">
-                            </iframe>
                         </div>
                     </div>
-                </div>
-                {% endfor %}
-            {% else %}
-                <div class="no-videos-message" data-aos="fade-up">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <p>No video modules available for this subtopic.</p>
-                </div>
-            {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div class="no-videos-message feature-card" data-aos="fade-up">
+                        <div class="feature-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3>No Videos Available</h3>
+                        <p>No video modules are currently available.</p>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </section>
 
@@ -144,12 +306,51 @@
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
+        // Initialize AOS
         AOS.init({
             once: true,
             duration: 1000,
             offset: 100
         });
+
+        // Video Modal Functionality
+        const modal = document.getElementById('videoModal');
+        const modalFrame = document.getElementById('modalVideoFrame');
+        const closeButton = document.querySelector('.close-button');
+
+        function openVideoModal(videoUrl, videoTitle, videoId, subtopicId) {
+            // Add autoplay parameter to the video URL
+            const autoplayUrl = videoUrl.includes('?') ? 
+                `${videoUrl}&autoplay=1` : 
+                `${videoUrl}?autoplay=1`;
+            
+            modalFrame.src = autoplayUrl;
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        function closeVideoModal() {
+            modal.classList.remove('show');
+            modalFrame.src = ''; // Clear the video source
+            document.body.style.overflow = ''; // Restore background scrolling
+        }
+
+        // Close modal when clicking the close button
+        closeButton.addEventListener('click', closeVideoModal);
+
+        // Close modal when clicking outside the content
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeVideoModal();
+            }
+        });
+
+        // Close modal when pressing Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('show')) {
+                closeVideoModal();
+            }
+        });
     </script>
-    <script src="{% static 'js/expVideo.js' %}?v=5"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modules - AdaptivePhysics</title>
     <meta name="description" content="Explore physics topics and track your learning progress with AI-powered assessments.">
-    <link rel="stylesheet" href="{% static 'css/modules.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'css/modules.css' %}?v=9">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -101,7 +101,7 @@
                             {% if item.subtopic %}
                                 <p class="current-subtopic">
                                     <i class="fas fa-book-reader"></i>
-                                    Currently Learning: {{ item.subtopic.subtopic_name }}
+                                    Currently Learning: <h4><span style="color: #94182f; font-weight: 700;">{{ item.subtopic.subtopic_name }}</span></h4>
                                 </p>
                             {% endif %}
                             <div class="card-footer">
@@ -133,6 +133,30 @@
                         </div>
                     </div>
                 </div>
+
+                {% if item.upcoming_subtopics %}
+                <div class="upcoming-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:"250" }}">
+                    <h3>Upcoming Topics</h3>
+                    <div class="completed-topics">
+                        <h4><i class="fas fa-forward"></i> Next in Your Journey</h4>
+                        <ul>
+                            {% for upcoming in item.upcoming_subtopics %}
+                                <li>
+                                    <i class="fas fa-hourglass-start"></i>
+                                    <span>{{ upcoming.subtopic_name }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% if item.subtopic %}
+                        <a href="{% url 'test' topic_id=item.topic.topic_id subtopic_id=item.subtopic.subtopic_id %}" class="cta-button">
+                            <span class="button-text">Continue Learning</span>
+                            <i class="fas fa-arrow-right"></i>
+                            <div class="button-glow"></div>
+                        </a>
+                    {% endif %}
+                </div>
+                {% endif %}
                 {% endfor %}
             </div>
         </div>
@@ -146,6 +170,6 @@
             offset: 100
         });
     </script>
-    <script src="{% static 'js/modules.js' %}?v=3"></script>
+    <script src="{% static 'js/modules.js' %}?v=4"></script>
 </body>
 </html>

@@ -77,6 +77,11 @@ nav.nav-hidden {
     font-weight: 700;
 }
 
+.logo i {
+    color: #9e1b32;
+    animation: spin 4s linear infinite;
+}
+
 .logo-text {
     background: var(--primary-gradient);
     background-clip: text;
@@ -221,7 +226,7 @@ nav.nav-hidden {
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
-    padding: 0 1rem;
+    padding: 5rem 1rem;
     z-index: 2;
 }
 
@@ -234,10 +239,93 @@ nav.nav-hidden {
     position: relative;
     overflow: hidden;
     height: 100%;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+}
+
+.feature-card.flipped .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.card-back {
+    transform: rotateY(180deg);
+    background: var(--primary-gradient);
+    color: white;
+    border-radius: 20px;
+}
+
+.card-back h3 {
+    color: white;
+    margin-bottom: 1.5rem;
+}
+
+.card-back ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+    text-align: left;
+}
+
+.card-back ul li {
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-back ul li:before {
+    content: "•";
+    color: white;
+    font-weight: bold;
+}
+
+.back-hover {
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.card-back:hover .back-hover {
+    opacity: 1;
+}
+
+.back-hover i {
+    font-size: 1.5rem;
+    color: white;
+}
+
+.back-hover span {
+    color: white;
+    font-size: 0.9rem;
 }
 
 .feature-card:hover {
@@ -350,7 +438,7 @@ nav.nav-hidden {
 .step-content h4 {
     color: var(--text-dark);
     margin-bottom: 0.5rem;
-    font-size: 1.2rem;
+    font-size: 1.0rem;
 }
 
 .step-content p {
@@ -566,13 +654,21 @@ footer {
     .flow-steps {
         flex-direction: column;
     }
-
+    
     .flow-arrow {
         transform: rotate(90deg);
     }
-
+    
     .learning-flow {
         padding: 2rem;
+    }
+
+    .feature-card {
+        padding: 2rem 1.5rem;
+    }
+    
+    .card-back ul li {
+        font-size: 0.9rem;
     }
 }
 

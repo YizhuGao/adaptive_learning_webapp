@@ -423,28 +423,135 @@ def submit_test(request, topic_id, subtopic_id):
 
 
 
+# @login_required
+# def modules_view(request):
+#     student = get_object_or_404(Student, user=request.user)
+#     if not student.can_take_experimental_test:
+#         topics = Topic.objects.all()
+#         topic_data = []
+
+#         for topic in topics:
+#             # Get all completed subtopics for this student and topic
+#             completed_subtopics = list(Progress.objects.filter(
+#                 student=student,
+#                 current_topic=topic,
+#                 completion_status='Completed'
+#             ).values_list('current_subtopic__subtopic_name', flat=True))
+
+#             # Get the latest progress for this topic
+#             progress = Progress.objects.filter(student=student, current_topic=topic).order_by('-last_accessed').first()
+
+#             if progress:
+#                 current_subtopic = progress.current_subtopic
+
+#                 # Check if the current subtopic is completed before creating progress for the next one
+#                 if progress.completion_status == 'Completed':
+#                     next_subtopic = Subtopic.objects.filter(
+#                         topic=topic,
+#                         subtopic_order_number__gt=current_subtopic.subtopic_order_number
+#                     ).order_by('subtopic_order_number').first() if current_subtopic else None
+
+#                     if next_subtopic:
+#                         next_progress = Progress.objects.filter(
+#                             student=student,
+#                             current_topic=topic,
+#                             current_subtopic=next_subtopic
+#                         ).first()
+
+#                         if not next_progress:
+#                             # Create progress for the next subtopic
+#                             new_progress = Progress.objects.create(
+#                                 student=student,
+#                                 current_topic=topic,
+#                                 current_subtopic=next_subtopic,
+#                                 next_subtopic=Subtopic.objects.filter(
+#                                     topic=topic,
+#                                     subtopic_order_number__gt=next_subtopic.subtopic_order_number
+#                                 ).order_by('subtopic_order_number').first(),
+#                                 module=VideoModule.objects.filter(subtopic=current_subtopic).first(),
+#                                 completion_status='not_started',
+#                                 video_watched=False
+#                             )
+#                             progress = new_progress
+
+#                         # Add to topic_data (added completed_subtopics)
+#                         topic_data.append({
+#                             'topic': topic,
+#                             'subtopic': progress.current_subtopic,
+#                             'completed_subtopics': completed_subtopics
+#                         })
+
+#                     else:
+#                         progress.completion_status = 'Completed'
+#                         progress.save()
+
+#                         # Add to topic_data (added completed_subtopics)
+#                         topic_data.append({
+#                             'topic': topic,
+#                             'subtopic': None,
+#                             'completed_subtopics': completed_subtopics
+#                         })
+
+#                 else:
+#                     # If current subtopic is not complete, do not create next subtopic progress
+#                     topic_data.append({
+#                         'topic': topic,
+#                         'subtopic': progress.current_subtopic,
+#                         'completed_subtopics': completed_subtopics
+#                     })
+
+#             else:
+#                 # If no progress exists, start from the first subtopic
+#                 first_subtopic = Subtopic.objects.filter(topic=topic).order_by('subtopic_order_number').first()
+#                 if first_subtopic:
+#                     progress = Progress.objects.create(
+#                         student=student,
+#                         current_topic=topic,
+#                         current_subtopic=first_subtopic,
+#                         next_subtopic=Subtopic.objects.filter(
+#                             topic=topic,
+#                             subtopic_order_number__gt=first_subtopic.subtopic_order_number
+#                         ).order_by('subtopic_order_number').first(),
+#                         module=VideoModule.objects.filter(topic=topic).first(),
+#                         completion_status='not_started'
+#                     )
+
+
+#                 topic_data.append({
+#                     'topic': topic,
+#                     'subtopic': progress.current_subtopic if progress else None,
+#                     'completed_subtopics': completed_subtopics
+#                 })
+
+#         context = {
+#             'topic_data': topic_data,
+#             'username': request.user.student.first_name
+#         }
+#         return render(request, 'my_app/modules.html', context)
+
+#     messages.error(request, "You are not authorized to access the normal test section.")
+#     return redirect('experiment_home')  # Replace with appropriate view name
+
 @login_required
 def modules_view(request):
     student = get_object_or_404(Student, user=request.user)
+    
     if not student.can_take_experimental_test:
         topics = Topic.objects.all()
         topic_data = []
 
         for topic in topics:
-            # Get all completed subtopics for this student and topic
             completed_subtopics = list(Progress.objects.filter(
                 student=student,
                 current_topic=topic,
                 completion_status='Completed'
             ).values_list('current_subtopic__subtopic_name', flat=True))
 
-            # Get the latest progress for this topic
             progress = Progress.objects.filter(student=student, current_topic=topic).order_by('-last_accessed').first()
 
             if progress:
                 current_subtopic = progress.current_subtopic
 
-                # Check if the current subtopic is completed before creating progress for the next one
                 if progress.completion_status == 'Completed':
                     next_subtopic = Subtopic.objects.filter(
                         topic=topic,
@@ -459,7 +566,6 @@ def modules_view(request):
                         ).first()
 
                         if not next_progress:
-                            # Create progress for the next subtopic
                             new_progress = Progress.objects.create(
                                 student=student,
                                 current_topic=topic,
@@ -474,35 +580,46 @@ def modules_view(request):
                             )
                             progress = new_progress
 
-                        # Add to topic_data (added completed_subtopics)
+                        upcoming_subtopics = list(Subtopic.objects.filter(
+                            topic=topic,
+                            subtopic_order_number__gt=progress.current_subtopic.subtopic_order_number
+                        ).order_by('subtopic_order_number'))
+
                         topic_data.append({
                             'topic': topic,
                             'subtopic': progress.current_subtopic,
-                            'completed_subtopics': completed_subtopics
+                            'completed_subtopics': completed_subtopics,
+                            'upcoming_subtopics': upcoming_subtopics
                         })
 
                     else:
                         progress.completion_status = 'Completed'
                         progress.save()
 
-                        # Add to topic_data (added completed_subtopics)
                         topic_data.append({
                             'topic': topic,
                             'subtopic': None,
-                            'completed_subtopics': completed_subtopics
+                            'completed_subtopics': completed_subtopics,
+                            'upcoming_subtopics': []
                         })
 
                 else:
-                    # If current subtopic is not complete, do not create next subtopic progress
+                    upcoming_subtopics = list(Subtopic.objects.filter(
+                        topic=topic,
+                        subtopic_order_number__gt=current_subtopic.subtopic_order_number
+                    ).order_by('subtopic_order_number')) if current_subtopic else []
+
                     topic_data.append({
                         'topic': topic,
                         'subtopic': progress.current_subtopic,
-                        'completed_subtopics': completed_subtopics
+                        'completed_subtopics': completed_subtopics,
+                        'upcoming_subtopics': upcoming_subtopics
                     })
 
             else:
-                # If no progress exists, start from the first subtopic
                 first_subtopic = Subtopic.objects.filter(topic=topic).order_by('subtopic_order_number').first()
+                progress = None
+
                 if first_subtopic:
                     progress = Progress.objects.create(
                         student=student,
@@ -516,11 +633,16 @@ def modules_view(request):
                         completion_status='not_started'
                     )
 
+                upcoming_subtopics = list(Subtopic.objects.filter(
+                    topic=topic,
+                    subtopic_order_number__gt=first_subtopic.subtopic_order_number
+                ).order_by('subtopic_order_number')) if first_subtopic else []
 
                 topic_data.append({
                     'topic': topic,
                     'subtopic': progress.current_subtopic if progress else None,
-                    'completed_subtopics': completed_subtopics
+                    'completed_subtopics': completed_subtopics,
+                    'upcoming_subtopics': upcoming_subtopics
                 })
 
         context = {
@@ -530,7 +652,7 @@ def modules_view(request):
         return render(request, 'my_app/modules.html', context)
 
     messages.error(request, "You are not authorized to access the normal test section.")
-    return redirect('experiment_home')  # Replace with appropriate view name
+    return redirect('experiment_home')
 
 
 @login_required
@@ -1026,6 +1148,98 @@ def all_learning_videos(request):
 HF_API_KEY = os.environ.get("HF_API_KEY")
 API_URL = "https://api-inference.huggingface.co/models/microsoft/Phi-3-mini-4k-instruct"
 headers = {"Authorization": f"Bearer {HF_API_KEY}"}
+
+# @csrf_exempt
+# def phi3_chat(request):
+#     if request.method != 'POST':
+#         return JsonResponse({"error": "Invalid request method."}, status=405)
+
+#     try:
+#         data = json.loads(request.body.decode('utf-8'))
+#         user_input = data.get('message', '').strip()
+#         selected_video_title = data.get('video_title', '').strip()
+
+#         if not user_input or not selected_video_title:
+#             return JsonResponse({"response": "Message and video title are required."}, status=400)
+
+#         # Get the selected video from DB
+#         video = VideoModule.objects.filter(title=selected_video_title).first()
+#         if not video:
+#             return JsonResponse({"response": "Selected video not found."}, status=404)
+
+#         # Get video embedding from DB
+#         # if not video.embedding:
+#         #     return JsonResponse({"response": "No embedding found for this video."}, status=404)
+#         # video_emb = np.frombuffer(video.embedding, dtype=np.float32)
+
+#         # Get user input embedding
+#         # user_emb = EMBED_MODEL.encode([user_input])[0]
+
+#         # # Compute cosine similarity
+#         # def cosine_similarity(a, b):
+#         #     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+#         # similarity = cosine_similarity(user_emb, video_emb)
+
+#         # Prepare the best chunk (context)
+#         # If similarity is high, include description, else just title
+#         description = video.description or ""
+#         short_description = description[:200]  # Truncate to 200 chars
+
+#         # if similarity > 0.5:
+#         context = f"Title: {video.title}\nDescription: {short_description}"
+#         # else:
+#         #     context = f"Title: {video.title}"
+
+#         # Build prompt
+#         prompt = f"""Student is watching this video:
+
+# {context}
+
+# Student asks: {user_input}
+# Answer concisely in 70 to 100 words:"""
+
+#         # Prepare conversational payload
+#         payload = {
+#             "inputs": prompt
+#         }
+
+#         start = time.time()
+#         response = requests.post(API_URL, headers=headers, json=payload)
+#         end = time.time()
+#         logger.warning(f'HF API call took {end - start:.2f} seconds')
+#         logger.warning("HF API status: %s", response.status_code)
+#         logger.warning("HF API content: %s", response.content)
+#         try:
+#             result = response.json()
+#         except Exception as e:
+#             logger.error(f"HF API JSONDecodeError: {str(e)}")
+#             if response.status_code == 504:
+#                 return JsonResponse({"response": "The AI service is currently overloaded or unavailable (504 Gateway Timeout). Please try again later."}, status=503)
+#             if response.status_code == 500:
+#                 return JsonResponse({"response": "The AI service encountered an internal error (500). Please try again later."}, status=500)
+#             return JsonResponse({"response": "HF API did not return valid JSON. Status: {} Content: {}".format(response.status_code, response.content.decode(errors='replace'))}, status=500)
+
+#         if isinstance(result, dict) and "error" in result:
+#             return JsonResponse({"response": f"HF API error: {result['error']}"}, status=500)
+
+#         # Handle the list response with generated_text
+#         if isinstance(result, list) and len(result) > 0 and "generated_text" in result[0]:
+#             full_response = result[0]["generated_text"]
+#             if full_response.startswith(prompt):
+#                 reply = full_response[len(prompt):].lstrip("\n")
+#             else:
+#                 reply = full_response
+#         else:
+#             reply = "No response generated."
+
+#         return JsonResponse({"response": reply})
+
+#     except json.JSONDecodeError as e:
+#         logger.error("JSONDecodeError:", str(e))
+#         return JsonResponse({"response": "Invalid JSON format."}, status=400)
+#     except Exception as e:
+#         logger.error("General Exception:", str(e))
+#         return JsonResponse({"response": f"Server error: {str(e)}"}, status=500)
 
 @csrf_exempt
 def phi3_chat(request):

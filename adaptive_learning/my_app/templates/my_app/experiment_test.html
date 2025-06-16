@@ -7,6 +7,8 @@
     <title>{{ topic.topic_name }} - {{ subtopic.subtopic_name }} Test</title>
     <link rel="stylesheet" href="{% static 'css/test.css' %}?v=2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     {% comment %} <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> {% endcomment %}
 </head>
 <body>
@@ -17,16 +19,32 @@
         <span class="welcome-text">All the Best 👍🏼, {{ username }}</span>
     </div>
     <div class="right">
-        <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a> 
+        <a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a>
         <a href="{% url 'all_learning_videos' %}" class="nav-link"><i class="fas fa-video"></i> Learning Videos</a>
         <a href="{% url 'profile_update' %}" class="nav-link"><i class="fas fa-user"></i> Profile</a>
         <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
+    <!-- Mobile Menu Button -->
+    <div class="mobile-menu-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
 </nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu">
+    <a href="{% url 'home' %}" class="mobile-link"><i class="fas fa-home"></i> Home</a>
+    <a href="{% url 'all_learning_videos' %}" class="mobile-link"><i class="fas fa-video"></i> Learning Videos</a>
+    <a href="{% url 'profile_update' %}" class="mobile-link"><i class="fas fa-user"></i> Profile</a>
+    <a href="{% url 'logout' %}" class="mobile-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+</div>
 
 <!-- Test Container -->
 <div class="test-container">
-    <p>Answer the following questions carefully:</p>
+    <h1 class="gradient-text">{{ topic.topic_name }} - {{ subtopic.subtopic_name }}</h1>
+    <p class="welcome-message">Welcome, {{ username }}! Let's test your knowledge 🎯</p>
+    <p class="test-instructions">Answer all questions carefully to get the most accurate recommendations</p>
 
     <!-- Progress Bar -->
     <div class="progress-bar">
@@ -34,37 +52,91 @@
     </div>
 
     <form method="POST" action="{% url 'submit_experimental_test' %}">
-    {% csrf_token %}
-    <div class="questions-container">
-        {% for item in question_data %}
-        <div class="question-card">
-            <center><p class="question-text"><strong>Q{{ forloop.counter }} : {{ item.question.question_text }}</strong></p></center>
-            <div class="options">
-                {% for option in item.options %}
-                <label class="option">
-                    <input type="radio" name="question_{{ item.question.pk }}" value="{{ option.pk }}">
-                    {{ option.option_text }}
-                </label>
-                {% endfor %}
+        {% csrf_token %}
+        <div class="questions-container">
+            {% for item in question_data %}
+            <div class="question-card">
+                <p class="question-text"><strong>Question {{ forloop.counter }}:</strong> {{ item.question.question_text }}</p>
+                <div class="options">
+                    {% for option in item.options %}
+                    <label class="option">
+                        <input type="radio" name="question_{{ item.question.pk }}" value="{{ option.pk }}" required>
+                        <span class="option-text">{{ option.option_text }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Combined Button Container -->
+        <div class="button-container">
+            <div class="nav-buttons">
+                <button type="button" id="prev-btn" class="nav-btn">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </button>
+                <button type="button" id="next-btn" class="nav-btn">
+                    Next <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="submit-container">
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Submit Test
+                </button>
             </div>
         </div>
-        {% endfor %}
-    </div>
-
-    <!-- Navigation Buttons -->
-    <div class="nav-buttons">
-        <button type="button" id="prev-btn" class="nav-btn">Previous</button>
-        <button type="button" id="next-btn" class="nav-btn">Next</button>
-    </div>
-
-    <center><button type="submit" class="submit-btn">Submit Test</button></center>
-</form>
+    </form>
 </div>
 
 <!-- Feedback Section -->
 <div id="feedback"></div>
 
 <script src="{% static 'js/test.js' %}?v=2"></script>
+
+<!-- Mobile Menu Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const navbar = document.querySelector('.navbar');
+        let lastScrollTop = 0;
+
+        // Mobile menu toggle
+        mobileMenuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('active');
+            this.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+                mobileMenuBtn.classList.remove('active');
+            }
+        });
+
+        // Navbar scroll behavior
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > lastScrollTop) {
+                // Scrolling down
+                navbar.classList.add('nav-hidden');
+            } else {
+                // Scrolling up
+                navbar.classList.remove('nav-hidden');
+            }
+            
+            if (scrollTop > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            
+            lastScrollTop = scrollTop;
+        });
+    });
+</script>
 
 </body>
 </html>
