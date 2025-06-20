@@ -116,6 +116,11 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
+.logo i {
+    color: #9e1b32;
+    animation: spin 4s linear infinite;
+}
+
 .welcome-text {
     font-size: 1rem;
     font-weight: 500;

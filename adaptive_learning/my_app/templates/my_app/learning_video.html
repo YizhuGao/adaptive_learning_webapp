@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>Learning Videos - AdaptivePhysics</title>
+    <title>Learning Videos - Adaptive Physics</title>
     <meta name="description" content="Watch personalized physics video lessons with AI-powered learning support.">
     <link rel="stylesheet" href="{% static 'css/home.css' %}?v=7">
     <link rel="stylesheet" href="{% static 'css/chatbot.css' %}?v=9">
@@ -31,7 +31,7 @@
         <div class="left">
             <a href="{% url 'home' %}" class="logo">
                 <i class="fas fa-atom spin"></i>
-                <span class="logo-text">AdaptivePhysics</span>
+                <span class="logo-text">Adaptive Physics</span>
             </a>
             <span class="welcome-text">Welcome, {{ request.user.student.first_name }}</span>
         </div>

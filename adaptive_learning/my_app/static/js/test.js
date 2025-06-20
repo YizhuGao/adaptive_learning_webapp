@@ -35,17 +35,6 @@ document.addEventListener('DOMContentLoaded', function() {
         radio.addEventListener('change', () => {
             updateProgress();
             checkAllQuestionsAnswered();
-            
-            // Auto-advance to next question after selection
-            if (currentQuestionIndex < totalQuestions - 1) {
-                setTimeout(() => {
-                    currentQuestionIndex++;
-                    showQuestion(currentQuestionIndex);
-                    checkAllQuestionsAnswered(); // Check again after advancing
-                }, 500); // Short delay before advancing
-            } else {
-                checkAllQuestionsAnswered(); // Check when on last question
-            }
         });
     });
 

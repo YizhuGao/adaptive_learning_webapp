@@ -4,17 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Results - AdaptivePhysics</title>
+    <title>Test Results - Adaptive Physics</title>
     <meta name="description" content="View your test results and personalized learning recommendations">
-    <link rel="stylesheet" href="{% static 'css/testResults.css' %}?v=5">
+    <link rel="stylesheet" href="{% static 'css/testResults.css' %}?v=7">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Navbar -->
+    <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="left">
+            <a href="{% url 'home' %}" class="logo">
+                <i class="fas fa-atom spin"></i>
+                <span class="logo-text">Adaptive Physics</span>
+            </a>
             <span class="welcome-text">Results for {{ student_name }}</span>
         </div>
         <div class="right">
@@ -28,16 +32,29 @@
                 <i class="fas fa-sign-out-alt"></i> Logout
             </a>
         </div>
+
+        <!-- Mobile Menu Button -->
+        <div class="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
     </nav>
 
-    <div class="misconceptions-container">
-        <h2>Misconceptions</h2>
-        <ul>
-            {% for m in misconceptions %}
-            <li><strong>{{ m.name }}</strong></li>
-            {% endfor %}
-        </ul>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <a href="{% url 'home' %}" class="mobile-link">
+            <i class="fas fa-home"></i> Home
+        </a>
+        <a href="{% url 'modules' %}" class="mobile-link">
+            <i class="fas fa-book"></i> Modules
+        </a>
+        <a href="{% url 'logout' %}" class="mobile-link">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
     </div>
+
+    
 
     <!-- Results Container -->
     <div class="results-container">
@@ -106,6 +123,19 @@
             </tbody>
         </table>
         
+        {% if misconceptions %}
+        <div class="misconceptions-container">
+            <h2>Misconceptions</h2>
+            <p>Based on your selected options we think you might have below misconceptions</p>
+            <ul>
+                {% for m in misconceptions %}
+                <li><strong>{{ m.name }}</strong></li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+
         <!-- Video Learning Section -->
         <div class="learning-section">
             {% if video_url %}

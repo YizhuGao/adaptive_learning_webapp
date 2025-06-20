@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modules - AdaptivePhysics</title>
+    <title>Modules - Adaptive Physics</title>
     <meta name="description" content="Explore physics topics and track your learning progress with AI-powered assessments.">
     <link rel="stylesheet" href="{% static 'css/modules.css' %}?v=9">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
@@ -28,7 +28,7 @@
         <div class="left">
             <a href="{% url 'home' %}" class="logo">
                 <i class="fas fa-atom spin"></i>
-                <span class="logo-text">AdaptivePhysics</span>
+                <span class="logo-text">Adaptive Physics</span>
             </a>
             <span class="welcome-text">Welcome, {{ username }}</span>
         </div>
@@ -136,7 +136,7 @@
 
                 {% if item.upcoming_subtopics %}
                 <div class="upcoming-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:"250" }}">
-                    <h3>Upcoming Topics</h3>
+                    <h3>Upcoming Sub-Topics</h3>
                     <div class="completed-topics">
                         <h4><i class="fas fa-forward"></i> Next in Your Journey</h4>
                         <ul>
