@@ -7,9 +7,9 @@
     <meta name="csrf-token" content="{{ csrf_token }}">
     <title>Learning Videos - Adaptive Physics</title>
     <meta name="description" content="Watch personalized physics video lessons with AI-powered learning support.">
-    <link rel="stylesheet" href="{% static 'css/home.css' %}?v=7">
-    <link rel="stylesheet" href="{% static 'css/chatbot.css' %}?v=9">
-    <link rel="stylesheet" href="{% static 'css/learningVideo.css' %}?v=11">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'css/chatbot.css' %}?v=6">
+    <link rel="stylesheet" href="{% static 'css/learningVideo.css' %}?v=6">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -101,7 +101,7 @@
                                 <i class="fas fa-video"></i>
                             </div>
                             <h3>{{ video.title }}</h3>
-                            <div class="video-container" onclick="openVideoModal('{{ video.url }}', '{{ video.title }}', '{{ video.id }}', '{{ subtopic_id }}')" style="cursor: pointer;">
+                            <div class="video-container" onclick="openVideoModal(this, '{{ video.url }}', '{{ video.title }}', '{{ video.id }}', '{{ subtopic_id }}')" style="cursor: pointer;">
                                 <div class="video-thumbnail">
                                     <div class="video-overlay">
                                         <i class="play-icon fas fa-play-circle glow"></i>
@@ -152,7 +152,7 @@
     <div id="videoModal" class="video-modal">
         <div class="video-modal-content">
             <div class="video-modal-header">
-                <h3 id="modalVideoTitle" class="gradient-text"></h3>
+                <h3 id="modalVideoTitle"></h3>
                 <button class="close-modal" onclick="closeVideoModal()">
                     <i class="fas fa-times"></i>
                 </button>
@@ -163,15 +163,6 @@
                         allow="autoplay; fullscreen" 
                         allowfullscreen>
                 </iframe>
-            </div>
-            <div class="video-modal-footer">
-                <button id="modalMarkWatchedBtn" class="mark-watched-btn cta-button">
-                    <span class="button-content">
-                        <i class="fas fa-check-circle"></i>
-                        <span class="button-text">Mark as Watched</span>
-                    </span>
-                    <div class="button-glow"></div>
-                </button>
             </div>
         </div>
     </div>
@@ -205,28 +196,79 @@
     <script>
         const phi3ChatURL = "{% url 'phi3_chat' %}";
 
-        function openVideoModal(videoUrl, videoTitle, videoId, subtopicId) {
+        function populateVideoDropdown() {
+            const select = document.getElementById('video-select');
+            select.innerHTML = '<option value="">Select a video...</option>';
+            document.querySelectorAll('.video-frame').forEach(frame => {
+                const title = frame.getAttribute('data-video-title');
+                if (title) {
+                    const option = document.createElement('option');
+                    option.value = title;
+                    option.textContent = title;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        function openVideoModal(el, videoUrl, videoTitle, videoId, subtopicId) {
+            // Remove highlight from any previously viewed video titles
+            document.querySelectorAll('.feature-link h3.video-viewing').forEach(title => {
+                title.classList.remove('video-viewing');
+            });
+
+            // Add highlight to the current video title
+            const titleElement = el.closest('.feature-link').querySelector('h3');
+            if (titleElement) {
+                titleElement.classList.add('video-viewing');
+            }
+
             const modal = document.getElementById('videoModal');
             const modalFrame = document.getElementById('modalVideoFrame');
             const modalTitle = document.getElementById('modalVideoTitle');
-            const modalMarkWatchedBtn = document.getElementById('modalMarkWatchedBtn');
+            const chatbotPopup = document.getElementById('chatbot-popup');
             
             modalFrame.src = videoUrl;
             modalTitle.textContent = videoTitle;
-            modalMarkWatchedBtn.setAttribute('data-video-id', videoId);
-            modalMarkWatchedBtn.setAttribute('data-subtopic-id', subtopicId);
             
+            // Add class to body for split-screen layout
+            document.body.classList.add('video-modal-open');
+            modal.classList.add('open');
             modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+            
+            // Show chatbot
+            chatbotPopup.style.display = 'flex';
+            populateVideoDropdown();
+            
+            // Set the current video as selected in chatbot
+            const videoSelect = document.getElementById('video-select');
+            if (videoSelect) {
+                videoSelect.value = videoTitle;
+                const event = new Event('change');
+                videoSelect.dispatchEvent(event);
+            }
+            
+            document.body.style.overflow = 'hidden';
         }
 
         function closeVideoModal() {
             const modal = document.getElementById('videoModal');
             const modalFrame = document.getElementById('modalVideoFrame');
+            const chatbotPopup = document.getElementById('chatbot-popup');
             
             modalFrame.src = ''; // Stop video playback
+            document.body.classList.remove('video-modal-open');
+            modal.classList.remove('open');
             modal.style.display = 'none';
-            document.body.style.overflow = ''; // Restore scrolling
+            
+            // Hide chatbot
+            chatbotPopup.style.display = 'none';
+            
+            // Remove highlight from video title
+            document.querySelectorAll('.feature-link h3.video-viewing').forEach(title => {
+                title.classList.remove('video-viewing');
+            });
+            
+            document.body.style.overflow = '';
         }
 
         // Close modal when clicking outside

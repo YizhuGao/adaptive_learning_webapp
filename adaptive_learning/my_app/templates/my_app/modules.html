@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modules - Adaptive Physics</title>
     <meta name="description" content="Explore physics topics and track your learning progress with AI-powered assessments.">
-    <link rel="stylesheet" href="{% static 'css/modules.css' %}?v=9">
+    <link rel="stylesheet" href="{% static 'css/modules.css' %}?v=6">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -82,64 +82,42 @@
             <div class="module-grid">
                 {% for item in topic_data %}
                 <div class="module-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:"200" }}">
-                    <div class="module-card-inner">
-                        <div class="module-front">
-                            <div class="module-icon">
-                                {% if forloop.counter == 1 %}
-                                    <i class="fas fa-rocket"></i>
-                                {% elif forloop.counter == 2 %}
-                                    <i class="fas fa-magnet"></i>
-                                {% elif forloop.counter == 3 %}
-                                    <i class="fas fa-bolt"></i>
-                                {% elif forloop.counter == 4 %}
-                                    <i class="fas fa-wave-square"></i>
-                                {% else %}
-                                    <i class="fas fa-atom"></i>
-                                {% endif %}
-                            </div>
-                            <h2>{{ item.topic.topic_name }}</h2>
-                            {% if item.subtopic %}
-                                <p class="current-subtopic">
-                                    <i class="fas fa-book-reader"></i>
-                                    Currently Learning: <h4><span style="color: #94182f; font-weight: 700;">{{ item.subtopic.subtopic_name }}</span></h4>
-                                </p>
-                            {% endif %}
-                            <div class="card-footer">
-                                <span class="hover-hint">Click to see details</span>
-                            </div>
+                    <h3>{{ item.topic.topic_name }}</h3>
+                    {% if item.completed_subtopics %}
+                        <div class="completed-topics">
+                            <h4><i class="fas fa-trophy"></i> Completed Subtopics</h4>
+                            <ul>
+                                {% for subtopic in item.completed_subtopics %}
+                                    <li>
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>{{ subtopic }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
                         </div>
-                        <div class="module-back">
-                            <h3>Progress Overview</h3>
-                            {% if item.completed_subtopics %}
-                                <div class="completed-topics">
-                                    <h4><i class="fas fa-trophy"></i> Completed Subtopics</h4>
-                                    <ul>
-                                        {% for subtopic in item.completed_subtopics %}
-                                            <li>
-                                                <i class="fas fa-check-circle"></i>
-                                                <span>{{ subtopic }}</span>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            {% endif %}
-                            {% if item.subtopic %}
-                                <a href="{% url 'test' topic_id=item.topic.topic_id subtopic_id=item.subtopic.subtopic_id %}" class="cta-button">
-                                    <span class="button-text">Continue Learning</span>
-                                    <i class="fas fa-arrow-right"></i>
-                                    <div class="button-glow"></div>
-                                </a>
-                            {% endif %}
-                        </div>
-                    </div>
+                    {% endif %}
+                    {% if item.subtopic %}
+                        <!-- <a href="{% url 'test' topic_id=item.topic.topic_id subtopic_id=item.subtopic.subtopic_id %}" class="cta-button">
+                            <span class="button-text">Continue Learning</span>
+                            <i class="fas fa-arrow-right"></i>
+                            <div class="button-glow"></div>
+                        </a> -->
+                    {% endif %}
                 </div>
 
                 {% if item.upcoming_subtopics %}
                 <div class="upcoming-card" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:"250" }}">
-                    <h3>Upcoming Sub-Topics</h3>
+                    <h3>Upcoming Sub Topics</h3>
+                    
                     <div class="completed-topics">
                         <h4><i class="fas fa-forward"></i> Next in Your Journey</h4>
                         <ul>
+                            {% if item.subtopic %}
+                                <li class="currently-learning">
+                                    <i class="fas fa-hourglass-start"></i>
+                               <span style="color: #f4264b;"> {{ item.subtopic.subtopic_name }}</span>
+                                </li>
+                            {% endif %}
                             {% for upcoming in item.upcoming_subtopics %}
                                 <li>
                                     <i class="fas fa-hourglass-start"></i>

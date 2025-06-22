@@ -19,25 +19,17 @@ function markVideoAsWatched(videoId, subtopicId, button) {
     .then(data => {
         if (data.success) {
             console.log(`Successfully marked video ${videoId} as watched.`);
-            // Add the watched class to trigger the animation
-            button.classList.add('watched');
-            // Update button content
-            button.querySelector('.button-content').innerHTML = `
-                <i class="fas fa-check"></i>
-                <span class="button-text">Watched</span>
-            `;
-            button.style.backgroundColor = '#4CAF50';
             
-            // Find and update the corresponding button in the modal if it exists
-            const modalButton = document.getElementById('modalMarkWatchedBtn');
-            if (modalButton && modalButton.getAttribute('data-video-id') === videoId) {
-                modalButton.classList.add('watched');
-                modalButton.querySelector('.button-content').innerHTML = `
-                    <i class="fas fa-check"></i>
-                    <span class="button-text">Watched</span>
-                `;
-                modalButton.style.backgroundColor = '#4CAF50';
-            }
+            // Update the clicked button
+            updateButtonToWatched(button);
+            
+            // Find and update all buttons for this video (both original and modal)
+            const allButtons = document.querySelectorAll(`[data-video-id="${videoId}"][data-subtopic-id="${subtopicId}"]`);
+            allButtons.forEach(btn => {
+                if (btn !== button) {
+                    updateButtonToWatched(btn);
+                }
+            });
         } else {
             console.error('Error marking video as watched:', data.message);
         }
@@ -47,18 +39,31 @@ function markVideoAsWatched(videoId, subtopicId, button) {
     });
 }
 
+// Function to update button to watched state
+function updateButtonToWatched(button) {
+    button.classList.add('watched');
+    button.querySelector('.button-content').innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span class="button-text">Watched</span>
+    `;
+    button.style.pointerEvents = 'none';
+}
+
 // Event listener for each "Mark as Watched" button
-document.querySelectorAll('.mark-watched-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        if (!this.classList.contains('watched')) {
-            const videoId = this.getAttribute('data-video-id');
-            const subtopicId = this.getAttribute('data-subtopic-id');
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners to existing buttons
+    document.querySelectorAll('.mark-watched-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            if (!this.classList.contains('watched')) {
+                const videoId = this.getAttribute('data-video-id');
+                const subtopicId = this.getAttribute('data-subtopic-id');
 
-            console.log(`Button clicked for video ID: ${videoId}, subtopic ID: ${subtopicId}`);
+                console.log(`Button clicked for video ID: ${videoId}, subtopic ID: ${subtopicId}`);
 
-            // Call the function to mark the video as watched
-            markVideoAsWatched(videoId, subtopicId, this);
-        }
+                // Call the function to mark the video as watched
+                markVideoAsWatched(videoId, subtopicId, this);
+            }
+        });
     });
 });
 
