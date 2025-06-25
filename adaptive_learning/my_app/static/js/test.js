@@ -56,6 +56,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Update current question index
         currentQuestionIndex = index;
+
+        // Hide/show navigation buttons at ends
+        if (currentQuestionIndex === 0) {
+            prevBtn.style.visibility = 'hidden';
+            prevBtn.style.pointerEvents = 'none';
+        } else {
+            prevBtn.style.visibility = 'visible';
+            prevBtn.style.pointerEvents = '';
+        }
+        if (currentQuestionIndex === totalQuestions - 1) {
+            nextBtn.style.visibility = 'hidden';
+            nextBtn.style.pointerEvents = 'none';
+        } else {
+            nextBtn.style.visibility = 'visible';
+            nextBtn.style.pointerEvents = '';
+        }
     }
 
     function updateProgress() {

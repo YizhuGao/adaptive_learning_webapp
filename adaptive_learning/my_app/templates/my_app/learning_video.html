@@ -235,7 +235,7 @@
             modal.classList.add('open');
             modal.style.display = 'flex';
             
-            // Show chatbot
+            // Automatically show chatbot side by side with video modal
             chatbotPopup.style.display = 'flex';
             populateVideoDropdown();
             
@@ -260,7 +260,7 @@
             modal.classList.remove('open');
             modal.style.display = 'none';
             
-            // Hide chatbot
+            // Hide chatbot when closing modal
             chatbotPopup.style.display = 'none';
             
             // Remove highlight from video title
@@ -269,6 +269,19 @@
             });
             
             document.body.style.overflow = '';
+        }
+
+        // Toggle chatbot function
+        function toggleChatbot() {
+            const chatbotPopup = document.getElementById('chatbot-popup');
+            const isVisible = chatbotPopup.style.display === 'flex';
+            
+            if (isVisible) {
+                chatbotPopup.style.display = 'none';
+            } else {
+                chatbotPopup.style.display = 'flex';
+                populateVideoDropdown();
+            }
         }
 
         // Close modal when clicking outside

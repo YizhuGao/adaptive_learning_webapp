@@ -150,9 +150,9 @@
                     <p>Ready for the next challenge? Check out more modules!</p>
                 {% else %}
                     <h3><i class="fas fa-info-circle"></i> Video Coming Soon</h3>
-                    <p>No video is available for this subtopic at the moment.</p>
+                    <p>You did great job!.</p>
                     <a href="{% url 'test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="start-btn">
-                        <i class="fas fa-redo"></i> Retake Test
+                        <i class="fas fa-redo"></i> Continue Learning  <!--- Retake Test --->
                     </a>
                 {% endif %}
             {% endif %}
