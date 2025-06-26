@@ -456,6 +456,7 @@ def modules_view(request):
                             current_subtopic=next_subtopic
                         ).first()
 
+                        # Only create progress for the next subtopic if the current one is completed
                         if not next_progress:
                             new_progress = Progress.objects.create(
                                 student=student,
@@ -465,13 +466,13 @@ def modules_view(request):
                                     topic=topic,
                                     subtopic_order_number__gt=next_subtopic.subtopic_order_number
                                 ).order_by('subtopic_order_number').first(),
-                                module=VideoModule.objects.filter(subtopic=current_subtopic).first(),
+                                module=VideoModule.objects.filter(subtopic=next_subtopic).first(),
                                 completion_status='not_started',
                                 video_watched=False
                             )
                             progress = new_progress
 
-                        upcoming_subtopics = list(Subtopic.objects.filter(
+                        upcoming_subtopics = [progress.current_subtopic] + list(Subtopic.objects.filter(
                             topic=topic,
                             subtopic_order_number__gt=progress.current_subtopic.subtopic_order_number
                         ).order_by('subtopic_order_number'))
@@ -495,10 +496,16 @@ def modules_view(request):
                         })
 
                 else:
+                    # Find all subtopics for this topic, ordered
+                    all_subtopics = list(Subtopic.objects.filter(topic=topic).order_by('subtopic_order_number'))
                     upcoming_subtopics = list(Subtopic.objects.filter(
                         topic=topic,
                         subtopic_order_number__gt=current_subtopic.subtopic_order_number
                     ).order_by('subtopic_order_number')) if current_subtopic else []
+
+                    # Always include the current subtopic as the first upcoming if not completed
+                    if progress.completion_status != 'Completed' and current_subtopic:
+                        upcoming_subtopics = [current_subtopic] + upcoming_subtopics
 
                     topic_data.append({
                         'topic': topic,
@@ -520,14 +527,12 @@ def modules_view(request):
                             topic=topic,
                             subtopic_order_number__gt=first_subtopic.subtopic_order_number
                         ).order_by('subtopic_order_number').first(),
-                        module=VideoModule.objects.filter(topic=topic).first(),
+                        module=VideoModule.objects.filter(subtopic=first_subtopic).first(),
                         completion_status='not_started'
                     )
 
-                upcoming_subtopics = list(Subtopic.objects.filter(
-                    topic=topic,
-                    subtopic_order_number__gt=first_subtopic.subtopic_order_number
-                ).order_by('subtopic_order_number')) if first_subtopic else []
+                # Show all upcoming subtopics for a new user, with first as currently learning
+                upcoming_subtopics = list(Subtopic.objects.filter(topic=topic).order_by('subtopic_order_number')) if first_subtopic else []
 
                 topic_data.append({
                     'topic': topic,

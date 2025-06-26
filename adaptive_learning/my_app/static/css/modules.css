@@ -229,7 +229,6 @@ body {
 .module-card {
     background: var(--primary-gradient);
     border-radius: 15px;
-    height: 400px;
     cursor: pointer;
     width: 100%;
     box-shadow: var(--box-shadow);
@@ -240,6 +239,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     text-align: center;
+    min-height: 270px;
 }
 
 .module-card h3 {
@@ -469,10 +469,6 @@ body {
     .module-card {
         padding: 0.8rem;
     }
-    
-    .completed-topics ul {
-        max-height: 100px;
-    }
 }
 
 .upcoming-subtopics {
@@ -522,10 +518,10 @@ body {
     padding: 1.2rem;
     box-shadow: var(--box-shadow);
     border: 1px solid var(--border-color);
-    height: 400px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    min-height: 270px;
 }
 
 .upcoming-card h3 {
@@ -591,4 +587,9 @@ body {
     position: relative;
     overflow: hidden;
     margin-top: 0.6rem;
+}
+
+.currently-learning span {
+    color: #f4264b !important;
+    font-weight: 600;
 }
