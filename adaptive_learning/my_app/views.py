@@ -42,15 +42,15 @@ def login_view(request):
         password = request.POST.get('password')
 
         # Manually authenticate user using email instead of username
-        logger.info(f"Attempting to authenticate user: {email}")
+        # logger.info(f"Attempting to authenticate user: {email}")
         user = authenticate(request, username=email, password=password)
         if user is not None:
-            logger.info(f"Authentication successful: {user.email}")
+            # logger.info(f"Authentication successful: {user.email}")
             login(request, user)
             messages.success(request, f"Welcome back, {email}!")
             return redirect('home')  # Redirect to success page after login
         else:
-            logger.warning("Authentication failed")
+            # logger.warning("Authentication failed")
             messages.error(request, "Invalid email or password.")
     return render(request, 'my_app/login.html')
 
@@ -194,10 +194,10 @@ def submit_test(request, topic_id, subtopic_id):
     student = get_object_or_404(Student, user=request.user)
     if not student.can_take_experimental_test:
         if request.method == "POST":
-            logger.info("Form Submitted: ", request.POST)  # Debugging line
+            # logger.info("Form Submitted: ", request.POST)  # Debugging line
 
             if not request.POST:
-                logger.warning("No data received in POST request.")
+                # logger.warning("No data received in POST request.")
                 return JsonResponse({"error": "No data received"}, status=400)
 
             try:
@@ -228,7 +228,7 @@ def submit_test(request, topic_id, subtopic_id):
                 first_question = Question.objects.order_by('question_id').first()
                 if first_question:
                     first_question_id = first_question.question_id
-                    logger.info(f"First question ID: {first_question_id}")
+                    # logger.info(f"First question ID: {first_question_id}")
                 else:
                     # Handle the case where there are no questions
                     first_question_id = None
@@ -262,8 +262,8 @@ def submit_test(request, topic_id, subtopic_id):
                             assigned_at_1_count += 1
 
                 # Calculate score
-                logger.warning(f"correct_count: {correct_count}")
-                logger.warning(f"total_questions: {total_questions}")
+                # logger.warning(f"correct_count: {correct_count}")
+                # logger.warning(f"total_questions: {total_questions}")
                 score = (correct_count / total_questions) * 100 if total_questions > 0 else 0
 
                 assessment.score = score
@@ -274,17 +274,17 @@ def submit_test(request, topic_id, subtopic_id):
                     "correct": correctness_list
                 })
 
-                logger.warning(f"answers_df:\n{answers_df}")
+                # logger.warning(f"answers_df:\n{answers_df}")
                 model_path = os.path.join(BASE_DIR, 'my_app', 'ML', 'ncdm_model.pth')
                 num_questions = answers_df.shape[0]
                 device = "cpu"
 
-                logger.warning("=== ML MODEL CALL: START ===")
+                # logger.warning("=== ML MODEL CALL: START ===")
                 model = MODEL
-                logger.warning("=== ML MODEL CALL: END ===")
+                # logger.warning("=== ML MODEL CALL: END ===")
 
                 misconception_matrix = tce_misunderstanding
-                logger.warning(f"question_ids_list: {question_ids_list}")
+                # logger.warning(f"question_ids_list: {question_ids_list}")
 
                 weak_knowledge_indices = set()
 
@@ -296,19 +296,19 @@ def submit_test(request, topic_id, subtopic_id):
                         question_row = misconception_matrix[misconception_matrix['item_id'] == item_id]
 
                         if question_row.empty:
-                            logger.warning(f"Question ID {que} not found in misunderstanding matrix.")
+                            # logger.warning(f"Question ID {que} not found in misunderstanding matrix.")
                             continue
 
                         # Extract the knowledge vector from the row (skipping question_id column)
                         knowledge_vector = question_row.iloc[0, 1:].to_numpy(dtype=float).reshape(1, -1)
 
-                        logger.warning(f"Calling predict for student {student.student_id}, question {que}")
+                        # logger.warning(f"Calling predict for student {student.student_id}, question {que}")
                         # Predict using the model
                         prediction, proficiency_vector = predict(MODEL, student.student_id, int(que), knowledge_vector, device)
 
-                        logger.warning(f"\nQuestion ID: Q{que}")
-                        logger.warning(f"Prediction: {prediction:.4f}")
-                        logger.warning(f"Proficiency Vector: {proficiency_vector}")
+                        # logger.warning(f"\nQuestion ID: Q{que}")
+                        # logger.warning(f"Prediction: {prediction:.4f}")
+                        # logger.warning(f"Proficiency Vector: {proficiency_vector}")
 
                         knowledge_vector_np = np.array(knowledge_vector).flatten()
 
@@ -322,21 +322,19 @@ def submit_test(request, topic_id, subtopic_id):
 
                             if prof_value > 0.6:
                                 weak_knowledge_indices.add(idx)
-                                logger.info(f"High misconception likelihood: prof={prof_value:.4f} → Added idx {idx + 1 } from Q{que}")
+                                # logger.info(f"High misconception likelihood: prof={prof_value:.4f} → Added idx {idx + 1 } from Q{que}")
 
                             elif 0.4 <= prof_value <= 0.6:
                                 if correctness_list[question_ids_list.index(int(que))] == 0:  # Student answered incorrectly
                                     weak_knowledge_indices.add(idx)
-                                    logger.info(
-                                        f"Moderate prof + incorrect answer: prof={prof_value:.4f} → Added idx {idx + 1 } from Q{que}")
+                                    logger.info(f"Moderate prof + incorrect answer: prof={prof_value:.4f} → Added idx {idx + 1 } from Q{que}")
                                 else:
                                     logger.info(
                                         f"Moderate prof + correct answer: prof={prof_value:.4f} → Not Added idx {idx + 1 } from Q{que}")
                             elif prediction < 0.7:
                                 weak_knowledge_indices.add(idx)
                             elif prof_value < 0.48:
-                                logger.info(
-                                    f"Low misconception probability (prof={prof_value:.4f}) → Skipped idx {idx + 1 } for Q{que}")
+                                logger.info(f"Low misconception probability (prof={prof_value:.4f}) → Skipped idx {idx + 1 } for Q{que}")
 
                             else:
                                 logger.info(f"No condition met for prof={prof_value:.4f}, idx {idx + 1 }, Q{que}")
@@ -347,14 +345,14 @@ def submit_test(request, topic_id, subtopic_id):
                 weak_knowledge_indices = sorted([int(idx) + 1 for idx in weak_knowledge_indices])
                 misconceptions = Misconception.objects.filter(misconception_id__in=weak_knowledge_indices)
 
-                logger.info("Final Weak Knowledge Indices:", weak_knowledge_indices)
-                print("Final Weak Knowledge Indices:", weak_knowledge_indices)
-                print("Final Weak Knowledge Indices:", misconceptions)
+                # logger.info("Final Weak Knowledge Indices:", weak_knowledge_indices)
+                # print("Final Weak Knowledge Indices:", weak_knowledge_indices)
+                # print("Final Weak Knowledge Indices:", misconceptions)
 
                 try:
                     misconception_videos = VideoModule.objects.filter(subtopic=subtopic)
 
-                    logger.info(" misconception_videos :", misconception_videos)
+                    # logger.info(" misconception_videos :", misconception_videos)
 
 
                     for video in misconception_videos:
@@ -367,13 +365,14 @@ def submit_test(request, topic_id, subtopic_id):
 
                                 # Get intersection between video misconceptions and weak knowledge indices
                                 matched_misconceptions = list(set(video_misconceptions) & set(weak_knowledge_indices))
-                                logger.info("matched_misconceptions - ", matched_misconceptions)
+                                # logger.info("matched_misconceptions - ", matched_misconceptions)
+                                # print("matched_misconceptions - ", matched_misconceptions)
 
                                 if matched_misconceptions:
-                                    logger.info(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
-                                    logger.info(f"  → Related to misconceptions: {matched_misconceptions}")
-                                    print(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
-                                    print(f"  → Related to misconceptions: {matched_misconceptions}")
+                                    # logger.info(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
+                                    # logger.info(f"  → Related to misconceptions: {matched_misconceptions}")
+                                    # print(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
+                                    # print(f"  → Related to misconceptions: {matched_misconceptions}")
 
 
                                     # Create a VideoProgress record only once for this video
@@ -401,9 +400,14 @@ def submit_test(request, topic_id, subtopic_id):
                 progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
                 if progress:
                     if assigned_at_0_count > 0:
-                        progress.score_before = score
-                        progress.completion_status = "In Progress"
-                    if assigned_at_1_count > 0:
+                        if not matched_misconceptions:
+                            progress.score_before = score
+                            progress.score_after = score
+                            progress.completion_status = "Completed"
+                        else:
+                            progress.score_before = score
+                            progress.completion_status = "In Progress"
+                    elif assigned_at_1_count > 0:
                         progress.score_after = score
                         progress.completion_status = "Completed"
 
@@ -803,7 +807,7 @@ def update_video_progress(request):
 def complete_video(request):
     student = get_object_or_404(Student, user=request.user)
     if not student.can_take_experimental_test:
-        logger.info("Inside the complete_video")
+        # logger.info("Inside the complete_video")
         if request.method == 'POST':
             try:
                 # Parse the JSON request data
@@ -826,7 +830,7 @@ def complete_video(request):
                 except VideoProgress.DoesNotExist:
                     raise Exception(f"VideoProgress entry not found for student {student.student_id}, video {video.video_module_id}, subtopic {subtopic.subtopic_id}")
 
-                logger.info(f"DEBUG: VideoProgress entry found for student {student.student_id}, video {video.video_module_id}, subtopic {subtopic.subtopic_id}")
+                # logger.info(f"DEBUG: VideoProgress entry found for student {student.student_id}, video {video.video_module_id}, subtopic {subtopic.subtopic_id}")
                 # print(video_progress)
 
                 # If the video hasn't been watched already, mark it as watched
@@ -1073,9 +1077,9 @@ def phi3_chat(request):
         response = requests.post(API_URL, headers=headers, json=payload)
         end = time.time()
 
-        logger.warning(f'HF API call took {end - start:.2f} seconds')
-        logger.warning("HF API status: %s", response.status_code)
-        logger.warning("HF API content: %s", response.content)
+        # logger.warning(f'HF API call took {end - start:.2f} seconds')
+        # logger.warning("HF API status: %s", response.status_code)
+        # logger.warning("HF API content: %s", response.content)
 
         try:
             result = response.json()
