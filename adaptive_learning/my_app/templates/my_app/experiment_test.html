@@ -47,16 +47,20 @@
     <p class="test-instructions">Answer all questions carefully to get the most accurate recommendations</p>
 
     <!-- Progress Bar -->
-    <div class="progress-bar">
-        <div class="progress" id="progress"></div>
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div class="progress-text">
+            <span id="questions-answered">0</span>/<span id="total-questions">{{ question_data|length }}</span> Questions Answered
+        </div>
     </div>
-
     <form method="POST" action="{% url 'submit_experimental_test' %}">
         {% csrf_token %}
         <div class="questions-container">
             {% for item in question_data %}
             <div class="question-card">
-                <p class="question-text"><strong>Question {{ forloop.counter }}:</strong> {{ item.question.question_text }}</p>
+                <p class="question-text"><strong>Question <span style="color: #94182f; font-weight: 700;">{{ forloop.counter }}</span> :</strong> {{ item.question.question_text }}</p>
                 <div class="options">
                     {% for option in item.options %}
                     <label class="option">

@@ -149,10 +149,10 @@
                     <p>You've successfully completed this subtopic and watched the video.</p>
                     <p>Ready for the next challenge? Check out more modules!</p>
                 {% else %}
-                    <h3><i class="fas fa-info-circle"></i> Video Coming Soon</h3>
-                    <p>You did great job!.</p>
+                    <!-- <h3><i class="fas fa-info-circle"></i> Video Coming Soon</h3> -->
+                    <p>You did a great job in this subtopic! Let's move to next subtopic</p>
                     <a href="{% url 'test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="start-btn">
-                        <i class="fas fa-redo"></i> Continue Learning  <!--- Retake Test --->
+                             Continue Learning <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 {% endif %}
             {% endif %}
