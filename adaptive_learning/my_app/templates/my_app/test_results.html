@@ -123,43 +123,37 @@
             </tbody>
         </table>
         
-
+        {% if misconceptions %}
+        <div class="misconceptions-container">
+            <h2>Misconceptions</h2>
+            <p>Based on your selected options we think you might have below misconceptions</p>
+            <ul>
+                {% for m in misconceptions %}
+                <li><strong>{{ m.name }}</strong></li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
 
 
         <!-- Video Learning Section -->
         <div class="learning-section">
-            {% if not matched_misconceptions %}
-                <h3><i class="fas fa-check-circle"></i> No Misconceptions!</h3>
-                <p>You don't have any misconceptions, and you successfully completed the topic. Check out the next modules.</p>
+            {% if video_url %}
+                <h3><i class="fas fa-graduation-cap"></i> Ready to improve? Watch our personalized video lesson!</h3>
+                <a href="{% url 'learning_video' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="watch-video-button">
+                    <i class="fas fa-play-circle"></i> Watch Learning Video
+                </a>
             {% else %}
-                {% if misconceptions %}
-                <div class="misconceptions-container">
-                    <h2>Misconceptions</h2>
-                    <p>Based on your selected options we think you might have below misconceptions</p>
-                    <ul>
-                        {% for m in misconceptions %}
-                        <li><strong>{{ m.name }}</strong></li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% endif %}
-                {% if video_url %}
-                    <h3><i class="fas fa-graduation-cap"></i> Ready to improve? Watch our personalized video lesson!</h3>
-                    <a href="{% url 'learning_video' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="watch-video-button">
-                        <i class="fas fa-play-circle"></i> Watch Learning Video
-                    </a>
+                {% if score_after %}
+                    <h3><i class="fas fa-trophy"></i> Great progress!</h3>
+                    <p>You've successfully completed this subtopic and watched the video.</p>
+                    <p>Ready for the next challenge? Check out more modules!</p>
                 {% else %}
-                    {% if score_after %}
-                        <h3><i class="fas fa-trophy"></i> Great progress!</h3>
-                        <p>You've successfully completed this subtopic and watched the video.</p>
-                        <p>Ready for the next challenge? Check out more modules!</p>
-                    {% else %}
-                        <h3><i class="fas fa-info-circle"></i> Video Coming Soon</h3>
-                        <p>You did great job!.</p>
-                        <a href="{% url 'test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="start-btn">
-                            <i class="fas fa-redo"></i> Continue Learning  <!--- Retake Test --->
-                        </a>
-                    {% endif %}
+                    <h3><i class="fas fa-info-circle"></i> Video Coming Soon</h3>
+                    <p>You did great job!.</p>
+                    <a href="{% url 'test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="start-btn">
+                        <i class="fas fa-redo"></i> Continue Learning  <!--- Retake Test --->
+                    </a>
                 {% endif %}
             {% endif %}
         </div>
