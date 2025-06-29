@@ -122,22 +122,26 @@
                 {% endfor %}
             </tbody>
         </table>
+
         
-        {% if misconceptions %}
-        <div class="misconceptions-container">
-            <h2>Misconceptions</h2>
-            <p>Based on your selected options we think you might have below misconceptions</p>
-            <ul>
-                {% for m in misconceptions %}
-                <li><strong>{{ m.name }}</strong></li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
-
-
         <!-- Video Learning Section -->
         <div class="learning-section">
+            {% if not matched_misconceptions and score_before %}
+                <h3><i class="fas fa-check-circle"></i> No Misconceptions!</h3>
+                <p>You did a great job in this subtopic! You don't have any misconceptions, Let's move to next subtopic.</p>
+                <p> Check out more modules!</p>
+            {% else %}
+            {% if misconceptions %}
+                <div class="misconceptions-container">
+                    <h2>Misconceptions</h2>
+                    <p>Based on your selected options we think you might have below misconceptions</p>
+                    <ul>
+                        {% for m in misconceptions %}
+                        <li><strong>{{ m.name }}</strong></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
             {% if video_url %}
                 <h3><i class="fas fa-graduation-cap"></i> Ready to improve? Watch our personalized video lesson!</h3>
                 <a href="{% url 'learning_video' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="watch-video-button">
@@ -155,6 +159,7 @@
                              Continue Learning <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 {% endif %}
+            {% endif %}
             {% endif %}
         </div>
     </div>
