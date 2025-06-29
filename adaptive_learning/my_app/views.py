@@ -415,6 +415,7 @@ def submit_test(request, topic_id, subtopic_id):
 
                 # Redirect to the test results page
                 request.session['misconceptions'] = [m.id for m in misconceptions]
+                request.session['matched_misconceptions'] = matched_misconceptions if 'matched_misconceptions' in locals() else []
                 return redirect('test_results', topic_id=topic_id, subtopic_id=subtopic_id)
 
             except Exception as e:
@@ -560,6 +561,7 @@ def test_results(request, topic_id, subtopic_id):
     student = get_object_or_404(Student, user=request.user)
     misconception_ids = request.session.pop('misconceptions', [])
     misconceptions = Misconception.objects.filter(id__in=misconception_ids)
+    matched_misconceptions = request.session.pop('matched_misconceptions', [])
     if not student.can_take_experimental_test:
         try:
             topic = get_object_or_404(Topic, topic_id=topic_id)
@@ -611,6 +613,7 @@ def test_results(request, topic_id, subtopic_id):
                 "student_id": student.student_id,
                 "score_after": progress.score_after if progress else None,
                 'misconceptions': misconceptions,
+                'matched_misconceptions': matched_misconceptions,
             }
 
             return render(request, "my_app/test_results.html", context)
