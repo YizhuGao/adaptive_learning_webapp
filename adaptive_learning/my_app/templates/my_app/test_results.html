@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Results - Adaptive Physics</title>
     <meta name="description" content="View your test results and personalized learning recommendations">
-    <link rel="stylesheet" href="{% static 'css/testResults.css' %}?v=7">
+    <link rel="stylesheet" href="{% static 'css/testResults.css' %}?v=11">
     <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -126,10 +126,13 @@
         
         <!-- Video Learning Section -->
         <div class="learning-section">
-            {% if not matched_misconceptions and score_before %}
-                <h3><i class="fas fa-check-circle"></i> No Misconceptions!</h3>
-                <p>You did a great job in this subtopic! You don't have any misconceptions, Let's move to next subtopic.</p>
+            {% if not misconceptions and not video_url %}
+                <h3><i class="fas fa-check-circle"></i> Subtopic Completed!</h3>
+                <p>You did a great job in this subtopic! Let's move to next subtopic.</p>
                 <p> Check out more modules!</p>
+                <a href="{% url 'modules' %}" class="start-btn">
+                    Continue Learning <i class="fa-solid fa-arrow-right"></i>
+                 </a>
             {% else %}
             {% if misconceptions %}
                 <div class="misconceptions-container">
@@ -147,18 +150,6 @@
                 <a href="{% url 'learning_video' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="watch-video-button">
                     <i class="fas fa-play-circle"></i> Watch Learning Video
                 </a>
-            {% else %}
-                {% if score_after %}
-                    <h3><i class="fas fa-trophy"></i> Great progress!</h3>
-                    <p>You've successfully completed this subtopic and watched the video.</p>
-                    <p>Ready for the next challenge? Check out more modules!</p>
-                {% else %}
-                    <!-- <h3><i class="fas fa-info-circle"></i> Video Coming Soon</h3> -->
-                    <p>You did a great job in this subtopic! Let's move to next subtopic</p>
-                    <a href="{% url 'test' topic_id=topic.topic_id subtopic_id=subtopic.subtopic_id %}" class="start-btn">
-                             Continue Learning <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                {% endif %}
             {% endif %}
             {% endif %}
         </div>

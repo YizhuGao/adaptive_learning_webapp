@@ -343,7 +343,7 @@ def submit_test(request, topic_id, subtopic_id):
                         logger.error(f"Prediction error for Q{que}: {e}")
 
                 weak_knowledge_indices = sorted([int(idx) + 1 for idx in weak_knowledge_indices])
-                misconceptions = Misconception.objects.filter(misconception_id__in=weak_knowledge_indices)
+                # misconceptions = Misconception.objects.filter(misconception_id__in=weak_knowledge_indices)
 
                 # logger.info("Final Weak Knowledge Indices:", weak_knowledge_indices)
                 # print("Final Weak Knowledge Indices:", weak_knowledge_indices)
@@ -354,6 +354,7 @@ def submit_test(request, topic_id, subtopic_id):
 
                     # logger.info(" misconception_videos :", misconception_videos)
 
+                    all_matched_misconception_ids = set()
 
                     for video in misconception_videos:
                         if video.subtopic == subtopic:
@@ -365,15 +366,14 @@ def submit_test(request, topic_id, subtopic_id):
 
                                 # Get intersection between video misconceptions and weak knowledge indices
                                 matched_misconceptions = list(set(video_misconceptions) & set(weak_knowledge_indices))
-                                # logger.info("matched_misconceptions - ", matched_misconceptions)
-                                # print("matched_misconceptions - ", matched_misconceptions)
+                                print("matched_misconceptions before DB - ", matched_misconceptions)
 
                                 if matched_misconceptions:
+                                    all_matched_misconception_ids.update(matched_misconceptions)
                                     # logger.info(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
                                     # logger.info(f"  → Related to misconceptions: {matched_misconceptions}")
                                     # print(f"\n[Video Match] Video: '{video.title}' (ID: {video.video_module_id})")
                                     # print(f"  → Related to misconceptions: {matched_misconceptions}")
-
 
                                     # Create a VideoProgress record only once for this video
                                     obj, created = VideoProgress.objects.get_or_create(
@@ -390,8 +390,15 @@ def submit_test(request, topic_id, subtopic_id):
                             except Exception as inner_e:
                                 logger.error(f"Error processing video ID {video.video_module_id if video else 'Unknown'}: {inner_e}")
 
-                            else:
-                                logger.info("No Video for the given misconceptions found.")
+                            
+
+                    if all_matched_misconception_ids:
+                        # Query Misconception table once using all unique IDs
+                        misconceptions = Misconception.objects.filter(misconception_id__in=all_matched_misconception_ids)
+                        print("Final misconceptions from DB:", misconceptions)
+                    else:
+                        misconceptions = Misconception.objects.none()
+                        print("No misconceptions matched any videos.", misconceptions)        
 
                 except Exception as e:
                     logger.error("Error while assigning videos based on misconceptions:", e)
@@ -400,7 +407,7 @@ def submit_test(request, topic_id, subtopic_id):
                 progress = Progress.objects.filter(student=student, current_subtopic=subtopic).first()
                 if progress:
                     if assigned_at_0_count > 0:
-                        if not matched_misconceptions:
+                        if not misconceptions:
                             progress.score_before = score
                             progress.score_after = score
                             progress.completion_status = "Completed"
@@ -415,7 +422,6 @@ def submit_test(request, topic_id, subtopic_id):
 
                 # Redirect to the test results page
                 request.session['misconceptions'] = [m.id for m in misconceptions]
-                request.session['matched_misconceptions'] = matched_misconceptions if 'matched_misconceptions' in locals() else []
                 return redirect('test_results', topic_id=topic_id, subtopic_id=subtopic_id)
 
             except Exception as e:
