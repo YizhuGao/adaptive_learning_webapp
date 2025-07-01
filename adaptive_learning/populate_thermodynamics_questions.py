@@ -128,12 +128,12 @@ questions_data = [
         "options": [
             ("Joy says: “Yes it does, but the boiling water is just not as hot as it is here.”", True),
             ("Tay says: “That’s not true. Water always boils at the same temperature.”", False),
-            ("Lou says: “The boiling point of the water decreases, but the water itself is still at 100 degrees.", False),
-            ("Mai says: “I agree with Jim. The water never gets to its boiling point.", False),
+            ("Lou says: “The boiling point of the water decreases, but the water itself is still at 100 degrees.”", False),
+            ("Mai says: “I agree with Jim. The water never gets to its boiling point.”", False),
         ],
     },
     {
-        "question_text": "Sam takes a can of coke and a plastic bottle of coke from the refrigerator, where they have been overnight. He quickly puts a thermometer in the coke in the can. The temperature is 7°C. What are the most likely temperatures of the plastic bottle and coke it holds?", #question 9
+        "question_text": "Sam takes a can of cola and a plastic bottle of cola from the refrigerator, where they have been overnight. He quickly puts a thermometer in the cola in the can. The temperature is 7°C. What are the most likely temperatures of the plastic bottle and cola it holds?", #question 9
         "topic": "Thermodynamics",
         "topic_order": 1,
         "subtopic": "Nature of temperature",
@@ -144,12 +144,12 @@ questions_data = [
             ("They are both less than 7 °C", False),
             ("They are both equal to 7 °C", True),
             ("They are both greater than 7 °C", False),
-            ("The coke is at 7 °C but the bottle is greater than 7 °C", False),
-            ("It depends on the amount of coke and/or the size of the bottle.", False),
+            ("The cola is at 7 °C but the bottle is greater than 7 °C", False),
+            ("It depends on the amount of cola and/or the size of the bottle.", False),
         ],
     },
     {
-        "question_text": "A few minutes later, Ned picks up the coke can and then tells everyone that the bench top underneath it feels colder than the rest of the bench. Whose explanation do you think is best?", #question 10
+        "question_text": "A few minutes later, Ned picks up the cola can and then tells everyone that the bench top underneath it feels colder than the rest of the bench. Whose explanation do you think is best?", #question 10
         "topic": "Thermodynamics",
         "topic_order": 1,
         "subtopic": "Heat transfer and temperature change",
@@ -157,9 +157,9 @@ questions_data = [
         "assigned_at": 0,
         "difficulty_level": "Beginner",
         "options": [
-            ("Jon says: “The cold has been transferred from the coke to the bench.”", False),
+            ("Jon says: “The cold has been transferred from the cola to the bench.”", False),
             ("Rob says: “There is no energy left in the bench beneath the can.”", False),
-            ("Sue says: “Some heat has been transferred from the bench to the coke.”", True),
+            ("Sue says: “Some heat has been transferred from the bench to the cola.”", True),
             ("Eli says: “The can causes heat beneath the can to move away through the bench-top.”", False),
         ],
     },
@@ -271,7 +271,7 @@ questions_data = [
         ],
     },
     {
-        "question_text": "Dan simultaneously picks up two cartons of chocolate milk, a cold one from the refrigerator and a warm one that has been sitting on the bench-top for some time. Why do you think the carton from the refrigerator feels colder than the one from the bench-top? Compared with the warm carton, the cold carton ---",
+        "question_text": "Dan simultaneously picks up two cartons of chocolate milk, a cold one from the refrigerator and a warm one that has been sitting on the bench-top for some time. Why do you think the carton from the refrigerator feels colder than the one from the bench-top? Compared with the warm carton, the cold carton -",
         "topic": "Thermodynamics",
         "topic_order": 1,
         "subtopic": "Heat transfer and temperature change", #question 18
@@ -295,10 +295,10 @@ questions_data = [
         "assigned_at": 0,
         "difficulty_level": "Intermediate",
         "options": [
-            ("Emi says: 'It’s because the pressure causes water to boil above 100°C.'", True),
-            ("Col says: 'It’s because the high pressure generates extra heat.'", False),
-            ("Fay says: 'It’s because the steam is at a higher temperature than the boiling soup.'", False),
-            ("Tom says: 'It’s because pressure cookers spread the heat more evenly through the food.'", False)
+            ("Emi says: “It’s because the pressure causes water to boil above 100°C.”", True),
+            ("Col says: “It’s because the high pressure generates extra heat.”", False),
+            ("Fay says: “It’s because the steam is at a higher temperature than the boiling soup.”", False),
+            ("Tom says: “It’s because pressure cookers spread the heat more evenly through the food.”", False)
         ],
     },
     {
@@ -523,19 +523,20 @@ questions_data = [
         "question_text": "Jim believes he must use boiling water to make a cup of tea. He tells his friends: “I couldn’t make tea if I was camping on a high mountain because water doesn’t boil at high altitudes.” Who do you agree with?",
         "topic": "Thermodynamics",
         "topic_order": 1,
-        "subtopic": "Boiling point, Liquifaction, Vaporation", #question 8
+        "subtopic": "Boiling point, Liquifaction, Vaporation",  # question 8
         "subtopic_order_number": 5,
         "assigned_at": 1,
         "difficulty_level": "Beginner",
         "options": [
             ("Joy says: “Yes it does, but the boiling water is just not as hot as it is here.”", True),
             ("Tay says: “That’s not true. Water always boils at the same temperature.”", False),
-            ("Lou says: “The boiling point of the water decreases, but the water itself is still at 100 degrees.", False),
-            ("Mai says: “I agree with Jim. The water never gets to its boiling point.", False),
+            ("Lou says: “The boiling point of the water decreases, but the water itself is still at 100 degrees.”",
+             False),
+            ("Mai says: “I agree with Jim. The water never gets to its boiling point.”", False),
         ],
     },
     {
-        "question_text": "Sam takes a can of coke and a plastic bottle of coke from the refrigerator, where they have been overnight. He quickly puts a thermometer in the coke in the can. The temperature is 7°C. What are the most likely temperatures of the plastic bottle and coke it holds?", #question 9
+        "question_text": "Sam takes a can of cola and a plastic bottle of cola from the refrigerator, where they have been overnight. He quickly puts a thermometer in the cola in the can. The temperature is 7°C. What are the most likely temperatures of the plastic bottle and cola it holds?", #question 9
         "topic": "Thermodynamics",
         "topic_order": 1,
         "subtopic": "Nature of temperature",
@@ -546,12 +547,12 @@ questions_data = [
             ("They are both less than 7 °C", False),
             ("They are both equal to 7 °C", True),
             ("They are both greater than 7 °C", False),
-            ("The coke is at 7 °C but the bottle is greater than 7 °C", False),
-            ("It depends on the amount of coke and/or the size of the bottle.", False),
+            ("The cola is at 7 °C but the bottle is greater than 7 °C", False),
+            ("It depends on the amount of cola and/or the size of the bottle.", False),
         ],
     },
     {
-        "question_text": "A few minutes later, Ned picks up the coke can and then tells everyone that the bench top underneath it feels colder than the rest of the bench. Whose explanation do you think is best?", #question 10
+        "question_text": "A few minutes later, Ned picks up the cola can and then tells everyone that the bench top underneath it feels colder than the rest of the bench. Whose explanation do you think is best?", #question 10
         "topic": "Thermodynamics",
         "topic_order": 1,
         "subtopic": "Heat transfer and temperature change",
@@ -559,9 +560,9 @@ questions_data = [
         "assigned_at": 1,
         "difficulty_level": "Beginner",
         "options": [
-            ("Jon says: “The cold has been transferred from the coke to the bench.”", False),
+            ("Jon says: “The cold has been transferred from the cola to the bench.”", False),
             ("Rob says: “There is no energy left in the bench beneath the can.”", False),
-            ("Sue says: “Some heat has been transferred from the bench to the coke.”", True),
+            ("Sue says: “Some heat has been transferred from the bench to the cola.”", True),
             ("Eli says: “The can causes heat beneath the can to move away through the bench-top.”", False),
         ],
     },
@@ -673,7 +674,7 @@ questions_data = [
         ],
     },
     {
-        "question_text": "Dan simultaneously picks up two cartons of chocolate milk, a cold one from the refrigerator and a warm one that has been sitting on the bench-top for some time. Why do you think the carton from the refrigerator feels colder than the one from the bench-top? Compared with the warm carton, the cold carton ---",
+        "question_text": "Dan simultaneously picks up two cartons of chocolate milk, a cold one from the refrigerator and a warm one that has been sitting on the bench-top for some time. Why do you think the carton from the refrigerator feels colder than the one from the bench-top? Compared with the warm carton, the cold carton -",
         "topic": "Thermodynamics",
         "topic_order": 1,
         "subtopic": "Heat transfer and temperature change", #question 18
@@ -692,15 +693,15 @@ questions_data = [
         "question_text": "Ron reckons his mother cooks soup in a pressure cooker because it cooks faster than in a normal saucepan but he doesn’t know why. [Pressure cookers have a sealed lid so that the pressure inside rises well above atmospheric pressure.] Which person do you most agree with?",
         "topic": "Thermodynamics",
         "topic_order": 1,
-        "subtopic": "Boiling point, Liquifaction, Vaporation", #question 19
+        "subtopic": "Boiling point, Liquifaction, Vaporation",  # question 19
         "subtopic_order_number": 5,
         "assigned_at": 1,
         "difficulty_level": "Intermediate",
         "options": [
-            ("Emi says: 'It’s because the pressure causes water to boil above 100°C.'", True),
-            ("Col says: 'It’s because the high pressure generates extra heat.'", False),
-            ("Fay says: 'It’s because the steam is at a higher temperature than the boiling soup.'", False),
-            ("Tom says: 'It’s because pressure cookers spread the heat more evenly through the food.'", False)
+            ("Emi says: “It’s because the pressure causes water to boil above 100°C.”", True),
+            ("Col says: “It’s because the high pressure generates extra heat.”", False),
+            ("Fay says: “It’s because the steam is at a higher temperature than the boiling soup.”", False),
+            ("Tom says: “It’s because pressure cookers spread the heat more evenly through the food.”", False)
         ],
     },
     {
