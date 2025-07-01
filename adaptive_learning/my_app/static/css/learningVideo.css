@@ -1285,6 +1285,9 @@ body.video-modal-open .chatbot-btn {
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(158, 27, 50, 0.2);
 }
+.mark-watched-btn .button-text {
+    font-size: 0.85rem; /* or any smaller size you prefer */
+}
 
 .mark-watched-btn::before {
     content: '';
