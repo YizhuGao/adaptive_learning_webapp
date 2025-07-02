@@ -58,7 +58,7 @@ questions_data = [
         ],
     },
     {
-        "question_text": "On the stove is a kettle full of water. The water has started to boil rapidly. The most likely temperature of the water 1s about:",
+        "question_text": "On the stove is a kettle full of water. The water has started to boil rapidly. The most likely temperature of the water is about:",
         "topic": "Thermodynamics",
         "topic_order": 1,
         "subtopic": "Boiling point, Liquifaction, Vaporation", #question 4
@@ -379,7 +379,7 @@ questions_data = [
         ],
     },
     {
-        "question_text": "Gay is describing a TV segment she saw the night before: “I saw physicists make super-conductor magnets, which were at a temperature of —260 °C.” Who do you think is right?",
+        "question_text": "Gay is describing a TV segment she saw the night before: “I saw physicists make super-conductor magnets, which were at a temperature of -260 °C.” Who do you think is right?",
         "topic": "Thermodynamics",
         "topic_order": 1,
         "subtopic": "Nature of temperature", #question 25
@@ -460,7 +460,7 @@ questions_data = [
         ],
     },
     {
-        "question_text": "On the stove is a kettle full of water. The water has started to boil rapidly. The most likely temperature of the water 1s about:",
+        "question_text": "On the stove is a kettle full of water. The water has started to boil rapidly. The most likely temperature of the water is about:",
         "topic": "Thermodynamics",
         "topic_order": 1,
         "subtopic": "Boiling point, Liquifaction, Vaporation", #question 4
@@ -782,7 +782,7 @@ questions_data = [
         ],
     },
     {
-        "question_text": "Gay is describing a TV segment she saw the night before: “I saw physicists make super-conductor magnets, which were at a temperature of —260 °C.” Who do you think is right?",
+        "question_text": "Gay is describing a TV segment she saw the night before: “I saw physicists make super-conductor magnets, which were at a temperature of -260 °C.” Who do you think is right?",
         "topic": "Thermodynamics",
         "topic_order": 1,
         "subtopic": "Nature of temperature", #question 25
