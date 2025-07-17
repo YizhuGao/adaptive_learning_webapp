@@ -167,6 +167,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/home/'
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://adaptive-learning-webapp.onrender.com",
     "https://adaptive-learning-webapp-uiw1.onrender.com",
 ]
