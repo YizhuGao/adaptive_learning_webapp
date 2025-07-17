@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-)-6-6n_o8jj4@@29g4mtxaeyp#w2-7uf1-5^^kg^v#g*zemhwz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["adaptive-learning-webapp.onrender.com", "*"]
+ALLOWED_HOSTS = ["adaptive-learning-webapp.onrender.com", "*", "https://adaptive-learning-webapp-uiw1.onrender.com"]
 # ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 
@@ -99,22 +99,22 @@ WSGI_APPLICATION = 'adaptive_learning.wsgi.application'
 #     }
 # }
 
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         default=os.environ.get('DATABASE_URL')
-#     )
-# }
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        'OPTIONS': {
-            'timeout': 20
-        }
-
-    }
+     'default': dj_database_url.config(
+         default=os.environ.get('DATABASE_URL')
+     )
 }
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': BASE_DIR / 'db.sqlite3',
+#        'OPTIONS': {
+#            'timeout': 20
+#        }
+#
+#    }
+#}
 
 # DATABASES = {
 #     'default': dj_database_url.config(
